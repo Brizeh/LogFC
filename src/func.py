@@ -1,9 +1,8 @@
 import math
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
-from const import *
-from languages import *
-
+from const import BOSS_DICT, CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS
+from languages import LANGUES
 
 def time_to_index(time: int):  # time in millisecond
     return int(time / 300)
@@ -39,10 +38,10 @@ def txt_file_to_lines(filepath: str):
         return []
 
 
-def lines_to_urls(lines: list[str], reward_mode=False):
-
+def lines_to_urls(lines: list[str], **kwargs):
+    reward_mode = kwargs.get("reward_mode", False)
     input_urls = []
-    boss_names = list(boss_dict.values())
+    boss_names = list(BOSS_DICT.values())
     escort_url = None
 
     for line in lines:
@@ -72,7 +71,7 @@ def lines_to_urls(lines: list[str], reward_mode=False):
 
 def is_valid_url(line):
     parts = line.split("_")
-    if "https://dps.report/" in line and parts[1] in boss_dict.values() and parts[0].split("-")[1].isdigit() and parts[0].split("-")[2].isdigit():
+    if "https://dps.report/" in line and parts[1] in BOSS_DICT.values() and parts[0].split("-")[1].isdigit() and parts[0].split("-")[2].isdigit():
         return True
     return False
 
@@ -113,7 +112,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
     
     for player in mvp:
         account = player.account
-        custom_name = custom_names.get(account)
+        custom_name = CUSTOM_NAMES.get(account)
         if custom_name:
             mvp_names.append(custom_name)
         else:
@@ -121,7 +120,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
             
     for player in lvp:
         account = player.account
-        custom_name = custom_names.get(account)
+        custom_name = CUSTOM_NAMES.get(account)
         if custom_name:
             lvp_names.append(custom_name)
         else:
@@ -153,23 +152,23 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
 
         if type(wingname) == int: 
             if wingname == 1:
-                run_message += langues["selected_language"]["W1"].format(wing_duration=wing_duration)
+                run_message += LANGUES["selected_language"]["W1"].format(wing_duration=wing_duration)
                 
             elif wingname == 3:
                 escort_in_run = any(boss.name == "ESCORT" for boss in wing)
                 if escort_in_run:
                     run_message += f"## W3 - *{wing_duration}*\n"
                 else:
-                    run_message += langues["selected_language"]["W3"].format(wing_duration=wing_duration)
+                    run_message += LANGUES["selected_language"]["W3"].format(wing_duration=wing_duration)
                     
             elif wingname == 7:
-                run_message += langues["selected_language"]["W7"].format(wing_duration=wing_duration)
+                run_message += LANGUES["selected_language"]["W7"].format(wing_duration=wing_duration)
                 
             else:
                 run_message += f"## W{wingname} - *{wing_duration}*\n"    
                   
         else:
-            run_message += langues["selected_language"][wingname].format(wing_duration=wing_duration)
+            run_message += LANGUES["selected_language"][wingname].format(wing_duration=wing_duration)
         
         for boss in wing:
             boss_name = boss.name + (" CM" if boss.cm else "")
@@ -179,7 +178,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
             if boss_percentil is not None:
                 notes_nb += 1
                 total_wingman_score += boss_percentil
-                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration} ({boss_percentil}%{emote_wingman})**\n"
+                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration} ({boss_percentil}%{EMOTE_WINGMAN})**\n"
             else:
                 run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration}**\n"
             run_message = cut_text(run_message)
@@ -192,7 +191,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
                 run_message = cut_text(run_message)
             if boss.name != "ESCORT":
                 for player_account, dps_mark in boss.get_dps_ranking().items():
-                    all_players[player_account].add_mark(dps_mark)
+                    ALL_PLAYERS[player_account].add_mark(dps_mark)
 
         run_message += "\n"
 
@@ -201,11 +200,11 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
         lvps = ', '.join(lvp_names)
         note_wingman = total_wingman_score / notes_nb
         if max_mvp_score > 1:
-            run_message += langues["selected_language"]["MVP"].format(mvps=mvps, max_mvp_score=max_mvp_score)
+            run_message += LANGUES["selected_language"]["MVP"].format(mvps=mvps, max_mvp_score=max_mvp_score)
         if max_lvp_score > 1:
-            run_message += langues["selected_language"]["LVP"].format(lvps=lvps, max_lvp_score=max_lvp_score)
-        run_message += langues["selected_language"]["TIME"].format(run_duration=run_duration)
-        run_message += langues["selected_language"]["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=emote_wingman)
+            run_message += LANGUES["selected_language"]["LVP"].format(lvps=lvps, max_lvp_score=max_lvp_score)
+        run_message += LANGUES["selected_language"]["TIME"].format(run_duration=run_duration)
+        run_message += LANGUES["selected_language"]["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
 
     
     player_rankings = list(filter(
