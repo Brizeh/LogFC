@@ -16,67 +16,67 @@ BOSS_DICT = {
     15438: "vg",
     15429: "gors",
     15375: "sab",
-    
+
     16123: "sloth",
     16115: "matt",
-    
+
     16253: "esc",
     16235: "kc",
     16246: "xera",
-    
+
     17194: "cairn",
     17172: "mo",
     17188: "sam",
     17154: "dei",
-    
+
     19767: "sh",
     19450: "dhuum",
-    
+
     43974: "ca",
     21105: "twins",
     20934: "qadim",
-    
+
     22006: "adina",
     21964: "sabir",
     22000: "qpeer",
-    
+
     26725: "greer",
     26774: "deci",
     26712: "ura",
-    
+
     #  IBS BOSSES
     22154: "ice",
     22343: "falln",
     22492: "frae",
     22711: "whisp",
     22521: "bone",
-    
+
     #  EOD BOSSES
     24033: "trin",
     23957: "ankka",
     24266: "li",
     43488: "void",
     25414: "olc",
-    
+
     #  SOTO BOSSES
     25705: "dagda",
     25989: "cerus",
-    
+
     # FRAC BOSSES
     17021: "mama",
     17028: "siax",
     16948: "enso",
-    
+
     17632: "skor",
     17949: "arriv",
     17759: "arkk",
-    
+
     23254: "ai",
-    
+
     25577: "kana",
-    
+
     26231: "eparc"
-    }
+}
 
 EXTRA_BOSS_DICT = {
     16199: "golem",
@@ -104,6 +104,5 @@ try:
         CUSTOM_NAMES = json.load(file)
 except:
     CUSTOM_NAMES = {}
-        
-    
+
 EMOTE_WINGMAN = ":wing:"
