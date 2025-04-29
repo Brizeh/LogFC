@@ -1,5 +1,5 @@
-from models.log_class import Log
-from const import BOSS_DICT, EXTRA_BOSS_DICT, ALL_BOSSES
+from src.models.log_class import Log
+from src.const import BOSS_DICT, EXTRA_BOSS_DICT, ALL_BOSSES
 from .sub_models.raid_bosses import *
 from .sub_models.ibs_bosses import *
 from .sub_models.eod_bosses import *
