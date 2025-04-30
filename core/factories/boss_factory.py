@@ -2,13 +2,9 @@
 from typing import Dict, Type, Optional
 
 from config.settings import BOSS_DICT, EXTRA_BOSS_DICT, ALL_BOSSES
-from core.models.log import Log
 from core.models.boss import Boss
-
-# Import des classes spécifiques de boss
-from core.models.boss_models.raid_wing1_vg import VG
-from core.models.boss_models.raid_wing1_gors import GORS
-from core.models.boss_models.raid_wing1_sabetha import SABETHA
+from core.models.boss_models import *
+from core.models.log import Log
 
 
 class BossFactory:
@@ -24,33 +20,40 @@ class BossFactory:
         "vg": VG,
         "gors": GORS,
         "sab": SABETHA,
-        #
-        # "sloth": SLOTH,
-        # "matt" : MATTHIAS,
-        #
-        # "esc"  : ESCORT,
-        # "kc"   : KC,
-        # "xera" : XERA,
-        #
-        # "cairn": CAIRN,
-        # "mo"   : MO,
-        # "sam"  : SAMAROG,
-        # "dei"  : DEIMOS,
-        #
-        # "sh"   : SH,
-        # "dhuum": DHUUM,
-        #
-        # "ca"   : CA,
-        # "twins": LARGOS,
-        # "qadim": Q1,
-        #
-        # "adina": ADINA,
-        # "sabir": SABIR,
-        # "qpeer": QTP,
-        #
-        # "greer": GREER,
-        # "deci" : DECIMA,
-        # "ura"  : URA,
+
+        # Wing 2
+        "sloth": SLOTH,
+        "matt" : MATTHIAS,
+
+        # Wing 3
+        "esc"  : ESCORT,
+        "kc"   : KC,
+        "xera" : XERA,
+
+        # Wing 4
+        "cairn": CAIRN,
+        "mo"   : MO,
+        "sam"  : SAMAROG,
+        "dei"  : DEIMOS,
+
+        # Wing 5
+        "sh"   : SH,
+        "dhuum": DHUUM,
+
+        # Wing 6
+        "ca"   : CA,
+        "twins": LARGOS,
+        "qadim": Q1,
+
+        # Wing 7
+        "adina": ADINA,
+        "sabir": SABIR,
+        "qpeer": QTP,
+
+        # Wing 8
+        "greer": GREER,
+        "deci" : DECIMA,
+        "ura"  : URA,
         #
         # #  IBS BOSSES
         # "ice"  : ICE,
@@ -85,8 +88,8 @@ class BossFactory:
         #
         # "eparc": EPARCH,
         #
-        # #  YES
-        # "golem": GOLEM
+        #  YES
+        "golem": GOLEM
     }
 
     @classmethod

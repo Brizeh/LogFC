@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from config.settings import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS
-from i18n.languages import lang_dict
+from i18n.languages import language_config
 from utils.formatters import disp_time
 
 
@@ -235,20 +235,20 @@ class ReportGenerator:
         # Formater différemment selon que le nom d'aile est un nombre ou une chaîne
         if isinstance(wingname, int):
             if wingname == 1:
-                run_message += lang_dict["W1"].format(wing_duration=wing_duration)
+                run_message += language_config.selected_language["W1"].format(wing_duration=wing_duration)
             elif wingname == 3:
                 escort_in_run = any(boss.name == "ESCORT" for boss in wing)
                 if escort_in_run:
                     run_message += f"## W3 - *{wing_duration}*\n"
                 else:
-                    run_message += lang_dict["W3"].format(wing_duration=wing_duration)
+                    run_message += language_config.selected_language["W3"].format(wing_duration=wing_duration)
             elif wingname == 7:
-                run_message += lang_dict["W7"].format(wing_duration=wing_duration)
+                run_message += language_config.selected_language["W7"].format(wing_duration=wing_duration)
             else:
                 run_message += f"## W{wingname} - *{wing_duration}*\n"
         else:
             # Pour les ailes avec des noms spéciaux, utiliser le dictionnaire de traduction
-            run_message += lang_dict[wingname].format(wing_duration=wing_duration)
+            run_message += language_config.selected_language[wingname].format(wing_duration=wing_duration)
 
         return run_message
 
@@ -275,14 +275,14 @@ class ReportGenerator:
 
         # Ajouter les MVPs s'il y en a plus d'un
         if self.max_mvp_score > 1:
-            run_message += lang_dict["MVP"].format(mvps=mvps, max_mvp_score=self.max_mvp_score)
+            run_message += language_config.selected_language["MVP"].format(mvps=mvps, max_mvp_score=self.max_mvp_score)
 
         # Ajouter les LVPs s'il y en a plus d'un
         if self.max_lvp_score > 1:
-            run_message += lang_dict["LVP"].format(lvps=lvps, max_lvp_score=self.max_lvp_score)
+            run_message += language_config.selected_language["LVP"].format(lvps=lvps, max_lvp_score=self.max_lvp_score)
 
         # Ajouter la durée totale et la note Wingman
-        run_message += lang_dict["TIME"].format(run_duration=run_duration)
-        run_message += lang_dict["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
+        run_message += language_config.selected_language["TIME"].format(run_duration=run_duration)
+        run_message += language_config.selected_language["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
 
         return run_message

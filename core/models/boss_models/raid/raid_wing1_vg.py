@@ -3,7 +3,7 @@ from typing import Optional, Dict, ClassVar
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
-from i18n.languages import language_config, lang_dict
+from i18n.languages import language_config
 
 
 class VG(Boss):
@@ -95,9 +95,9 @@ class VG(Boss):
             nb_players = len(i_players)
 
             if nb_players == 1:
-                return lang_dict["VG MVP BLEU S"].format(mvp_names=mvp_names, max_bleu=max_bleu)
+                return language_config.selected_language["VG MVP BLEU S"].format(mvp_names=mvp_names, max_bleu=max_bleu)
             else:
-                return lang_dict["VG MVP BLEU P"].format(mvp_names=mvp_names, nb_players=nb_players, max_bleu=max_bleu)
+                return language_config.selected_language["VG MVP BLEU P"].format(mvp_names=mvp_names, nb_players=nb_players, max_bleu=max_bleu)
 
         return None
 

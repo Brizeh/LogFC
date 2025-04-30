@@ -4,7 +4,7 @@ from typing import Optional, List, Dict, ClassVar
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
-from i18n.languages import language_config, lang_dict
+from i18n.languages import language_config
 from utils.formatters import time_to_index
 from utils.maths import get_dist
 
@@ -123,7 +123,7 @@ class SABETHA(Boss):
             dmg_ratio = min_dmg / total_dmg * 100
 
             # Générer le message
-            return lang_dict["SABETHA MVP SPLIT"].format(
+            return language_config.selected_language["SABETHA MVP SPLIT"].format(
                 mvp_names=mvp_names,
                 dmg_ratio=dmg_ratio
             )
@@ -149,7 +149,7 @@ class SABETHA(Boss):
             mvp_names = self.players_to_string(i_players)
 
             # Générer le message
-            return lang_dict["SABETHA MVP BOMB"].format(mvp_names=mvp_names)
+            return language_config.selected_language["SABETHA MVP BOMB"].format(mvp_names=mvp_names)
 
         return None
 
@@ -175,7 +175,7 @@ class SABETHA(Boss):
         self.add_lvps(i_players)
 
         # Générer le message
-        return lang_dict["SABETHA LVP SPLIT"].format(
+        return language_config.selected_language["SABETHA LVP SPLIT"].format(
             lvp_names=lvp_names,
             dmg_ratio=dmg_ratio
         )

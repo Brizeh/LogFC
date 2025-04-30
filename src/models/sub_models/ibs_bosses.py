@@ -1,7 +1,7 @@
 from src.models.boss_class import Boss, Stats
 from src.models.log_class import Log
 from src.func import *
-from i18n.languages import lang_dict
+from i18n.languages import language_config
 
 ################################ ICEBROOD CONSTRUCT ################################
 
@@ -59,7 +59,7 @@ class KODANS(Boss):
         dps                         = max_dmg / self.duration_ms 
         dmg_ratio                   = max_dmg / tot_dmg * 100
         self.add_lvps(i_players)
-        return lang_dict["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=dmg_ratio)
+        return language_config.selected_language["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=dmg_ratio)
     
     ################################ DATA MECHAS ################################
     
@@ -107,8 +107,8 @@ class FRAENIR(Boss):
             self.add_mvps(i_players)
             mvp_names = self.players_to_string(i_players)
             if len(i_players) > 1:
-                return lang_dict["FRAENIR MVP FROZEN P"].format(mvp_names=mvp_names, max_frozen=max_frozen)
-            return lang_dict["FRAENIR MVP FROZEN S"].format(mvp_names=mvp_names, max_frozen=max_frozen)
+                return language_config.selected_language["FRAENIR MVP FROZEN P"].format(mvp_names=mvp_names, max_frozen=max_frozen)
+            return language_config.selected_language["FRAENIR MVP FROZEN S"].format(mvp_names=mvp_names, max_frozen=max_frozen)
         return
     
     ################################ LVP ################################
@@ -123,7 +123,7 @@ class FRAENIR(Boss):
         self.add_lvps(i_players)
         if sak_count:
             sak_ratio = sak_dmg/max_dmg*100
-            return lang_dict["FRAENIR LVP SAK"].format(lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
+            return language_config.selected_language["FRAENIR LVP SAK"].format(lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
         return
     
     ################################ DATA MECHAS ################################
@@ -185,7 +185,7 @@ class WOJ(Boss):
         ratio                       = max_dmg / tot_dmg * 100
         self.add_mvps(i_players) 
         if max_dmg > 10000:
-            return lang_dict["WOJ MVP CHAINS"].format(mvp_name=mvp_name, max_dmg=max_dmg, ratio=ratio)
+            return language_config.selected_language["WOJ MVP CHAINS"].format(mvp_name=mvp_name, max_dmg=max_dmg, ratio=ratio)
         return
     
     ################################ DATA MECHAS ################################
@@ -238,7 +238,7 @@ class BONESKINNER(Boss):
         self.add_lvps(i_players)
         if sak_count:
             sak_ratio = sak_dmg/max_dmg*100
-            return lang_dict["FRAENIR LVP SAK"].format(lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
+            return language_config.selected_language["FRAENIR LVP SAK"].format(lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
         return
     
     ################################ DATA MECHAS ################################

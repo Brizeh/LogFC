@@ -6,7 +6,7 @@ import pytz
 from config.settings import BOSS_DICT, CUSTOM_NAMES, ALL_PLAYERS, DATE_FORMAT, PARIS_TIMEZONE
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
-from i18n.languages import language_config, lang_dict
+from i18n.languages import language_config
 from utils.formatters import time_to_index
 
 # Type pour les fonctions de filtrage des joueurs
@@ -1110,14 +1110,14 @@ class Boss:
 
         if min_cc == 0:
             if number_mvp == 1:
-                return lang_dict["MVP BOSS 0 CC S"].format(mvp_names=mvp_names)
+                return language_config.selected_language["MVP BOSS 0 CC S"].format(mvp_names=mvp_names)
             else:
-                return lang_dict["MVP BOSS 0 CC P"].format(mvp_names=mvp_names)
+                return language_config.selected_language["MVP BOSS 0 CC P"].format(mvp_names=mvp_names)
         else:
             if number_mvp == 1:
-                return lang_dict["MVP BOSS CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return language_config.selected_language["MVP BOSS CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
             else:
-                return lang_dict["MVP BOSS CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return language_config.selected_language["MVP BOSS CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
 
     def get_mvp_cc_total(self, extra_exclude: List[Callable[[int], bool]] = None) -> Optional[str]:
         """
@@ -1152,14 +1152,14 @@ class Boss:
 
         if min_cc == 0:
             if number_mvp == 1:
-                return lang_dict["MVP TOTAL 0 CC S"].format(mvp_names=mvp_names)
+                return language_config.selected_language["MVP TOTAL 0 CC S"].format(mvp_names=mvp_names)
             else:
-                return lang_dict["MVP TOTAL 0 CC P"].format(mvp_names=mvp_names)
+                return language_config.selected_language["MVP TOTAL 0 CC P"].format(mvp_names=mvp_names)
         else:
             if number_mvp == 1:
-                return lang_dict["MVP TOTAL CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return language_config.selected_language["MVP TOTAL CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
             else:
-                return lang_dict["MVP TOTAL CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return language_config.selected_language["MVP TOTAL CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
 
     def get_bad_dps(self, extra_exclude: List[Callable[[int], bool]] = None) -> Optional[str]:
         """
@@ -1216,9 +1216,9 @@ class Boss:
             bad_dps_name = self.players_to_string(bad_dps)
 
             if len(bad_dps) == 1:
-                return lang_dict["MVP BAD DPS S"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
+                return language_config.selected_language["MVP BAD DPS S"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
             else:
-                return lang_dict["MVP BAD DPS P"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
+                return language_config.selected_language["MVP BAD DPS P"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
 
         return None
 
@@ -1251,7 +1251,7 @@ class Boss:
         cc_ratio = max_cc / total_cc * 100
 
         # Générer le message
-        return lang_dict["LVP BOSS CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
+        return language_config.selected_language["LVP BOSS CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
 
     def get_lvp_cc_total(self) -> Optional[str]:
         """
@@ -1278,7 +1278,7 @@ class Boss:
         cc_ratio = max_cc / total_cc * 100
 
         # Générer le message
-        return lang_dict["LVP TOTAL CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
+        return language_config.selected_language["LVP TOTAL CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
 
     def get_lvp_dps(self) -> str:
         """
@@ -1307,7 +1307,7 @@ class Boss:
         self.add_lvps(i_players)
 
         if food_swap_count:
-            return lang_dict["LVP DPS FOODSWAP"].format(
+            return language_config.selected_language["LVP DPS FOODSWAP"].format(
                 lvp_dps_name=lvp_dps_name,
                 max_dmg=max_dmg,
                 dmg_ratio=dmg_ratio,
@@ -1315,7 +1315,7 @@ class Boss:
                 foodSwapCount=food_swap_count
             )
         else:
-            return lang_dict["LVP DPS"].format(
+            return language_config.selected_language["LVP DPS"].format(
                 lvp_dps_name=lvp_dps_name,
                 max_dmg=max_dmg,
                 dmg_ratio=dmg_ratio,
