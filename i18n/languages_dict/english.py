@@ -45,7 +45,7 @@ english = {
     "ESCORT LVP TOWER P": "⬗ *[**LVP** : {lvp_names} who **succeded** all of their **solo cap**]*",
     
     ################################ KC ################################
-    "KC MVP ORB"  : "⬗ *[**MVP** : {mvp_names} gived **{min_orb} orbs** to the **boss**]*",
+    "KC MVP BAD ORBS"  : "⬗ *[**MVP** : {mvp_names} gave **{min_orb} orbs** to the **boss**]*",
     "KC MVP 0 ORB": "⬗ *[**MVP** : {mvp_names} who dodged every **orbs** in the fight]*",
     "KC MVP ORB"  : "⬗ *[**MVP** : {mvp_names} only with **{min_orb} orbs** collected in the fight]*",
     
@@ -118,7 +118,7 @@ english = {
     "FRAENIR MVP FROZEN S": "⬗ *[**MVP** : {mvp_names} got frozen **{max_frozen}** times]*",
     "FRAENIR MVP FROZEN P": "⬗ *[**MVP** : {mvp_names} got frozen **{max_frozen}** times]*",
     
-    "FRAENIR LVP SAK"     : "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.1f}%** of the squad) using **{sak_count} SAK** (**{sak_ratio:.1f}%** of its dps)]*",
+    "FRAENIR LVP SAK"     : "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f} kdps** (**{dmg_ratio:.1f}%** of the squad) using **{sak_count} SAK** (**{sak_ratio:.1f}%** of its dps)]*",
     
     ################################ WOJ ################################
     "WOJ MVP CHAINS": "⬗ *[**MVP** : {mvp_name} took **{max_dmg}** damage from **chains** (**{ratio:.1f}%** of the squad)]*",
@@ -132,7 +132,7 @@ english = {
     "KO MVP DEBIL P": "⬗ *[**MVP** : {mvp_names} cummulated **{max_debil}** **debilitated** effects]*",
     
     ################################ KANAXAI ################################
-    "KANAXAI LVP DPS": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad) with **{linkCount} tether**]*",
+    "KANAXAI LVP DPS": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f} kdps** (**{dmg_ratio:.0f}%** of the squad) with **{linkCount} tether**]*",
     
     ################################ GENERAL ################################
     "MVP BOSS 0 CC S" : "⬗ *[**MVP** : {mvp_names} didn't do any **CC**]*",
@@ -151,8 +151,8 @@ english = {
     "LVP BOSS CC"     : "⬗ *[**LVP** : {lvp_names} thanks for doing **{max_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
     "LVP TOTAL CC"    : "⬗ *[**LVP** : {lvp_names} thanks for doing **{max_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
     
-    "LVP DPS"         : "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad)]*",
-    "LVP DPS FOODSWAP": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad) with **{foodSwapCount} foodswap**]*",
+    "LVP DPS"         : "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f} kdps** (**{dmg_ratio:.0f}%** of the squad)]*",
+    "LVP DPS FOODSWAP": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f} kdps** (**{dmg_ratio:.0f}%** of the squad) with **{foodSwapCount} foodswap**]*",
     
     ################################ TITRES ################################
     "W1"          : "## W1 - *{wing_duration}* (without pre-VG)\n",

@@ -27,3 +27,4 @@ class LanguageConfig:
 
 
 language_config = LanguageConfig()  # Global instance
+lang_dict = language_config.selected_language

@@ -59,9 +59,10 @@ def main(input_string, **kwargs):
 
     # Générer et afficher le rapport
     print(f"--- test\n")
-    # split_run_message = ReportGenerator.generate_report(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
-    # for message in split_run_message:
-    #     print(message)
+    report_generator = ReportGenerator(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
+    split_run_message = report_generator.generate()
+    for message in split_run_message:
+        print(message)
 
 
 if __name__ == "__main__":

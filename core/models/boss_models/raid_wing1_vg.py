@@ -3,7 +3,7 @@ from typing import Optional, Dict, ClassVar
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
-from i18n.languages import language_config
+from i18n.languages import language_config, lang_dict
 
 
 class VG(Boss):
@@ -93,9 +93,6 @@ class VG(Boss):
             # Préparer les variables pour le message
             mvp_names = self.players_to_string(i_players)
             nb_players = len(i_players)
-
-            # Sélectionner le message approprié en fonction du nombre de MVP
-            lang_dict = language_config.selected_language
 
             if nb_players == 1:
                 return lang_dict["VG MVP BLEU S"].format(mvp_names=mvp_names, max_bleu=max_bleu)

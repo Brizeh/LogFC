@@ -1,7 +1,7 @@
 from src.models.boss_class import Boss, Stats
 from src.models.log_class import Log
 from src.func import *
-from i18n.languages import SELECTED_LANGUAGE_DICT
+from i18n.languages import lang_dict
 
 ################################ DAGDA ################################
 
@@ -38,9 +38,9 @@ class DAGDA(Boss):
         if max_debil > 1:
             self.add_mvps(i_players)
             if len(i_players) == 1:
-                return SELECTED_LANGUAGE_DICT["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return lang_dict["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
             else:
-                return SELECTED_LANGUAGE_DICT["KO MVP DEBIL P"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return lang_dict["KO MVP DEBIL P"].format(mvp_names=mvp_names, max_debil=max_debil)
         return
     
     ################################ DATA MECHAS ################################

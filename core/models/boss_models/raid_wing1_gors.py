@@ -3,7 +3,7 @@ from typing import Optional, List, ClassVar
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
-from i18n.languages import language_config
+from i18n.languages import language_config, lang_dict
 
 
 class GORS(Boss):
@@ -102,7 +102,6 @@ class GORS(Boss):
             dmg_ratio = min_dmg / total_dmg * 100
 
             # Générer le message
-            lang_dict = language_config.selected_language
             return lang_dict["GORS MVP SPLIT"].format(
                 mvp_names=mvp_names,
                 min_dmg=min_dmg,
@@ -128,7 +127,6 @@ class GORS(Boss):
 
             # Préparer le message
             mvp_names = self.players_to_string(i_players)
-            lang_dict = language_config.selected_language
 
             # Sélectionner le message approprié en fonction du nombre de joueurs
             if len(i_players) == 1:
@@ -160,7 +158,6 @@ class GORS(Boss):
         self.add_lvps(i_players)
 
         # Générer le message
-        lang_dict = language_config.selected_language
         return lang_dict["GORS LVP SPLIT"].format(
             lvp_names=lvp_names,
             max_dmg=max_dmg,

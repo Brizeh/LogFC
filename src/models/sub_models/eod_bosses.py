@@ -1,7 +1,7 @@
 from src.models.boss_class import Boss, Stats
 from src.models.log_class import Log
 from src.func import *
-from i18n.languages import SELECTED_LANGUAGE_DICT
+from i18n.languages import lang_dict
 
 ################################ MAI TRIN ################################
 
@@ -38,9 +38,9 @@ class AH(Boss):
         if max_exposed > 2:
             self.add_mvps(i_players)
             if len(i_players) == 1:
-                return SELECTED_LANGUAGE_DICT["AH MVP EXPOSED S"].format(mvp_names=mvp_names, max_exposed=max_exposed)
+                return lang_dict["AH MVP EXPOSED S"].format(mvp_names=mvp_names, max_exposed=max_exposed)
             else:
-                return SELECTED_LANGUAGE_DICT["AH MVP EXPOSED P"].format(mvp_names=mvp_names, max_exposed=max_exposed)
+                return lang_dict["AH MVP EXPOSED P"].format(mvp_names=mvp_names, max_exposed=max_exposed)
         return
     
     ################################ LVP ################################
@@ -52,7 +52,7 @@ class AH(Boss):
         dps                         = max_dmg / time
         lvp_dps_name                = self.players_to_string(i_players)
         self.add_lvps(i_players)
-        return SELECTED_LANGUAGE_DICT["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=ratio)
+        return lang_dict["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=ratio)
     
     ################################ DATA MECHAS ################################
     
@@ -139,7 +139,7 @@ class KO(Boss):
         dmg_ratio                   = max_dmg / tot_dmg * 100
         dps                         = max_dmg / self.duration_ms
         self.add_lvps(i_players)
-        return SELECTED_LANGUAGE_DICT["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
+        return lang_dict["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
     
     ################################ MVP ################################
     
@@ -149,9 +149,9 @@ class KO(Boss):
         if max_debil > 1:
             self.add_lvps(i_players)
             if len(i_players) == 1:
-                return SELECTED_LANGUAGE_DICT["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return lang_dict["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
             else:
-                return SELECTED_LANGUAGE_DICT["KO MVP DEBIL P"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return lang_dict["KO MVP DEBIL P"].format(mvp_names=mvp_names, max_debil=max_debil)
         return
     
     ################################ DATA MECHAS ################################
@@ -229,7 +229,7 @@ class OLC(Boss):
         dmg_ratio                   = max_dmg / tot_dmg * 100
         dps                         = max_dmg / self.duration_ms
         self.add_lvps(i_players)
-        return SELECTED_LANGUAGE_DICT["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
+        return lang_dict["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
     
     ################################ DATA MECHAS ################################
     
