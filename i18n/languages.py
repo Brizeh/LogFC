@@ -9,7 +9,7 @@ class LanguageConfig:
             "FR": french,
             "EN": english
         }
-        self.selected_language = self.language_strings[DEFAULT_LANGUAGE]  # Dictionnaire par défaut
+        self.selected_language = self.language_strings[DEFAULT_LANGUAGE]  # Default dictionary
 
     def set_language(self, language_code):
         """Define the selected language"""
@@ -18,11 +18,11 @@ class LanguageConfig:
         return self.selected_language
 
     def get_string(self, key, **kwargs):
-        """Récupère une chaîne traduite avec interpolation de variables"""
+        """Retrieves a translated string with variable interpolation"""
         if key not in self.selected_language:
             return f"[MISSING: {key}]"
 
-        # Interpolation des variables dans la chaîne traduite
+        # Variable interpolation in the translated string
         return self.selected_language[key].format(**kwargs) if kwargs else self.selected_language[key]
 
 

@@ -10,7 +10,7 @@ class InputParser:
         self.urls = self.detect_urls()
 
     def __str__(self):
-        title = f"{len(self.urls)} urls detected :\n"
+        title = f"{len(self.urls)} urls detected:\n"
         for url in self.urls:
             title += f" - {url}\n"
         return title
@@ -18,13 +18,13 @@ class InputParser:
     def detect_urls(self):
         valid_terms = list(BOSS_DICT.values())
         valid_terms.sort(key=lambda x: (len(x), x), reverse=True)
-        # RegEx pour capturer chaque lien valide, même s'ils sont collés
+        # RegEx to capture each valid link, even if they are stuck together
         regex_full = rf"https://dps\.report/[a-zA-Z0-9]{{4}}-\d{{8}}-\d{{6}}_({'|'.join(valid_terms)})"
 
-        # Utilisation de re.finditer pour identifier toutes les correspondances
+        # Using re.finditer to identify all matches
         matches = [match.group(0) for match in re.finditer(regex_full, self.input)]
 
-        # Affichage des résultats
+        # Displaying results
         duplicates_checker = {}
         for match in matches:
             end = match.split("_")[-1]

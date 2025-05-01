@@ -11,12 +11,12 @@ class WingmanAPI:
 
         response = requests.get(url)
         if not response.ok:
-            print(f"Erreur Wingman: {response.status_code}")
+            print(f"Wingman Error: {response.status_code}")
             return None
 
         data = response.json()
         if data.get("error"):
-            print(f"Erreur Wingman: {data['error']}")
+            print(f"Wingman Error: {data['error']}")
             return None
 
         return [data["duration_med"], data["duration_top"]]

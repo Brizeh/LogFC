@@ -34,7 +34,7 @@ def main(input_string, **kwargs):
     # Retrieve the URLs
     urls = input_parser.urls
 
-    # Récupérer les données pour chaque URL
+    # Retrieve data for each URL
     requests = []
     for url in urls:
         requests.append(grequests.get(url))
@@ -43,17 +43,17 @@ def main(input_string, **kwargs):
     # Execute the requests
     responses = grequests.map(requests, size=2 * len(urls))
 
-    # Créer les objets Log et leur attribuer les contenus JSON
+    # Create Log objects and assign JSON content to them
     logs = [Log(url) for url in urls]
     for i in range(len(urls)):
         logs[i].set_jcontent(responses[2 * i])
         logs[i].set_pjcontent(responses[2 * i + 1])
 
-    # Créer les objets Boss correspondants
+    # Create corresponding Boss objects
     for log in logs:
         BossFactory.create_boss(log)
 
-    # Générer et afficher le rapport
+    # Generate and display the report
     report_generator = ReportGenerator(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
     split_run_message = report_generator.generate()
     for message in split_run_message:

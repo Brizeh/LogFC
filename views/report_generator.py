@@ -7,26 +7,26 @@ from utils.formatters import disp_time
 
 class ReportGenerator:
     """
-    Classe qui génère des rapports de raid formatés à partir des logs et des données des joueurs.
+    Class that generates formatted raid reports from logs and player data.
 
-    Cette classe transforme les données brutes des logs de combat et des statistiques des joueurs
-    en un rapport formaté en Markdown qui peut être partagé dans un chat Discord ou autre.
+    This class transforms raw combat log data and player statistics
+    into a Markdown-formatted report that can be shared in a Discord chat or elsewhere.
 
     Attributes:
-        logs (list) : Liste des logs de boss à inclure dans le rapport
-        players (dict) : Dictionnaire des joueurs participant au raid
-        titre (str) : Titre du rapport (défaut : "Run")
-        cutting_text_limit (int) : Limite de caractères pour la découpe des messages (défaut : 1700)
+        logs (list): List of boss logs to include in the report
+        players (dict): Dictionary of players participating in the raid
+        titre (str): Report title (default: "Run")
+        cutting_text_limit (int): Character limit for message splitting (default: 1700)
     """
 
     def __init__(self, logs: list, players: dict, titre: str = "Run"):
         """
-        Initialise un générateur de rapport avec les logs, les joueurs et un titre optionnel.
+        Initializes a report generator with logs, players, and an optional title.
 
         Args:
-            logs (list) : Liste des logs de boss à inclure dans le rapport
-            players (dict) : Dictionnaire des joueurs participant au raid
-            titre (str, optional) : Titre du rapport. Par défaut "Run"
+            logs (list): List of boss logs to include in the report
+            players (dict): Dictionary of players participating in the raid
+            titre (str, optional): Report title. Default "Run"
         """
         self.logs = logs
         self.players = players
@@ -42,49 +42,49 @@ class ReportGenerator:
 
     def generate(self) -> list:
         """
-        Génère le rapport complet et le renvoie sous forme de liste de messages.
+        Generates the complete report and returns it as a list of messages.
 
-        Le rapport inclut des détails sur chaque aile et chaque boss, ainsi que les
-        MVPs, LVPs et autres statistiques si disponibles.
+        The report includes details about each wing and each boss, as well as
+        MVPs, LVPs, and other statistics if available.
 
         Returns:
-            list: Liste de chaînes de caractères formatées en Markdown,
-                 chacune respectant la limite de caractères définie
+            list: List of Markdown-formatted strings,
+                 each respecting the defined character limit
         """
         if not self.logs:
             print("No boss found")
             return []
 
-        # Déterminer les MVPs et LVPs
+        # Determine MVPs and LVPs
         self._calculate_mvp_lvp()
 
-        # Trier les logs par date de début
+        # Sort logs by start date
         self.logs.sort(key=lambda log: log.start_date, reverse=False)
 
-        # Organiser les logs par aile
+        # Organize logs by wing
         wings = self._group_logs_by_wing()
 
-        # Informations générales du raid
+        # General raid information
         run_date = self.logs[0].start_date.strftime("%d/%m/%Y")
         run_duration = disp_time(self.logs[-1].end_date - self.logs[0].start_date)
         number_boss = len(self.logs)
 
-        # Initialiser le message avec titre et date
+        # Initialize the message with title and date
         run_message = f"# {self.titre}\n" if number_boss > 2 else ""
         run_message += f"# {run_date}\n"
 
-        # Générer les détails pour chaque aile
+        # Generate details for each wing
         run_message, wingman_stats = self._generate_wing_details(wings, run_message)
 
-        # Ajouter le récapitulatif si nécessaire
+        # Add summary if necessary
         if number_boss > 2:
             run_message = self._add_summary(run_message, run_duration, wingman_stats)
 
-        # Ajouter le dernier message s'il n'est pas vide
+        # Add the last message if it's not empty
         if run_message:
             self.split_message.append(run_message)
 
-        # Nettoyer les données pour libérer la mémoire
+        # Clean up data to free memory
         logs_copy = self.split_message.copy()
         self.logs.clear()
         self.players.clear()
@@ -94,16 +94,16 @@ class ReportGenerator:
 
     def _cut_text(self, text: str) -> str:
         """
-        Découpe le texte si sa longueur dépasse la limite définie.
+        Cuts the text if its length exceeds the defined limit.
 
-        Lorsque le texte dépasse la limite, la portion actuelle est ajoutée à
-        split_message et une nouvelle chaîne vide est retournée.
+        When the text exceeds the limit, the current portion is added to
+        split_message and a new empty string is returned.
 
         Args:
-            text (str) : Le texte à vérifier et potentiellement découper
+            text (str): The text to check and potentially cut
 
         Returns:
-            str: Le texte original ou une chaîne vide si le texte a été découpé
+            str: The original text or an empty string if the text has been cut
         """
         if len(text) >= self.cutting_text_limit:
             self.split_message.append(text)
@@ -112,11 +112,11 @@ class ReportGenerator:
 
     def _group_logs_by_wing(self) -> dict:
         """
-        Regroupe les logs par aile.
+        Groups logs by wing.
 
         Returns:
-            dict: Dictionnaire où les clés sont les noms/numéros d'aile et les valeurs
-                 sont les listes de logs correspondants
+            dict: Dictionary where keys are wing names/numbers and values
+                 are lists of corresponding logs
         """
         wings = {}
         for log in self.logs:
@@ -129,12 +129,12 @@ class ReportGenerator:
 
     def _calculate_mvp_lvp(self) -> None:
         """
-        Calcule les MVPs (Most Valuable Players) et LVPs (Least Valuable Players) du raid.
+        Calculates the MVPs (Most Valuable Players) and LVPs (Least Valuable Players) of the raid.
 
-        Cette méthode détermine les joueurs avec le plus grand nombre de MVPs et LVPs,
-        et stocke leurs noms (personnalisés si disponibles) dans mvp_names et lvp_names.
+        This method determines the players with the highest number of MVPs and LVPs,
+        and stores their names (customized if available) in mvp_names and lvp_names.
         """
-        # Trouver les joueurs avec le plus grand nombre de MVPs
+        # Find players with the highest number of MVPs
         for player in self.players.values():
             if player.mvps > self.max_mvp_score:
                 self.max_mvp_score = player.mvps
@@ -142,20 +142,20 @@ class ReportGenerator:
             elif player.mvps == self.max_mvp_score:
                 self.mvp.append(player)
 
-            # Trouver les joueurs avec le plus grand nombre de LVPs
+            # Find players with the highest number of LVPs
             if player.lvps > self.max_lvp_score:
                 self.max_lvp_score = player.lvps
                 self.lvp = [player]
             elif player.lvps == self.max_lvp_score:
                 self.lvp.append(player)
 
-        # Extraire les noms des MVPs (avec noms personnalisés si disponibles)
+        # Extract MVP names (with custom names if available)
         for player in self.mvp:
             account = player.account
             custom_name = CUSTOM_NAMES.get(account)
             self.mvp_names.append(custom_name if custom_name else player.name)
 
-        # Extraire les noms des LVPs (avec noms personnalisés si disponibles)
+        # Extract LVP names (with custom names if available)
         for player in self.lvp:
             account = player.account
             custom_name = CUSTOM_NAMES.get(account)
@@ -163,36 +163,36 @@ class ReportGenerator:
 
     def _generate_wing_details(self, wings: dict, run_message: str) -> tuple:
         """
-        Génère les détails pour chaque aile et bosses correspondants.
+        Generates details for each wing and corresponding bosses.
 
         Args:
-            wings (dict): Dictionnaire des ailes et leurs logs associés
-            run_message (str): Message en cours de construction
+            wings (dict): Dictionary of wings and their associated logs
+            run_message (str): Message under construction
 
         Returns:
-            tuple: (message mis à jour, (total_wingman_score, notes_nb))
+            tuple: (updated message, (total_wingman_score, notes_nb))
         """
         total_wingman_score = 0
         notes_nb = 0
 
         for wingname, wing in wings.items():
-            # Calculer la durée de l'aile
+            # Calculate wing duration
             wing_first_log = wing[0]
             wing_last_log = wing[-1]
             wing_duration = disp_time(wing_last_log.end_date - wing_first_log.start_date)
 
-            # Ajouter l'en-tête de l'aile au message
+            # Add wing header to the message
             run_message = self._format_wing_header(wingname, wing_duration, wing, run_message)
 
-            # Traiter chaque boss de l'aile
+            # Process each boss in the wing
             for boss in wing:
-                # Formater les informations du boss
+                # Format boss information
                 boss_name = boss.name + (" CM" if boss.cm else "")
                 boss_duration = disp_time(timedelta(seconds=boss.duration_ms / 1000))
                 boss_url = boss.log.url
                 boss_percentil = boss.wingman_percentile
 
-                # Ajouter les détails du boss au message
+                # Add boss details to the message
                 if boss_percentil is not None:
                     notes_nb += 1
                     total_wingman_score += boss_percentil
@@ -201,7 +201,7 @@ class ReportGenerator:
                     run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration}**\n"
                 run_message = self._cut_text(run_message)
 
-                # Ajouter MVP/LVP du boss s'ils existent
+                # Add boss MVP/LVP if they exist
                 if boss.mvp:
                     run_message += boss.mvp + "\n"
                     run_message = self._cut_text(run_message)
@@ -209,30 +209,30 @@ class ReportGenerator:
                     run_message += boss.lvp + "\n"
                     run_message = self._cut_text(run_message)
 
-                # Mettre à jour les statistiques DPS pour les joueurs (sauf pour ESCORT)
+                # Update DPS statistics for players (except for ESCORT)
                 if boss.name != "ESCORT":
                     for player_account, dps_mark in boss.get_dps_ranking().items():
                         ALL_PLAYERS[player_account].add_mark(dps_mark)
 
-            # Ajouter une ligne vide après chaque aile
+            # Add an empty line after each wing
             run_message += "\n"
 
         return run_message, (total_wingman_score, notes_nb)
 
     def _format_wing_header(self, wingname, wing_duration: str, wing: list, run_message: str) -> str:
         """
-        Formate l'en-tête d'une aile en fonction de son type.
+        Formats a wing header based on its type.
 
         Args:
-            wingname: Nom ou numéro de l'aile
-            wing_duration (str): Durée formatée de l'aile
-            wing (list): Liste des logs de l'aile
-            run_message (str): Message en cours de construction
+            wingname: Wing name or number
+            wing_duration (str): Formatted wing duration
+            wing (list): List of wing logs
+            run_message (str): Message under construction
 
         Returns:
-            str: Message avec l'en-tête de l'aile ajouté
+            str: Message with the wing header added
         """
-        # Formater différemment selon que le nom d'aile est un nombre ou une chaîne
+        # Format differently depending on whether the wing name is a number or a string
         if isinstance(wingname, int):
             if wingname == 1:
                 run_message += language_config.selected_language["W1"].format(wing_duration=wing_duration)
@@ -247,41 +247,41 @@ class ReportGenerator:
             else:
                 run_message += f"## W{wingname} - *{wing_duration}*\n"
         else:
-            # Pour les ailes avec des noms spéciaux, utiliser le dictionnaire de traduction
+            # For wings with special names, use the translation dictionary
             run_message += language_config.selected_language[wingname].format(wing_duration=wing_duration)
 
         return run_message
 
     def _add_summary(self, run_message: str, run_duration: str, wingman_stats: tuple) -> str:
         """
-        Ajoute un récapitulatif au rapport avec les MVPs, LVPs et statistiques globales.
+        Adds a summary to the report with MVPs, LVPs, and global statistics.
 
         Args:
-            run_message (str): Message en cours de construction
-            run_duration (str): Durée totale du raid formatée
-            wingman_stats (tuple): Tuple contenant (total_wingman_score, notes_nb)
+            run_message (str): Message under construction
+            run_duration (str): Formatted total raid duration
+            wingman_stats (tuple): Tuple containing (total_wingman_score, notes_nb)
 
         Returns:
-            str: Message avec le récapitulatif ajouté
+            str: Message with the summary added
         """
         total_wingman_score, notes_nb = wingman_stats
 
-        # Préparer les chaînes pour les MVPs et LVPs
+        # Prepare strings for MVPs and LVPs
         mvps = ', '.join(self.mvp_names)
         lvps = ', '.join(self.lvp_names)
 
-        # Calculer la note moyenne Wingman
+        # Calculate average Wingman score
         note_wingman = total_wingman_score / notes_nb if notes_nb > 0 else 0
 
-        # Ajouter les MVPs s'il y en a plus d'un
+        # Add MVPs if there's more than one
         if self.max_mvp_score > 1:
             run_message += language_config.selected_language["MVP"].format(mvps=mvps, max_mvp_score=self.max_mvp_score)
 
-        # Ajouter les LVPs s'il y en a plus d'un
+        # Add LVPs if there's more than one
         if self.max_lvp_score > 1:
             run_message += language_config.selected_language["LVP"].format(lvps=lvps, max_lvp_score=self.max_lvp_score)
 
-        # Ajouter la durée totale et la note Wingman
+        # Add total duration and Wingman score
         run_message += language_config.selected_language["TIME"].format(run_duration=run_duration)
         run_message += language_config.selected_language["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
 
