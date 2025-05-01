@@ -6,7 +6,7 @@ DEFAULT_LANGUAGE = "EN"
 DEFAULT_TITLE = "Run"
 DEFAULT_INPUT_FILE = "input/logs.txt"
 
-# Constantes API
+# API Constants
 REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -24,13 +24,13 @@ REQUEST_HEADERS = {
 }
 DPS_REPORT_JSON_URL = "https://dps.report/getJson?permalink="
 
-# Constantes techniques
+# Technical constants
 BIG = 1e9
 
-# Émotes et symboles
+# Emotes
 EMOTE_WINGMAN = ":wing:"
 
-# Autres constantes (boss_dict, custom_names, etc.)
+# Other constants
 BOSS_DICT = {
     #  RAID BOSSES
     15438: "vg",
@@ -109,7 +109,7 @@ try:
 except (FileNotFoundError, json.JSONDecodeError, PermissionError):
     CUSTOM_NAMES = {}
 
-# Initialisation des variables globales
+# Initialization of global variables
 ALL_BOSSES = []
 ALL_PLAYERS = {}
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S %z"

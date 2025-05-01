@@ -1,7 +1,3 @@
-"""
-Module contenant la classe OLC pour l'analyse des logs du boss Old Lion's Court.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class OLC(Boss):
     """
-    Classe représentant le boss Old Lion's Court (OLC) d'End of Dragons.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Old Lion's Court, basées principalement sur le DPS.
-
-    Attributes:
-        last (OLC): Référence à la dernière instance créée
-        name (str): Nom du boss "OLC"
-        boss_id (int): Identifiant du boss (25413)
-        wing (str): Indication de l'expansion "EOD"
+    Old Lion's Court (OLC) from End of Dragons.
     """
 
     last = None
@@ -28,10 +15,10 @@ class OLC(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de OLC avec un log spécifique.
+        Initializes an instance of OLC with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -40,12 +27,12 @@ class OLC(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Old Lion's Court.
+        Determines the MVP (Most Valuable Player) for the fight against Old Lion's Court.
 
-        Pour Old Lion's Court, le MVP est basé uniquement sur les joueurs avec un DPS significativement bas.
+        For Old Lion's Court, the MVP is based solely on players with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and the reason, or None if no MVP
         """
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
@@ -55,10 +42,10 @@ class OLC(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Old Lion's Court.
+        Determines the LVP (Least Valuable Player) for the fight against Old Lion's Court.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and the reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -66,12 +53,12 @@ class OLC(Boss):
 
     def get_lvp_dps(self):
         """
-        Identifie les LVP basés sur leur DPS élevé.
+        Identifies LVPs based on their high DPS.
 
-        Cette méthode est une implémentation spécifique pour Old Lion's Court.
+        This method is a specific implementation for Old Lion's Court.
 
         Returns:
-            str: Message LVP formaté ou None si aucun joueur n'a un DPS élevé
+            str: Formatted LVP message or None if no player has high DPS
         """
         i_players, max_dmg, tot_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_boss)
         lvp_dps_name = self.players_to_string(i_players)
@@ -85,12 +72,12 @@ class OLC(Boss):
 
     def get_dmg_boss(self, i_player: int):
         """
-        Récupère les dégâts totaux infligés par un joueur à Old Lion's Court.
+        Retrieves the total damage dealt by a player to Old Lion's Court.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Index of the player
 
         Returns:
-            int: Dégâts totaux infligés
+            int: Total damage dealt
         """
         return self.log.pjcontent["players"][i_player]["dpsAll"][0]["damage"]

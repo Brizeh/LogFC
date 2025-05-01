@@ -1,6 +1,3 @@
-"""
-Module contenant la classe représentant le boss Dagda de Secrets of the Obscure.
-"""
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
@@ -9,41 +6,33 @@ from i18n.languages import language_config
 
 class DAGDA(Boss):
     """
-    Classe représentant le boss Dagda de Secrets of the Obscure.
-    
-    Attributes:
-        last (DAGDA): Dernière instance créée de cette classe
-        name (str): Nom du boss
-        boss_id (int): Identifiant unique du boss
-        wing (str): Type d'instance (ici "SOTO" pour Secrets of the Obscure)
-        mvp (str): Message pour le joueur le plus performant
-        lvp (str): Message pour le joueur avec le plus de dégâts
+    Dagda from Secrets of the Obscure.
     """
-    
+
     last = None
     name = "DAGDA"
     boss_id = 25705
     wing = "SOTO"
-    
+
     def __init__(self, log: Log):
         """
-        Initialise une instance de Dagda.
-        
+        Initializes a Dagda instance.
+
         Args:
-            log (Log): Objet contenant les données du journal de combat
+            log (Log): Object containing the combat log data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
         DAGDA.last = self
-        
+
     def get_mvp(self):
         """
-        Récupère le message pour le joueur le plus performant.
-        Vérifie d'abord les joueurs avec des affaiblissements, puis ceux avec mauvais DPS.
-        
+        Retrieves the message for the best performing player.
+        First checks players with debilitations, then those with bad DPS.
+
         Returns:
-            str: Message pour le joueur le plus performant ou None
+            str: Message for the best performing player or None
         """
         msg_debil = self.mvp_debil()
         if msg_debil:
@@ -52,27 +41,27 @@ class DAGDA(Boss):
         if msg_bad_dps:
             return msg_bad_dps
         return None
-    
+
     def get_lvp(self):
         """
-        Récupère le message pour le joueur avec le plus de dégâts.
-        
+        Retrieves the message for the player with the most damage.
+
         Returns:
-            str: Message pour le joueur avec le plus de dégâts
+            str: Message for the player with the most damage
         """
         return self.get_lvp_dps()
-    
+
     def mvp_debil(self):
         """
-        Détermine le MVP basé sur le nombre maximum d'affaiblissements appliqués.
-        Exclut les joueurs soigneurs.
-        
+        Determines the MVP based on the maximum number of debilitations applied.
+        Excludes healer players.
+
         Returns:
-            str: Message formaté pour le MVP d'affaiblissements ou None
+            str: Formatted message for the debilitation MVP or None
         """
         i_players, max_debil, _ = Analyzer.get_max_value(self.player_list, self.get_max_debil, exclude=[self.is_heal])
         mvp_names = self.players_to_string(i_players)
-        
+
         if max_debil > 1:
             self.add_mvps(i_players)
             if len(i_players) == 1:
@@ -84,29 +73,29 @@ class DAGDA(Boss):
                     mvp_names=mvp_names, max_debil=max_debil
                 )
         return None
-    
+
     def get_max_debil(self, i_player: int):
         """
-        Récupère le nombre maximum d'affaiblissements appliqués par un joueur.
-        
+        Retrieves the maximum number of debilitations applied by a player.
+
         Args:
-            i_player (int): Index du joueur dans les données
-            
+            i_player (int): Player index in the data
+
         Returns:
-            int: Nombre maximum d'affaiblissements appliqués
+            int: Maximum number of debilitations applied
         """
-        buffUptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
+        buff_uptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
         debil_id = 67972
         states = None
-        
-        for buff in buffUptimes:
+
+        for buff in buff_uptimes:
             if buff["id"] == debil_id:
                 states = buff["states"]
-                
+
         debil = 0
         if states:
             for state in states:
                 if state[1] > debil:
                     debil = state[1]
-                    
+
         return debil

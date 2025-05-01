@@ -1,7 +1,3 @@
-"""
-Module contenant la classe SH pour l'analyse des logs du boss Soulless Horror.
-"""
-
 from core.models.boss import Boss
 from utils.maths import get_dist
 from i18n.languages import language_config
@@ -9,18 +5,7 @@ from i18n.languages import language_config
 
 class SH(Boss):
     """
-    Classe représentant le boss Soulless Horror (SH) de la cinquième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Soulless Horror, notamment concernant les chutes et les murs.
-
-    Attributes:
-        last (SH): Référence à la dernière instance créée
-        name (str): Nom du boss "SH"
-        wing (int): Numéro de l'aile (5)
-        boss_id (int): Identifiant du boss (19767)
-        center_arena (list): Coordonnées du centre de l'arène
-        radius1, radius2, radius3, radius4, radius5 (float): Rayons des différentes sections de l'arène
+    Soulless Horror (SH) from the fifth raid wing.
     """
 
     last = None
@@ -28,7 +13,7 @@ class SH(Boss):
     wing = 5
     boss_id = 19767
 
-    # Coordonnées et rayons de l'arène
+    # Arena coordinates and radii
     center_arena = [375, 375]
     radius1 = 345.5
     radius2 = 304.2
@@ -38,10 +23,10 @@ class SH(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de SH avec un log spécifique.
+        Initializes a SH instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -50,13 +35,13 @@ class SH(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Soulless Horror.
+        Determines the MVP (Most Valuable Player) for the Soulless Horror fight.
 
-        Vérifie d'abord les joueurs touchés par un mur, puis ceux qui sont tombés,
-        et enfin les joueurs avec peu de CC.
+        First checks players hit by a wall, then those who fell,
+        and finally players with low CC.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_wall = self.mvp_wall()
         if msg_wall:
@@ -70,10 +55,10 @@ class SH(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Soulless Horror.
+        Determines the LVP (Least Valuable Player) for the Soulless Horror fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_cc_boss()
 
@@ -81,10 +66,10 @@ class SH(Boss):
 
     def mvp_wall(self):
         """
-        Identifie les MVP qui ont été touchés par un mur.
+        Identifies MVPs who were hit by a wall.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été touché par un mur
+            str: Formatted MVP message or None if no player was hit by a wall
         """
         i_players = self.get_walled_players()
         mvp_names = self.players_to_string(i_players)
@@ -97,16 +82,16 @@ class SH(Boss):
 
     def mvp_fall(self):
         """
-        Identifie les MVP qui sont tombés de l'arène.
+        Identifies MVPs who fell from the arena.
 
-        Note: Il y a probablement une erreur dans le code original car il utilise
-        get_walled_players() au lieu de get_fallen_players(). Cette implémentation
-        corrige cette erreur.
+        Note: There is probably an error in the original code as it uses
+        get_walled_players() instead of get_fallen_players(). This implementation
+        corrects this error.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'est tombé
+            str: Formatted MVP message or None if no player fell
         """
-        i_players = self.get_fallen_players()  # Correction de la fonction appelée
+        i_players = self.get_fallen_players()  # Correction of the called function
         mvp_names = self.players_to_string(i_players)
         self.add_mvps(i_players)
 
@@ -119,13 +104,13 @@ class SH(Boss):
 
     def took_wall(self, i_player: int):
         """
-        Vérifie si un joueur a été touché par un mur (mort instantanée non due à une chute).
+        Checks if a player was hit by a wall (instant death not due to falling).
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a été touché par un mur, False sinon
+            bool: True if the player was hit by a wall, False otherwise
         """
         if self.is_dead_instant(i_player) and not self.has_fallen(i_player):
             return True
@@ -133,16 +118,16 @@ class SH(Boss):
 
     def has_fallen(self, i_player: int):
         """
-        Vérifie si un joueur est tombé de l'arène.
+        Checks if a player fell from the arena.
 
-        Cette méthode analyse la position du joueur à sa mort et le moment de sa mort
-        pour déterminer s'il est tombé d'une des bordures de l'arène.
+        This method analyzes the player's position at death and the time of death
+        to determine if they fell from one of the arena's edges.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur est tombé de l'arène, False sinon
+            bool: True if the player fell from the arena, False otherwise
         """
         if self.is_dead_instant(i_player):
             last_pos = self.get_player_pos(i_player)[-1]
@@ -164,10 +149,10 @@ class SH(Boss):
 
     def get_walled_players(self):
         """
-        Récupère la liste des joueurs touchés par un mur.
+        Retrieves the list of players hit by a wall.
 
         Returns:
-            list: Liste des indices des joueurs touchés par un mur
+            list: List of indices of players hit by a wall
         """
         walled = []
         for i in self.player_list:
@@ -177,10 +162,10 @@ class SH(Boss):
 
     def get_fallen_players(self):
         """
-        Récupère la liste des joueurs tombés de l'arène.
+        Retrieves the list of players who fell from the arena.
 
         Returns:
-            list: Liste des indices des joueurs tombés de l'arène
+            list: List of indices of players who fell from the arena
         """
         fallen = []
         for i in self.player_list:

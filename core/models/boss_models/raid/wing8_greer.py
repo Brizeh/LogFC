@@ -1,22 +1,9 @@
-"""
-Module contenant la classe GREER pour l'analyse des logs du boss Voice of the Fallen (Greer).
-"""
-
 from core.models.boss import Boss
 
 
 class GREER(Boss):
     """
-    Classe représentant le boss Voice of the Fallen (Greer) de la huitième aile de raid.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Greer, basées principalement sur le DPS.
-
-    Attributes:
-        last (GREER): Référence à la dernière instance créée
-        name (str): Nom du boss "GREER"
-        wing (int): Numéro de l'aile (8)
-        boss_id (int): Identifiant du boss (26725)
+    Voice of the Fallen (Greer)
     """
 
     last = None
@@ -26,10 +13,10 @@ class GREER(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de GREER avec un log spécifique.
+        Initializes a GREER instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -38,22 +25,22 @@ class GREER(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Greer.
+        Determines the MVP (Most Valuable Player) for the Greer fight.
 
-        Pour Greer, le MVP est basé uniquement sur les joueurs avec un DPS significativement bas.
+        For Greer, the MVP is based solely on players with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         return self.get_bad_dps()
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Greer.
+        Determines the LVP (Least Valuable Player) for the Greer fight.
 
-        Pour Greer, le LVP est basé uniquement sur les joueurs avec un DPS élevé.
+        For Greer, the LVP is based solely on players with high DPS.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()

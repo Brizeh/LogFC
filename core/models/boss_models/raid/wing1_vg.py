@@ -8,9 +8,7 @@ from i18n.languages import language_config
 
 class VG(Boss):
     """
-    Vale Guardian (Wing 1, Boss 1)
-
-    Ce boss est caractérisé par ses phases "bleues" où les joueurs doivent gérer
+    Vale Guardian
     des téléportations pour éviter des dégâts et assurer la mécanique des secteurs.
     """
 

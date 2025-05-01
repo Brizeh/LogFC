@@ -1,7 +1,3 @@
-"""
-Module contenant la classe LARGOS pour l'analyse des logs du boss Twin Largos.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class LARGOS(Boss):
     """
-    Classe représentant le boss Twin Largos de la sixième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre les Twin Largos, notamment concernant les ruées d'attaque.
-
-    Attributes:
-        last (LARGOS): Référence à la dernière instance créée
-        name (str): Nom du boss "LARGOS"
-        wing (int): Numéro de l'aile (6)
-        boss_id (int): Identifiant du boss (21105)
+    Twin Largos from the sixth raid wing.
     """
 
     last = None
@@ -28,10 +15,10 @@ class LARGOS(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de LARGOS avec un log spécifique.
+        Initializes a LARGOS instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -40,12 +27,12 @@ class LARGOS(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Twin Largos.
+        Determines the MVP (Most Valuable Player) for the Twin Largos fight.
 
-        Vérifie d'abord les joueurs ayant subi le plus de ruées d'attaque.
+        First checks players who suffered the most attack dashes.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_dash = self.mvp_dash()
         if msg_dash:
@@ -55,10 +42,10 @@ class LARGOS(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Twin Largos.
+        Determines the LVP (Least Valuable Player) for the Twin Largos fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_cc_total()
 
@@ -66,10 +53,10 @@ class LARGOS(Boss):
 
     def mvp_dash(self):
         """
-        Identifie les MVP basés sur le nombre élevé de ruées d'attaque subies.
+        Identifies MVPs based on the high number of attack dashes suffered.
 
         Returns:
-            str: Message MVP formaté, message de DPS faible, ou None
+            str: Formatted MVP message, low DPS message, or None
         """
         i_players, max_dash, _ = Analyzer.get_max_value(self.player_list, self.get_dash,
                                                         exclude=[self.is_heal, self.is_tank])
@@ -88,15 +75,15 @@ class LARGOS(Boss):
 
     def get_bad_dps(self, extra_exclude=None):
         """
-        Identifie les DPS dont le dégât est inférieur à celui d'un support.
+        Identifies DPS players whose damage is lower than that of a support.
 
-        Cette méthode est une surcharge spécifique à LARGOS.
+        This method is a specific override for LARGOS.
 
         Args:
-            extra_exclude (list, optional): Liste supplémentaire de fonctions de filtrage.
+            extra_exclude (list, optional): Additional list of filter functions.
 
         Returns:
-            str: Message formaté ou None si aucun joueur n'a un DPS faible
+            str: Formatted message or None if no player has low DPS
         """
         if extra_exclude is None:
             extra_exclude = []
@@ -131,25 +118,25 @@ class LARGOS(Boss):
 
     def get_dash(self, i_player: int):
         """
-        Récupère le nombre de ruées d'attaque subies par un joueur.
+        Retrieves the number of attack dashes suffered by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre de ruées d'attaque subies
+            int: Number of attack dashes suffered
         """
         return self.get_mech_value(i_player, "Vapor Rush Charge")
 
     def get_dmg_boss(self, i_player: int):
         """
-        Calcule les dégâts totaux infligés par un joueur contre les deux Largos.
+        Calculates the total damage dealt by a player against both Largos.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Dégâts totaux infligés
+            int: Total damage dealt
         """
         dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][0][self.real_phase_id]['damage']
         dmg += self.log.pjcontent['players'][i_player]['dpsTargets'][1][self.real_phase_id]['damage']

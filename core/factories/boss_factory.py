@@ -1,4 +1,3 @@
-# core/factories/boss_factory.py
 from typing import Dict, Type, Optional
 
 from config.settings import BOSS_DICT, EXTRA_BOSS_DICT, ALL_BOSSES
@@ -9,11 +8,11 @@ from core.models.log import Log
 
 class BossFactory:
     """
-    Usine à boss qui crée les instances appropriées pour chaque rencontre.
-    Utilise le pattern Factory Method pour instancier la bonne classe de boss.
+    Boss factory that creates appropriate instances for each encounter.
+    Uses the Factory Method pattern to instantiate the correct boss class.
     """
 
-    # Dictionnaire qui mappe les identifiants de boss aux classes correspondantes
+    # Dictionary that maps boss identifiers to corresponding classes
     _BOSS_CLASSES: Dict[str, Type[Boss]] = {
         # ============ RAID BOSSES ============
         # Wing 1
@@ -95,26 +94,26 @@ class BossFactory:
     @classmethod
     def create_boss(cls, log: Log) -> Optional[Boss]:
         """
-        Crée l'instance de boss appropriée à partir d'un log.
+        Creates the appropriate boss instance from a log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
 
         Returns:
-            L'instance de boss créée ou None si le boss n'est pas reconnu
+            The created boss instance or None if the boss is not recognized
         """
         trigger_id = log.jcontent.get('triggerID')
         boss_name = BOSS_DICT.get(trigger_id) or EXTRA_BOSS_DICT.get(trigger_id)
 
         if not boss_name:
-            print(f"Boss non reconnu pour le trigger ID: {trigger_id}")
+            print(f"Boss not recognized for trigger ID: {trigger_id}")
             return None
 
         if boss_name not in cls._BOSS_CLASSES:
-            print(f"Classe de boss non implémentée pour: {boss_name}")
+            print(f"Boss class not implemented for: {boss_name}")
             return None
 
-        # Instancier la classe de boss appropriée
+        # Instantiate the appropriate boss class
         boss_instance = cls._BOSS_CLASSES[boss_name](log)
         ALL_BOSSES.append(boss_instance)
 
@@ -123,11 +122,11 @@ class BossFactory:
     @classmethod
     def register_boss_class(cls, boss_name: str, boss_class: Type[Boss]) -> None:
         """
-        Enregistre une nouvelle classe de boss dans la factory.
-        Utile pour les extensions ou les tests.
+        Registers a new boss class in the factory.
+        Useful for extensions or tests.
 
         Args:
-            boss_name: L'identifiant du boss
-            boss_class: La classe à utiliser pour ce boss
+            boss_name: The boss identifier
+            boss_class: The class to use for this boss
         """
         cls._BOSS_CLASSES[boss_name] = boss_class

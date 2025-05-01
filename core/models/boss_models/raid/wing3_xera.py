@@ -1,7 +1,3 @@
-"""
-Module contenant la classe XERA pour l'analyse des logs du boss Xera.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -11,19 +7,7 @@ from utils.maths import get_dist
 
 class XERA(Boss):
     """
-    Classe représentant le boss Xera de la troisième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Xera, notamment concernant les téléportations et les phases de vol.
-
-    Attributes:
-        last (XERA): Référence à la dernière instance créée
-        name (str): Nom du boss "XERA"
-        wing (int): Numéro de l'aile (3)
-        boss_id (int): Identifiant du boss (16246)
-        real_phase (str): Phase principale du combat
-        debut, l1, l2, fin, r1, r2, centre (list): Coordonnées des points spécifiques
-        debut_radius, centre_radius (int): Rayons des zones importantes
+    Xera de la troisième aile de raid.
     """
 
     last = None

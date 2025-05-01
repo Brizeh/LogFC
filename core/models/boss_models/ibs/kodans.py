@@ -1,5 +1,4 @@
-"""
-Module contenant la classe représentant le boss Kodans de la saga Icebrood.
+
 """
 from core.models.boss import Boss
 from core.models.log import Log
@@ -9,15 +8,7 @@ from i18n.languages import language_config
 
 class KODANS(Boss):
     """
-    Classe représentant le boss Kodans de la saga Icebrood.
-    
-    Attributes:
-        last (KODANS): Dernière instance créée de cette classe
-        name (str): Nom du boss
-        boss_id (int): Identifiant unique du boss
-        wing (str): Type d'instance (ici "IBS" pour Icebrood Saga)
-        mvp (str): Message pour le joueur le plus performant
-        lvp (str): Message pour le joueur avec le plus de dégâts
+    Kodans de la saga Icebrood.
     """
     
     last = None

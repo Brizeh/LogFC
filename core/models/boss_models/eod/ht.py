@@ -1,22 +1,9 @@
-"""
-Module contenant la classe HT pour l'analyse des logs du boss Harvest Temple.
-"""
-
 from core.models.boss import Boss
 
 
 class HT(Boss):
     """
-    Classe représentant le boss Harvest Temple (HT) d'End of Dragons.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Harvest Temple, basées principalement sur le DPS.
-
-    Attributes:
-        last (HT): Référence à la dernière instance créée
-        name (str): Nom du boss "HT"
-        boss_id (int): Identifiant du boss (24375)
-        wing (str): Indication de l'expansion "EOD"
+    Harvest Temple (HT) from End of Dragons.
     """
 
     last = None
@@ -26,10 +13,10 @@ class HT(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de HT avec un log spécifique.
+        Initializes an instance of HT with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -38,12 +25,12 @@ class HT(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Harvest Temple.
+        Determines the MVP (Most Valuable Player) for the fight against Harvest Temple.
 
-        Pour Harvest Temple, le MVP est basé uniquement sur les joueurs avec un DPS significativement bas.
+        For Harvest Temple, the MVP is based only on players with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and the reason, or None if no MVP
         """
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
@@ -53,9 +40,9 @@ class HT(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Harvest Temple.
+        Determines the LVP (Least Valuable Player) for the fight against Harvest Temple.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and the reason, or None if no LVP
         """
         return self.get_lvp_dps()

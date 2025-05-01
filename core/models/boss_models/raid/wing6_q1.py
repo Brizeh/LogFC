@@ -1,7 +1,3 @@
-"""
-Module contenant la classe Q1 pour l'analyse des logs du boss Qadim.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -10,18 +6,7 @@ from utils.maths import get_dist
 
 class Q1(Boss):
     """
-    Classe représentant le boss Qadim (premier) de la sixième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Qadim, notamment concernant le positionnement au centre et les ondes de choc.
-
-    Attributes:
-        last (Q1): Référence à la dernière instance créée
-        name (str): Nom du boss "QADIM"
-        wing (int): Numéro de l'aile (6)
-        boss_id (int): Identifiant du boss (20934)
-        center (list): Coordonnées du centre de l'arène
-        fdp_radius (float): Rayon de la zone considérée comme "centre"
+    Qadim (first) from the sixth raid wing.
     """
 
     last = None
@@ -34,10 +19,10 @@ class Q1(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de Q1 avec un log spécifique.
+        Initializes a Q1 instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -46,13 +31,13 @@ class Q1(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Qadim.
+        Determines the MVP (Most Valuable Player) for the Qadim fight.
 
-        Vérifie d'abord les joueurs restés au centre, puis ceux avec un DPS faible,
-        et enfin ceux touchés par les ondes de choc de la masse.
+        First checks players who stayed in the center, then those with low DPS,
+        and finally those hit by the mace shockwaves.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_fdp = self.mvp_fdp()
         if msg_fdp:
@@ -70,10 +55,10 @@ class Q1(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Qadim.
+        Determines the LVP (Least Valuable Player) for the Qadim fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -81,10 +66,10 @@ class Q1(Boss):
 
     def mvp_fdp(self):
         """
-        Identifie les MVP qui sont restés au centre de l'arène (FDP = Fire Door Protocol).
+        Identifies MVPs who stayed in the center of the arena (FDP = Fire Door Protocol).
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'est resté au centre
+            str: Formatted MVP message or None if no player stayed in the center
         """
         i_players = self.get_fdp()
         fdp_names = self.players_to_string(i_players)
@@ -99,10 +84,10 @@ class Q1(Boss):
 
     def mvp_wave(self):
         """
-        Identifie les MVP touchés par le plus d'ondes de choc de la masse.
+        Identifies MVPs hit by the most mace shockwaves.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été touché par beaucoup d'ondes
+            str: Formatted MVP message or None if no player was hit by many waves
         """
         i_players, max_waves, _ = Analyzer.get_max_value(self.player_list, self.get_wave)
         mvp_names = self.players_to_string(i_players)
@@ -119,10 +104,10 @@ class Q1(Boss):
 
     def get_fdp(self):
         """
-        Identifie les joueurs qui sont restés au centre de l'arène pendant les phases P1 et P2.
+        Identifies players who stayed in the center of the arena during P1 and P2 phases.
 
         Returns:
-            list: Liste des indices des joueurs restés au centre
+            list: List of indices of players who stayed in the center
         """
         fdp = []
         start_p1, end_p1 = self.get_phase_timers("Qadim P1")
@@ -153,12 +138,12 @@ class Q1(Boss):
 
     def get_wave(self, i_player: int):
         """
-        Récupère le nombre d'ondes de choc de la masse subies par un joueur.
+        Retrieves the number of mace shock waves suffered by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre d'ondes de choc subies
+            int: Number of shock waves suffered
         """
         return self.get_mech_value(i_player, "Mace Shockwave")

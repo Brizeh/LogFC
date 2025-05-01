@@ -1,7 +1,3 @@
-"""
-Module contenant la classe AH pour l'analyse des logs du boss Mai Trin.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class AH(Boss):
     """
-    Classe représentant le boss Mai Trin d'End of Dragons.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Mai Trin, notamment concernant l'exposition et les dégâts.
-
-    Attributes:
-        last (AH): Référence à la dernière instance créée
-        name (str): Nom du boss "MAI TRIN"
-        boss_id (int): Identifiant du boss (24033)
-        wing (str): Indication de l'expansion "EOD"
+    Mai Trin from End of Dragons.
     """
 
     last = None
@@ -28,10 +15,10 @@ class AH(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de AH avec un log spécifique.
+        Initializes an instance of AH with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -40,13 +27,13 @@ class AH(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Mai Trin.
+        Determines the MVP (Most Valuable Player) for the fight against Mai Trin.
 
-        Vérifie d'abord les joueurs avec un niveau d'exposition élevé, puis ceux
-        avec un DPS significativement bas.
+        First checks players with a high level of exposure, then those
+        with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and the reason, or None if no MVP
         """
         msg_exposed = self.expose_mvp()
         if msg_exposed:
@@ -60,10 +47,10 @@ class AH(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Mai Trin.
+        Determines the LVP (Least Valuable Player) for the fight against Mai Trin.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and the reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -71,10 +58,10 @@ class AH(Boss):
 
     def expose_mvp(self):
         """
-        Identifie les MVP qui ont le plus souffert de l'effet d'exposition.
+        Identifies MVPs who suffered the most from the exposure effect.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été suffisamment exposé
+            str: Formatted MVP message or None if no player was sufficiently exposed
         """
         i_players, max_exposed, _ = Analyzer.get_max_value(self.player_list, self.get_max_exposed,
                                                            exclude=[self.is_heal])
@@ -93,12 +80,12 @@ class AH(Boss):
 
     def get_lvp_dps(self):
         """
-        Identifie les LVP basés sur leur DPS élevé.
+        Identifies LVPs based on their high DPS.
 
-        Cette méthode est une implémentation spécifique pour Mai Trin.
+        This method is a specific implementation for Mai Trin.
 
         Returns:
-            str: Message LVP formaté ou None si aucun joueur n'a un DPS élevé
+            str: Formatted LVP message or None if no player has high DPS
         """
         i_players, max_dmg, tot_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_boss)
         ratio = max_dmg / tot_dmg * 100
@@ -113,19 +100,19 @@ class AH(Boss):
 
     def get_max_exposed(self, i_player: int):
         """
-        Récupère le niveau maximal d'exposition subi par un joueur.
+        Retrieves the highest level of exposure suffered by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Index of the player
 
         Returns:
-            int: Niveau maximal d'exposition
+            int: Highest level of exposure
         """
-        buffUptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
+        buff_uptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
         expose_id = 64936
         expose_states = None
 
-        for buff in buffUptimes:
+        for buff in buff_uptimes:
             if buff["id"] == expose_id:
                 expose_states = buff["states"]
 
@@ -139,15 +126,15 @@ class AH(Boss):
 
     def get_dmg_boss(self, i_player: int):
         """
-        Calcule les dégâts totaux infligés par un joueur à Mai Trin et Echo.
+        Calculates the total damage dealt by a player to Mai Trin and Echo.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Index of the player
 
         Returns:
-            int: Dégâts totaux infligés
+            int: Total damage dealt
         """
-        targetDmg = self.log.pjcontent["players"][i_player]["dpsTargets"]
-        mai_trin_dmg = targetDmg[0][0]["damage"]
-        echo_dmg = targetDmg[1][0]["damage"]
+        target_dmg = self.log.pjcontent["players"][i_player]["dpsTargets"]
+        mai_trin_dmg = target_dmg[0][0]["damage"]
+        echo_dmg = target_dmg[1][0]["damage"]
         return mai_trin_dmg + echo_dmg

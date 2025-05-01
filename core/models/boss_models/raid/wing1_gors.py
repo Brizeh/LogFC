@@ -8,15 +8,11 @@ from i18n.languages import language_config
 
 class GORS(Boss):
     """
-    Gorseval (Wing 1, Boss 2)
-
-    Ce boss est caractérisé par ses phases de split où les joueurs doivent gérer
-    des orbes et des spectres, ainsi que par la mécanique "egged" qui peut causer
-    des problèmes significatifs.
+    Gorseval
     """
 
-    # Attributs de classe
-    last: Optional['GORS'] = None  # Référence à la dernière instance créée
+    # Class attributes
+    last: Optional['GORS'] = None  # Reference to the last created instance
     name: ClassVar[str] = "GORSEVAL"
     wing: ClassVar[int] = 1
     boss_id: ClassVar[int] = 15429
@@ -24,35 +20,35 @@ class GORS(Boss):
 
     def __init__(self, log: Log) -> None:
         """
-        Initialise un objet Gorseval.
+        Initializes a Gorseval object.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
-        GORS.last = self  # Met à jour la référence à la dernière instance
+        GORS.last = self  # Updates the reference to the last instance
 
     def get_mvp(self) -> Optional[str]:
         """
-        Détermine le joueur MVP pour Gorseval.
-        Priorité: joueurs egged > dégâts dans les phases de split > bad DPS
+        Determines the MVP player for Gorseval.
+        Priority: egged players > damage in split phases > bad DPS
 
         Returns:
-            Message de récompense MVP ou None si aucun joueur ne se démarque
+            MVP reward message or None if no player stands out
         """
-        # Vérifier d'abord si des joueurs ont été "egged"
+        # First, check if players have been "egged"
         msg_egg = self.mvp_egg()
         if msg_egg:
             return msg_egg
 
-        # Ensuite, vérifier les dégâts dans les phases de split
+        # Then, check for damage in split phases
         msg_dmg_split = self.mvp_dmg_split()
         if msg_dmg_split:
             return msg_dmg_split
 
-        # Enfin, vérifier les DPS sous-performants
+        # Finally, check for underperforming DPS
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
             return msg_bad_dps
@@ -61,10 +57,10 @@ class GORS(Boss):
 
     def get_lvp(self) -> str:
         """
-        Détermine le joueur LVP pour Gorseval, basé sur les dégâts dans les phases de split.
+        Determines the LVP player for Gorseval, based on damage in split phases.
 
         Returns:
-            Message de pénalité LVP
+            LVP penalty message
         """
         return self.lvp_dmg_split()
 
@@ -72,36 +68,36 @@ class GORS(Boss):
 
     def mvp_dmg_split(self) -> Optional[str]:
         """
-        Identifie les joueurs qui ont fait le moins de dégâts pendant les phases de split.
-        Ces joueurs sont considérés comme MVP car ils se sont concentrés sur les mécaniques.
+        Identifies players who did the least damage during split phases.
+        These players are considered MVP because they focused on mechanics.
 
         Returns:
-            Message MVP pour les bons dégâts en phase de split ou None si personne ne se démarque
+            MVP message for good damage during split phases or None if no one stands out
         """
-        # Obtenir les joueurs qui ont fait le moins de dégâts dans les phases de split
+        # Get the players who did the least damage during the split phases
         i_players, min_dmg, total_dmg = Analyzer.get_min_value(
             self.player_list,
             self.get_dmg_split,
             exclude=[self.is_support]
         )
 
-        # Calculer le total des dégâts des joueurs DPS
+        # Calculate the total damage from DPS players
         dps_total_dmg = Analyzer.get_tot_value(
             self.player_list,
             self.get_dmg_split,
             exclude=[self.is_support]
         )
 
-        # Si les dégâts sont significativement bas (moins de 75% de la part attendue)
+        # If the damage is significantly low (less than 75% of the expected share)
         if min_dmg / dps_total_dmg < 1 / 6 * 0.75:
-            # Ajouter ces joueurs à la liste des MVP
+            # Add these players to the MVP list
             self.add_mvps(i_players)
 
-            # Préparer les variables pour le message
+            # Prepare the variables for the message
             mvp_names = self.players_to_string(i_players)
             dmg_ratio = min_dmg / total_dmg * 100
 
-            # Générer le message
+            # Generate the message
             return language_config.selected_language["GORS MVP SPLIT"].format(
                 mvp_names=mvp_names,
                 min_dmg=min_dmg,
@@ -112,23 +108,23 @@ class GORS(Boss):
 
     def mvp_egg(self) -> Optional[str]:
         """
-        Identifie les joueurs qui ont été "egged" pendant le combat.
-        Cette mécanique est importante et mérite d'être soulignée.
+        Identifies players who were "egged" during the fight.
+        This mechanic is important and deserves recognition.
 
         Returns:
-            Message MVP pour les joueurs egged ou None si personne n'a été egged
+            MVP message for egged players or None if no one was egged
         """
-        # Obtenir la liste des joueurs qui ont été "egged"
+        # Get the list of players who were "egged"
         i_players = self.get_egged()
 
         if i_players:
-            # Ajouter ces joueurs à la liste des MVP
+            # Add these players to the MVP list
             self.add_mvps(i_players)
 
-            # Préparer le message
+            # Prepare the message
             mvp_names = self.players_to_string(i_players)
 
-            # Sélectionner le message approprié en fonction du nombre de joueurs
+            # Select the appropriate message based on the number of players
             if len(i_players) == 1:
                 return language_config.selected_language["GORS MVP EGG S"].format(mvp_names=mvp_names)
             else:
@@ -140,24 +136,24 @@ class GORS(Boss):
 
     def lvp_dmg_split(self) -> str:
         """
-        Identifie les joueurs qui ont fait le plus de dégâts pendant les phases de split.
-        Ces joueurs sont considérés comme LVP car ils se sont concentrés sur les dégâts
-        au détriment des mécaniques.
+        Identifies players who did the most damage during split phases.
+        These players are considered LVP because they focused on damage
+        at the expense of mechanics.
 
         Returns:
-            Message LVP pour les joueurs avec les dégâts les plus élevés en phase de split
+            LVP message for players with the highest damage during split phases
         """
-        # Obtenir les joueurs qui ont fait le plus de dégâts dans les phases de split
+        # Get the players who did the most damage during the split phases
         i_players, max_dmg, total_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_split)
 
-        # Préparer les variables pour le message
+        # Prepare the variables for the message
         lvp_names = self.players_to_string(i_players)
         dmg_ratio = max_dmg / total_dmg * 100
 
-        # Ajouter ces joueurs à la liste des LVP
+        # Add these players to the LVP list
         self.add_lvps(i_players)
 
-        # Générer le message
+        # Generate the message
         return language_config.selected_language["GORS LVP SPLIT"].format(
             lvp_names=lvp_names,
             max_dmg=max_dmg,
@@ -168,13 +164,13 @@ class GORS(Boss):
 
     def got_egged(self, i_player: int) -> bool:
         """
-        Vérifie si un joueur a été touché par la mécanique "Egged".
+        Checks if a player was affected by the "Egged" mechanic.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            True si le joueur a été touché par la mécanique, False sinon
+            True if the player was affected by the mechanic, False otherwise
         """
         return self.get_mech_value(i_player, "Egged") > 0
 
@@ -182,37 +178,37 @@ class GORS(Boss):
 
     def get_dmg_split(self, i_player: int) -> int:
         """
-        Calcule les dégâts totaux faits par un joueur pendant les phases de split.
+        Calculates the total damage done by a player during split phases.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Total des dégâts faits durant les phases de split
+            Total damage done during split phases
         """
         dmg_split = 0
 
         try:
-            # Récupérer les statistiques de dégâts pour les deux phases de split
+            # Get the damage stats for the two split phases
             dmg_split_1 = self.log.jcontent['phases'][3]['dpsStatsTargets'][i_player]
             dmg_split_2 = self.log.jcontent['phases'][6]['dpsStatsTargets'][i_player]
 
-            # Additionner les dégâts de toutes les cibles dans les deux phases
+            # Add up the damage from all targets in both phases
             for add_split1, add_split2 in zip(dmg_split_1, dmg_split_2):
                 dmg_split += add_split1[0] + add_split2[0]
 
         except (IndexError, KeyError, TypeError):
-            # En cas d'erreur d'accès aux données
+            # Handle errors accessing data
             return 0
 
         return dmg_split
 
     def get_egged(self) -> List[int]:
         """
-        Identifie tous les joueurs qui ont été touchés par la mécanique "Egged".
+        Identifies all players affected by the "Egg" mechanic.
 
         Returns:
-            Liste des indices des joueurs qui ont été egged
+            List of indices of players who were egged
         """
         egged = []
 

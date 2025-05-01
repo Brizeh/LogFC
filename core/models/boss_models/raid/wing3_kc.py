@@ -1,7 +1,3 @@
-"""
-Module contenant la classe KC pour l'analyse des logs du boss Keep Construct.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class KC(Boss):
     """
-    Classe représentant le boss Keep Construct (KC) de la troisième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Keep Construct, en particulier concernant la gestion des orbes.
-
-    Attributes:
-        last (KC): Référence à la dernière instance créée
-        name (str): Nom du boss "KC"
-        wing (int): Numéro de l'aile (3)
-        boss_id (int): Identifiant du boss (16235)
+    Keep Construct (KC) de la troisième aile de raid.
     """
 
     last = None

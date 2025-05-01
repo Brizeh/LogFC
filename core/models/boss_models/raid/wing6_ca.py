@@ -1,22 +1,9 @@
-"""
-Module contenant la classe CA pour l'analyse des logs du boss Conjured Amalgamate.
-"""
-
 from core.models.boss import Boss
 
 
 class CA(Boss):
     """
-    Classe représentant le boss Conjured Amalgamate (CA) de la sixième aile de raid.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Conjured Amalgamate.
-
-    Attributes:
-        last (CA): Référence à la dernière instance créée
-        name (str): Nom du boss "CA"
-        wing (int): Numéro de l'aile (6)
-        boss_id (int): Identifiant du boss (43974)
+    Conjured Amalgamate (CA) from the sixth raid wing.
     """
 
     last = None
@@ -26,10 +13,10 @@ class CA(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de CA avec un log spécifique.
+        Initializes a CA instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -38,21 +25,21 @@ class CA(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Conjured Amalgamate.
+        Determines the MVP (Most Valuable Player) for the Conjured Amalgamate fight.
 
-        Pour CA, le MVP est basé uniquement sur les joueurs avec un DPS significativement bas.
+        For CA, the MVP is based solely on players with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         return self.get_bad_dps()
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Conjured Amalgamate.
+        Determines the LVP (Least Valuable Player) for the Conjured Amalgamate fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -63,4 +50,3 @@ class CA(Boss):
     ################################ CONDITIONS ################################
 
     ################################ DATA MECHAS ################################
-    

@@ -9,15 +9,7 @@ from i18n.languages import language_config
 
 class WOJ(Boss):
     """
-    Classe représentant le boss Voice of the Fallen (WOJ) de la saga Icebrood.
-    
-    Attributes:
-        last (WOJ): Dernière instance créée de cette classe
-        name (str): Nom du boss
-        boss_id (int): Identifiant unique du boss
-        wing (str): Type d'instance (ici "IBS" pour Icebrood Saga)
-        mvp (str): Message pour le joueur le plus performant
-        lvp (str): Message pour le joueur avec le plus de dégâts
+    Voice of the Fallen (WOJ) de la saga Icebrood.
     """
     
     last = None

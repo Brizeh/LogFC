@@ -5,16 +5,7 @@ from i18n.languages import language_config
 
 class SLOTH(Boss):
     """
-    Classe représentant le boss Slothasor de la seconde aile de raid.
-    
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Slothasor, en particulier concernant les contrôles et les tantrums.
-    
-    Attributes:
-        last (SLOTH): Référence à la dernière instance créée
-        name (str): Nom du boss "SLOTH"
-        wing (int): Numéro de l'aile (2)
-        boss_id (int): Identifiant du boss (16123)
+    Slothasor de la seconde aile de raid.
     """
     
     last    = None

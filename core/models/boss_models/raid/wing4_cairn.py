@@ -1,7 +1,3 @@
-"""
-Module contenant la classe CAIRN pour l'analyse des logs du boss Cairn.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class CAIRN(Boss):
     """
-    Classe représentant le boss Cairn de la quatrième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Cairn, en particulier concernant les téléportations.
-
-    Attributes:
-        last (CAIRN): Référence à la dernière instance créée
-        name (str): Nom du boss "CAIRN"
-        wing (int): Numéro de l'aile (4)
-        boss_id (int): Identifiant du boss (17194)
+    Cairn de la quatrième aile de raid.
     """
 
     last = None

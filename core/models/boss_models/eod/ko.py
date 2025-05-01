@@ -1,7 +1,3 @@
-"""
-Module contenant la classe KO pour l'analyse des logs du boss Minister Li.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class KO(Boss):
     """
-    Classe représentant le boss Minister Li (KO) d'End of Dragons.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Minister Li, notamment concernant les affaiblissements.
-
-    Attributes:
-        last (KO): Référence à la dernière instance créée
-        name (str): Nom du boss "KO"
-        boss_id (int): Identifiant du boss (24485)
-        wing (str): Indication de l'expansion "EOD"
+    Minister Li (KO) from End of Dragons.
     """
 
     last = None
@@ -28,10 +15,10 @@ class KO(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de KO avec un log spécifique.
+        Initializes an instance of KO with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -40,13 +27,13 @@ class KO(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Minister Li.
+        Determines the MVP (Most Valuable Player) for the fight against Minister Li.
 
-        Vérifie d'abord les joueurs avec beaucoup d'affaiblissements, puis ceux
-        avec un DPS significativement bas.
+        First checks players with a high amount of debilitating effects,
+        then those with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and the reason, or None if no MVP
         """
         msg_debil = self.mvp_debil()
         if msg_debil:
@@ -60,10 +47,10 @@ class KO(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Minister Li.
+        Determines the LVP (Least Valuable Player) for the fight against Minister Li.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and the reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -71,12 +58,12 @@ class KO(Boss):
 
     def get_lvp_dps(self):
         """
-        Identifie les LVP basés sur leur DPS élevé.
+        Identifies LVPs based on their high DPS.
 
-        Cette méthode est une implémentation spécifique pour Minister Li.
+        This method is a specific implementation for Minister Li.
 
         Returns:
-            str: Message LVP formaté ou None si aucun joueur n'a un DPS élevé
+            str: Formatted LVP message or None if no player has high DPS
         """
         i_players, max_dmg, tot_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_boss)
         lvp_dps_name = self.players_to_string(i_players)
@@ -90,16 +77,16 @@ class KO(Boss):
 
     def mvp_debil(self):
         """
-        Identifie les MVP qui ont subi le plus d'affaiblissements (debilitation).
+        Identifies MVPs who suffered the most debilitating effects.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a subi beaucoup d'affaiblissements
+            str: Formatted MVP message or None if no player had many debilitating effects
         """
         i_players, max_debil, _ = Analyzer.get_max_value(self.player_list, self.get_max_debil, exclude=[self.is_heal])
         mvp_names = self.players_to_string(i_players)
 
         if max_debil > 1:
-            self.add_lvps(i_players)  # Erreur possible : devrait probablement être add_mvps
+            self.add_mvps(i_players)
             if len(i_players) == 1:
                 return language_config.selected_language["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
             else:
@@ -111,13 +98,13 @@ class KO(Boss):
 
     def get_max_debil(self, i_player: int):
         """
-        Récupère le niveau maximal d'affaiblissement subi par un joueur.
+        Retrieves the highest level of debilitation suffered by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Index of the player
 
         Returns:
-            int: Niveau maximal d'affaiblissement
+            int: Highest level of debilitation
         """
         buffUptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
         debil_id = 67972
@@ -137,12 +124,12 @@ class KO(Boss):
 
     def get_dmg_boss(self, i_player: int):
         """
-        Récupère les dégâts totaux infligés par un joueur à Minister Li.
+        Retrieves the total damage dealt by a player to Minister Li.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Index of the player
 
         Returns:
-            int: Dégâts totaux infligés
+            int: Total damage dealt
         """
         return self.log.pjcontent["players"][i_player]["dpsAll"][0]["damage"]

@@ -1,7 +1,3 @@
-"""
-Module contenant la classe SAMAROG pour l'analyse des logs du boss Samarog.
-"""
-
 import numpy as np
 
 from core.models.boss import Boss
@@ -10,18 +6,7 @@ from i18n.languages import language_config
 
 class SAMAROG(Boss):
     """
-    Classe représentant le boss Samarog de la quatrième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Samarog, notamment concernant les joueurs empalés et les traîtres.
-
-    Attributes:
-        last (SAMAROG): Référence à la dernière instance créée
-        name (str): Nom du boss "SAMAROG"
-        wing (int): Numéro de l'aile (4)
-        boss_id (int): Identifiant du boss (17188)
-        top_left_corn, top_right_corn, bot_left_corn, bot_right_corn (list): Coordonnées des coins de l'arène
-        scaler (float): Facteur d'échelle pour les coordonnées
+    Samarog de la quatrième aile de raid.
     """
 
     last = None

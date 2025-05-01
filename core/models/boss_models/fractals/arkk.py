@@ -1,57 +1,46 @@
-"""
-Module contenant la classe représentant le boss ARKK des fractales.
-"""
 from core.models.boss import Boss
 from core.models.log import Log
 
 
 class ARKK(Boss):
     """
-    Classe représentant le boss ARKK des fractales.
-    
-    Attributes:
-        last (ARKK): Dernière instance créée de cette classe
-        name (str): Nom du boss
-        boss_id (int): Identifiant unique du boss
-        wing (str): Type d'instance (ici "FRAC" pour fractale)
-        mvp (str): Message pour le joueur le plus performant
-        lvp (str): Message pour le joueur avec le plus de dégâts
+    ARKK from fractals.
     """
-    
+
     last = None
     name = "ARKK"
     boss_id = 17759
     wing = "FRAC"
-    
+
     def __init__(self, log: Log):
         """
-        Initialise une instance de ARKK.
-        
+        Initializes an instance of ARKK.
+
         Args:
-            log (Log): Objet contenant les données du journal de combat
+            log (Log): Object containing the combat log data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
         ARKK.last = self
-        
+
     def get_mvp(self):
         """
-        Récupère le message pour le joueur le plus performant.
-        
+        Retrieves the message for the most valuable player.
+
         Returns:
-            str: Message pour le joueur le plus performant ou None
+            str: Message for the top-performing player or None
         """
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
             return msg_bad_dps
         return None
-    
+
     def get_lvp(self):
         """
-        Récupère le message pour le joueur avec le plus de dégâts.
-        
+        Retrieves the message for the player with the most damage.
+
         Returns:
-            str: Message pour le joueur avec le plus de dégâts
+            str: Message for the least valuable player
         """
         return self.get_lvp_dps()

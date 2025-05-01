@@ -1,21 +1,10 @@
-"""
-Module contenant la classe représentant le boss Icebrood Construct de la saga Icebrood.
-"""
 from core.models.boss import Boss
 from core.models.log import Log
 
 
 class ICE(Boss):
     """
-    Classe représentant le boss Icebrood Construct de la saga Icebrood.
-    
-    Attributes:
-        last (ICE): Dernière instance créée de cette classe
-        name (str): Nom du boss
-        boss_id (int): Identifiant unique du boss
-        wing (str): Type d'instance (ici "IBS" pour Icebrood Saga)
-        mvp (str): Message pour le joueur le plus performant
-        lvp (str): Message pour le joueur avec le plus de dégâts
+    Icebrood Construct de la saga Icebrood.
     """
     
     last = None

@@ -1,23 +1,10 @@
-"""
-Module contenant la classe MO pour l'analyse des logs du boss Mursaat Overseer.
-"""
-
 from core.models.boss import Boss
 from i18n.languages import language_config
 
 
 class MO(Boss):
     """
-    Classe représentant le boss Mursaat Overseer (MO) de la quatrième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Mursaat Overseer, en particulier concernant les pics.
-
-    Attributes:
-        last (MO): Référence à la dernière instance créée
-        name (str): Nom du boss "MO"
-        wing (int): Numéro de l'aile (4)
-        boss_id (int): Identifiant du boss (17172)
+    Mursaat Overseer (MO) de la quatrième aile de raid.
     """
 
     last = None

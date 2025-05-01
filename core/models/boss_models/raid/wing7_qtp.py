@@ -1,22 +1,9 @@
-"""
-Module contenant la classe QTP pour l'analyse des logs du boss Qadim the Peerless.
-"""
-
 from core.models.boss import Boss
 
 
 class QTP(Boss):
     """
-    Classe représentant le boss Qadim the Peerless (QTP) de la septième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre QTP, notamment concernant les pylônes et les buffs.
-
-    Attributes:
-        last (QTP): Référence à la dernière instance créée
-        name (str): Nom du boss "QTP"
-        wing (int): Numéro de l'aile (7)
-        boss_id (int): Identifiant du boss (22000)
+    Qadim the Peerless (QTP)
     """
 
     last = None
@@ -26,10 +13,10 @@ class QTP(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de QTP avec un log spécifique.
+        Initializes a QTP instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -38,13 +25,13 @@ class QTP(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre QTP.
+        Determines the MVP (Most Valuable Player) for the QTP fight.
 
-        Vérifie d'abord les joueurs avec un DPS faible (en excluant les joueurs de pylône),
-        puis ceux avec peu de CC (également en excluant les joueurs de pylône).
+        First checks players with low DPS (excluding pylon players),
+        then those with low CC (also excluding pylon players).
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_pylon])
         if msg_bad_dps:
@@ -58,12 +45,12 @@ class QTP(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre QTP.
+        Determines the LVP (Least Valuable Player) for the QTP fight.
 
-        Vérifie d'abord les joueurs avec beaucoup de CC, puis ceux avec un DPS élevé.
+        First checks players with high CC, then those with high DPS.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         msg_cc = self.get_lvp_cc_total()
         if msg_cc:
@@ -73,16 +60,16 @@ class QTP(Boss):
 
     def is_alac(self, i_player: int):
         """
-        Vérifie si un joueur fournit suffisamment d'alacrité à son sous-groupe.
+        Checks if a player provides enough alacrity to their subgroup.
 
-        Cette méthode prend en compte le nombre de joueurs qui gèrent les pylônes
-        dans le sous-groupe pour ajuster l'exigence de génération d'alacrité.
+        This method takes into account the number of pylon players
+        in the subgroup to adjust the alacrity generation requirement.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur fournit suffisamment d'alacrité, False sinon
+            bool: True if the player provides enough alacrity, False otherwise
         """
         min_alac_contrib = 30
         alac_id = 30328
@@ -102,16 +89,16 @@ class QTP(Boss):
 
     def is_quick(self, i_player: int):
         """
-        Vérifie si un joueur fournit suffisamment de célérité à son sous-groupe.
+        Checks if a player provides enough quickness to their subgroup.
 
-        Cette méthode prend en compte le nombre de joueurs qui gèrent les pylônes
-        dans le sous-groupe pour ajuster l'exigence de génération de célérité.
+        This method takes into account the number of pylon players
+        in the subgroup to adjust the quickness generation requirement.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur fournit suffisamment de célérité, False sinon
+            bool: True if the player provides enough quickness, False otherwise
         """
         min_quick_contrib = 30
         quick_id = 1187
@@ -131,10 +118,10 @@ class QTP(Boss):
 
     def get_dps_ranking(self):
         """
-        Calcule le classement DPS des joueurs pour QTP en excluant les supports et joueurs de pylône.
+        Calculates the DPS ranking of players for QTP excluding supports and pylon players.
 
         Returns:
-            dict: Dictionnaire associant les joueurs à leur score DPS
+            dict: Dictionary associating players with their DPS score
         """
         return self._get_dps_contrib([self.is_support, self.is_pylon])
 
@@ -142,13 +129,13 @@ class QTP(Boss):
 
     def is_pylon(self, i_player: int):
         """
-        Vérifie si un joueur est un 'joueur de pylône' (a attrapé plus d'une orbe).
+        Checks if a player is a 'pylon player' (caught more than one orb).
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a attrapé plus d'une orbe, False sinon
+            bool: True if the player caught more than one orb, False otherwise
         """
         return self.get_orb_caught(i_player) > 1
 
@@ -156,12 +143,12 @@ class QTP(Boss):
 
     def get_orb_caught(self, i_player: int):
         """
-        Récupère le nombre d'orbes (Critical Mass) attrapées par un joueur.
+        Retrieves the number of orbs (Critical Mass) caught by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre d'orbes attrapées
+            int: Number of orbs caught
         """
         return self.get_mech_value(i_player, "Critical Mass")

@@ -1,22 +1,9 @@
-"""
-Module contenant la classe XJ pour l'analyse des logs du boss Ankka.
-"""
-
 from core.models.boss import Boss
 
 
 class XJ(Boss):
     """
-    Classe représentant le boss Ankka d'End of Dragons.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Ankka, basées principalement sur le CC et le DPS.
-
-    Attributes:
-        last (XJ): Référence à la dernière instance créée
-        name (str): Nom du boss "ANKKA"
-        boss_id (int): Identifiant du boss (23957)
-        wing (str): Indication de l'expansion "EOD"
+    Ankka from End of Dragons.
     """
 
     last = None
@@ -26,10 +13,10 @@ class XJ(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de XJ avec un log spécifique.
+        Initializes an instance of XJ with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -38,12 +25,12 @@ class XJ(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Ankka.
+        Determines the MVP (Most Valuable Player) for the fight against Ankka.
 
-        Vérifie d'abord les joueurs avec peu de CC, puis ceux avec un DPS significativement bas.
+        First checks players with low CC, then those with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and the reason, or None if no MVP
         """
         msg_cc = self.get_mvp_cc_total()
         if msg_cc:
@@ -57,9 +44,9 @@ class XJ(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Ankka.
+        Determines the LVP (Least Valuable Player) for the fight against Ankka.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and the reason, or None if no LVP
         """
         return self.get_lvp_dps()

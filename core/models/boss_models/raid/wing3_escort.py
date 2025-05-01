@@ -1,7 +1,3 @@
-"""
-Module contenant la classe ESCORT pour l'analyse des logs de l'escorte.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -10,18 +6,7 @@ from utils.maths import get_dist
 
 class ESCORT(Boss):
     """
-    Classe représentant le boss Escort de la troisième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs pendant l'escorte, notamment concernant les mines et les tours.
-
-    Attributes:
-        last (ESCORT): Référence à la dernière instance créée
-        name (str): Nom du boss "ESCORT"
-        wing (int): Numéro de l'aile (3)
-        boss_id (int): Identifiant du boss (16253)
-        towers (list): Positions des tours à activer
-        tower_radius (int): Rayon d'activation des tours
+    Escort de la troisième aile de raid.
     """
 
     last = None

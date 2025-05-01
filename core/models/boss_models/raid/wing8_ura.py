@@ -1,22 +1,9 @@
-"""
-Module contenant la classe URA pour l'analyse des logs du boss Keeper of Chaos (Ura).
-"""
-
 from core.models.boss import Boss
 
 
 class URA(Boss):
     """
-    Classe représentant le boss Keeper of Chaos (Ura) de la huitième aile de raid.
-
-    Cette classe implémente des méthodes de base pour analyser les performances
-    des joueurs contre Ura, basées principalement sur le DPS.
-
-    Attributes:
-        last (URA): Référence à la dernière instance créée
-        name (str): Nom du boss "URA"
-        wing (int): Numéro de l'aile (8)
-        boss_id (int): Identifiant du boss (26712)
+    Keeper of Chaos (Ura) from the eighth raid wing.
     """
 
     last = None
@@ -26,34 +13,34 @@ class URA(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de URA avec un log spécifique.
+        Initializes a URA instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
-        URA.last = self  # Correction de la variable utilisée (GREER.last → URA.last)
+        URA.last = self  # Correction of the variable used (GREER.last → URA.last)
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Ura.
+        Determines the MVP (Most Valuable Player) for the Ura fight.
 
-        Pour Ura, le MVP est basé uniquement sur les joueurs avec un DPS significativement bas.
+        For Ura, the MVP is based solely on players with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         return self.get_bad_dps()
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Ura.
+        Determines the LVP (Least Valuable Player) for the Ura fight.
 
-        Pour Ura, le LVP est basé uniquement sur les joueurs avec un DPS élevé.
+        For Ura, the LVP is based solely on players with high DPS.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()

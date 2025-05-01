@@ -1,7 +1,3 @@
-"""
-Module contenant la classe DHUUM pour l'analyse des logs du boss Dhuum.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,17 +5,7 @@ from i18n.languages import language_config
 
 class DHUUM(Boss):
     """
-    Classe représentant le boss Dhuum de la cinquième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Dhuum, en particulier concernant les fissures.
-
-    Attributes:
-        last (DHUUM): Référence à la dernière instance créée
-        name (str): Nom du boss "DHUUM"
-        wing (int): Numéro de l'aile (5)
-        boss_id (int): Identifiant du boss (19450)
-        real_phase (str): Phase principale du combat
+    Dhuum from the fifth raid wing.
     """
 
     last = None
@@ -30,10 +16,10 @@ class DHUUM(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de DHUUM avec un log spécifique.
+        Initializes a DHUUM instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -42,13 +28,13 @@ class DHUUM(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Dhuum.
+        Determines the MVP (Most Valuable Player) for the Dhuum fight.
 
-        Vérifie d'abord les joueurs avec beaucoup de fissures, puis les joueurs
-        avec un DPS significativement bas (en excluant les porteurs de vert).
+        First checks players with many cracks, then players
+        with significantly low DPS (excluding green carriers).
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_cracks = self.mvp_cracks()
         if msg_cracks:
@@ -62,19 +48,19 @@ class DHUUM(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Dhuum.
+        Determines the LVP (Least Valuable Player) for the Dhuum fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
     def get_dps_ranking(self):
         """
-        Calcule le classement DPS des joueurs pour Dhuum en excluant les supports et porteurs de vert.
+        Calculates the DPS ranking of players for Dhuum excluding supports and green carriers.
 
         Returns:
-            dict: Dictionnaire associant les joueurs à leur score DPS
+            dict: Dictionary associating players with their DPS score
         """
         return self._get_dps_contrib([self.is_support, self.is_green])
 
@@ -82,10 +68,10 @@ class DHUUM(Boss):
 
     def mvp_cracks(self):
         """
-        Identifie les MVP basés sur le nombre élevé de fissures gérées.
+        Identifies MVPs based on the high number of cracks handled.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a géré beaucoup de fissures
+            str: Formatted MVP message or None if no player handled many cracks
         """
         i_players, max_cracks, _ = Analyzer.get_max_value(self.player_list, self.get_cracks)
         mvp_names = self.players_to_string(i_players)
@@ -102,13 +88,13 @@ class DHUUM(Boss):
 
     def is_green(self, i_player: int) -> bool:
         """
-        Vérifie si un joueur a effectué un port vert pendant la phase principale.
+        Checks if a player performed a green port during the main phase.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a effectué un port vert, False sinon
+            bool: True if the player performed a green port, False otherwise
         """
         return self.get_mech_value(i_player, "Green port", "Dhuum Fight") > 0
 
@@ -116,12 +102,12 @@ class DHUUM(Boss):
 
     def get_cracks(self, i_player: int):
         """
-        Récupère le nombre de fissures gérées par un joueur.
+        Retrieves the number of cracks handled by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre de fissures gérées
+            int: Number of cracks handled
         """
         return self.get_mech_value(i_player, "Cracks")

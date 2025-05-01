@@ -1,4 +1,3 @@
-# core/models/sub_models/raid_bosses/wing1.py
 from typing import Optional, List, Dict, ClassVar
 
 from core.models.boss import Boss
@@ -11,20 +10,17 @@ from utils.maths import get_dist
 
 class SABETHA(Boss):
     """
-    Sabetha (Wing 1, Boss 3)
-
-    Ce boss est caractérisé par des phases de splits avec des adds importants
-    et des mécaniques de bombes et de canons qui doivent être gérées correctement.
+    Sabetha
     """
 
-    # Attributs de classe
-    last: Optional['SABETHA'] = None  # Référence à la dernière instance créée
+    # Class attributes
+    last: Optional['SABETHA'] = None  # Reference to the last created instance
     name: ClassVar[str] = "SABETHA"
     wing: ClassVar[int] = 1
     boss_id: ClassVar[int] = 15375
     real_phase: ClassVar[str] = "Full Fight"
 
-    # Positions et constantes pour les mécaniques
+    # Positions and constants for mechanics
     pos_sab: List[float] = [376.7, 364.4]
     pos_canon1: List[float] = [346.9, 706.7]
     pos_canon2: List[float] = [35.9, 336.8]
@@ -35,35 +31,35 @@ class SABETHA(Boss):
 
     def __init__(self, log: Log) -> None:
         """
-        Initialise un objet Sabetha.
+        Initializes a Sabetha object.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
-        SABETHA.last = self  # Met à jour la référence à la dernière instance
+        SABETHA.last = self  # Updates the reference to the last instance
 
     def get_mvp(self) -> Optional[str]:
         """
-        Détermine le joueur MVP pour Sabetha.
-        Priorité: bon usage des bombes > bons dégâts sur les adds > bad DPS (excluant les canons)
+        Determines the MVP player for Sabetha.
+        Priority: proper use of bombs > good damage on adds > bad DPS (excluding the cannons)
 
         Returns:
-            Message de récompense MVP ou None si aucun joueur ne se démarque
+            MVP reward message or None if no player stands out
         """
-        # Vérifier d'abord si des joueurs ont bien utilisé les bombes
+        # First, check if players have properly used the bombs
         msg_terrorists = self.mvp_terrorists()
         if msg_terrorists:
             return msg_terrorists
 
-        # Ensuite, vérifier les dégâts dans les phases de split
+        # Next, check the damage during the split phases
         msg_dmg_split = self.mvp_dmg_split()
         if msg_dmg_split:
             return msg_dmg_split
 
-        # Enfin, vérifier les DPS sous-performants (en excluant les joueurs aux canons)
+        # Finally, check for underperforming DPS (excluding players on cannons)
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_cannon])
         if msg_bad_dps:
             return msg_bad_dps
@@ -72,20 +68,20 @@ class SABETHA(Boss):
 
     def get_lvp(self) -> str:
         """
-        Détermine le joueur LVP pour Sabetha, basé sur les dégâts dans les phases de split.
+        Determines the LVP player for Sabetha, based on damage during the split phases.
 
         Returns:
-            Message de pénalité LVP
+            LVP penalty message
         """
         return self.lvp_dmg_split()
 
     def get_dps_ranking(self) -> Dict[str, float]:
         """
-        Calcule le classement DPS adapté pour Sabetha.
-        Exclut les supports et les joueurs aux canons car ils ont un rôle spécifique.
+        Calculates the DPS ranking for Sabetha.
+        Excludes supports and players on cannons because they have a specific role.
 
         Returns:
-            Dictionnaire des contributions DPS normalisées
+            Dictionary of normalized DPS contributions
         """
         return self._get_dps_contrib([self.is_support, self.is_cannon])
 
@@ -93,36 +89,36 @@ class SABETHA(Boss):
 
     def mvp_dmg_split(self) -> Optional[str]:
         """
-        Identifie les joueurs qui ont fait le moins de dégâts pendant les phases d'adds.
-        Ces joueurs sont considérés comme MVP car ils se sont concentrés sur les mécaniques.
+        Identifies the players who did the least damage during the add phases.
+        These players are considered MVP because they focused on the mechanics.
 
         Returns:
-            Message MVP pour les bons dégâts sur les adds ou None si personne ne se démarque
+            MVP message for good damage on adds or None if no one stands out
         """
-        # Obtenir les joueurs qui ont fait le moins de dégâts dans les phases d'adds
+        # Get the players who did the least damage in the add phases
         i_players, min_dmg, total_dmg = Analyzer.get_min_value(
             self.player_list,
             self.get_dmg_split,
             exclude=[self.is_support, self.is_cannon]
         )
 
-        # Calculer le total des dégâts des joueurs DPS
+        # Calculate the total damage of DPS players
         dps_total_dmg = Analyzer.get_tot_value(
             self.player_list,
             self.get_dmg_split,
             exclude=[self.is_support]
         )
 
-        # Si les dégâts sont significativement bas (moins de 75% de la part attendue)
+        # If the damage is significantly low (less than 75% of the expected share)
         if min_dmg / dps_total_dmg < 1 / 6 * 0.75:
-            # Ajouter ces joueurs à la liste des MVP
+            # Add these players to the MVP list
             self.add_mvps(i_players)
 
-            # Préparer les variables pour le message
+            # Prepare variables for the message
             mvp_names = self.players_to_string(i_players)
             dmg_ratio = min_dmg / total_dmg * 100
 
-            # Générer le message
+            # Generate the message
             return language_config.selected_language["SABETHA MVP SPLIT"].format(
                 mvp_names=mvp_names,
                 dmg_ratio=dmg_ratio
@@ -132,23 +128,23 @@ class SABETHA(Boss):
 
     def mvp_terrorists(self) -> Optional[str]:
         """
-        Identifie les joueurs qui ont bien géré les bombes pendant le combat.
-        Les "terroristes" sont les joueurs qui ont éloigné les bombes des autres joueurs.
+        Identifies the players who properly handled the bombs during the fight.
+        The "terrorists" are the players who kept the bombs away from others.
 
         Returns:
-            Message MVP pour les bons utilisateurs de bombes ou None si personne ne se démarque
+            MVP message for good bomb users or None if no one stands out
         """
-        # Obtenir la liste des joueurs qui ont bien géré les bombes
+        # Get the list of players who handled the bombs well
         i_players = self.get_terrorists()
 
-        # Ajouter ces joueurs à la liste des MVP
+        # Add these players to the MVP list
         self.add_mvps(i_players)
 
         if i_players:
-            # Préparer le message
+            # Prepare the message
             mvp_names = self.players_to_string(i_players)
 
-            # Générer le message
+            # Generate the message
             return language_config.selected_language["SABETHA MVP BOMB"].format(mvp_names=mvp_names)
 
         return None
@@ -157,24 +153,23 @@ class SABETHA(Boss):
 
     def lvp_dmg_split(self) -> str:
         """
-        Identifie les joueurs qui ont fait le plus de dégâts pendant les phases d'adds.
-        Ces joueurs sont considérés comme LVP car ils se sont concentrés sur les dégâts
-        au détriment des mécaniques.
+        Identifies the players who did the most damage during the add phases.
+        These players are considered LVP because they focused on damage at the expense of mechanics.
 
         Returns:
-            Message LVP pour les joueurs avec les dégâts les plus élevés sur les adds
+            LVP message for the players with the highest damage on the adds
         """
-        # Obtenir les joueurs qui ont fait le plus de dégâts dans les phases d'adds
+        # Get the players who did the most damage in the add phases
         i_players, max_dmg, total_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_split)
 
-        # Préparer les variables pour le message
+        # Prepare variables for the message
         lvp_names = self.players_to_string(i_players)
         dmg_ratio = max_dmg / total_dmg * 100
 
-        # Ajouter ces joueurs à la liste des LVP
+        # Add these players to the LVP list
         self.add_lvps(i_players)
 
-        # Générer le message
+        # Generate the message
         return language_config.selected_language["SABETHA LVP SPLIT"].format(
             lvp_names=lvp_names,
             dmg_ratio=dmg_ratio
@@ -184,19 +179,19 @@ class SABETHA(Boss):
 
     def is_cannon(self, i_player: int, n: int = 0) -> bool:
         """
-        Vérifie si un joueur a géré un canon pendant le combat.
+        Checks if a player handled a cannon during the fight.
 
         Args:
-            i_player: Indice du joueur
-            n: Numéro du canon à vérifier (0 = tous, 1-4 = canon spécifique)
+            i_player: The player index
+            n: The cannon number to check (0 = all, 1-4 = specific cannon)
 
         Returns:
-            True si le joueur a géré le(s) canon(s) spécifié(s), False sinon
+            True if the player handled the specified cannon(s), False otherwise
         """
-        # Récupérer les positions du joueur pendant le combat
+        # Retrieve the player's positions during the fight
         pos_player = self.get_player_pos(i_player)
 
-        # Déterminer quels canons vérifier
+        # Determine which cannons to check
         if n == 0:
             canon_pos = [
                 SABETHA.pos_canon1,
@@ -215,10 +210,10 @@ class SABETHA(Boss):
         else:
             canon_pos = []
 
-        # Vérifier si le joueur a été à proximité d'un canon
+        # Check if the player was near a cannon
         for pos in pos_player:
             for canon in canon_pos:
-                # Utiliser la fonction get_dist pour calculer la distance entre deux points
+                # Use the get_dist function to calculate the distance between two points
                 if get_dist(pos, canon) <= SABETHA.canon_detect_radius:
                     return True
 
@@ -226,50 +221,50 @@ class SABETHA(Boss):
 
     def is_terrorist(self, i_player: int) -> bool:
         """
-        Vérifie si un joueur a bien géré les bombes (en s'éloignant des autres joueurs).
+        Checks if a player properly handled the bombs (by staying away from other players).
 
         Args:
-            i_player: Indice du joueur
+            i_player: The player index
 
         Returns:
-            True si le joueur a bien géré les bombes, False sinon
+            True if the player properly handled the bombs, False otherwise
         """
-        # Récupérer l'historique des bombes pour ce joueur
+        # Retrieve the player's bomb history
         bomb_history = self.get_player_mech_history(i_player, ["Timed Bomb"])
 
         if bomb_history:
-            # Récupérer les positions du joueur et la liste des autres joueurs
+            # Get the player's positions and the list of other players
             poses = self.get_player_pos(i_player)
             players = self.player_list
 
-            # Examiner chaque bombe
+            # Check each bomb
             for bomb in bomb_history:
-                # Le joueur a 3 secondes après l'apparition de la bombe pour s'éloigner
+                # The player has 3 seconds after the bomb appears to move away
                 bomb_time = bomb['time'] + 3000
                 time_index = time_to_index(bomb_time, self.time_base)
 
                 try:
-                    # Position du joueur au moment de l'explosion
+                    # Player's position at the time of the explosion
                     bomb_pos = poses[time_index]
                 except IndexError:
-                    # Si l'indice est hors limites, passer à la bombe suivante
+                    # If the index is out of bounds, move to the next bomb
                     continue
 
-                # Compter combien de joueurs sont à proximité de l'explosion
+                # Count how many players are near the explosion
                 bombed_players = 0
                 for i in players:
-                    # Ne pas compter le joueur lui-même ou les joueurs morts
+                    # Do not count the player themselves or dead players
                     if i == i_player or self.is_dead(i):
                         continue
 
-                    # Position de ce joueur au moment de l'explosion
+                    # Position of this player at the time of the explosion
                     i_pos = self.get_player_pos(i)[time_index]
 
-                    # Vérifier si ce joueur est dans le rayon de l'explosion (270 unités après scaling)
+                    # Check if the player is within the explosion radius (270 units after scaling)
                     if get_dist(bomb_pos, i_pos) * SABETHA.scaler <= 270:
                         bombed_players += 1
 
-                # Si le joueur a touché plus d'un autre joueur, ce n'est pas un bon terroriste
+                # If the player hit more than one other player, they're not a good terrorist
                 if bombed_players > 1:
                     return True
 
@@ -279,33 +274,33 @@ class SABETHA(Boss):
 
     def get_dmg_split(self, i_player: int) -> int:
         """
-        Calcule les dégâts totaux faits par un joueur pendant les phases d'adds.
+        Calculates the total damage done by a player during the add phases.
 
         Args:
-            i_player: Indice du joueur
+            i_player: The player index
 
         Returns:
-            Total des dégâts faits pendant les phases d'adds
+            Total damage done during the add phases
         """
         try:
-            # Récupérer les dégâts pour chacun des trois adds importants
+            # Get the damage for each of the three important adds
             dmg_kernan = self.log.jcontent['phases'][2]['dpsStatsTargets'][i_player][0][0]
             dmg_mornifle = self.log.jcontent['phases'][5]['dpsStatsTargets'][i_player][0][0]
             dmg_karde = self.log.jcontent['phases'][7]['dpsStatsTargets'][i_player][0][0]
 
-            # Additionner les dégâts des trois adds
+            # Sum the damage from the three adds
             return dmg_kernan + dmg_mornifle + dmg_karde
 
         except (IndexError, KeyError, TypeError):
-            # En cas d'erreur d'accès aux données
+            # If there's an error accessing the data
             return 0
 
     def get_terrorists(self) -> List[int]:
         """
-        Identifie tous les joueurs qui ont bien géré les bombes pendant le combat.
+        Identifies all players who properly handled the bombs during the fight.
 
         Returns:
-            Liste des indices des joueurs qui ont bien géré les bombes
+            List of indices of players who properly handled the bombs
         """
         terrorists = []
 

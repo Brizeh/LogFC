@@ -1,7 +1,3 @@
-"""
-Module contenant la classe DEIMOS pour l'analyse des logs du boss Deimos.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,17 +5,7 @@ from i18n.languages import language_config
 
 class DEIMOS(Boss):
     """
-    Classe représentant le boss Deimos de la quatrième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Deimos, notamment concernant les huiles noires, les pizzas et les larmes.
-
-    Attributes:
-        last (DEIMOS): Référence à la dernière instance créée
-        name (str): Nom du boss "DEIMOS"
-        wing (int): Numéro de l'aile (4)
-        boss_id (int): Identifiant du boss (17154)
-        real_phase (str): Phase principale du combat
+    Deimos de la quatrième aile de raid.
     """
 
     last = None

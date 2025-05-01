@@ -1,7 +1,3 @@
-"""
-Module contenant la classe ADINA pour l'analyse des logs du boss Cardinal Adina.
-"""
-
 from core.models.boss import Boss
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
@@ -9,16 +5,7 @@ from i18n.languages import language_config
 
 class ADINA(Boss):
     """
-    Classe représentant le boss Cardinal Adina de la septième aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Adina, notamment concernant les phases de split.
-
-    Attributes:
-        last (ADINA): Référence à la dernière instance créée
-        name (str): Nom du boss "ADINA"
-        wing (int): Numéro de l'aile (7)
-        boss_id (int): Identifiant du boss (22006)
+    Cardinal Adina
     """
 
     last = None
@@ -28,10 +15,10 @@ class ADINA(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de ADINA avec un log spécifique.
+        Initializes an ADINA instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -40,13 +27,13 @@ class ADINA(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Adina.
+        Determines the MVP (Most Valuable Player) for the Adina fight.
 
-        Vérifie d'abord les joueurs avec un DPS faible, puis ceux qui ont fait
-        le moins de dégâts pendant les phases de split.
+        First checks players with low DPS, then those who dealt
+        the least damage during split phases.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
@@ -55,12 +42,12 @@ class ADINA(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Adina.
+        Determines the LVP (Least Valuable Player) for the Adina fight.
 
-        Identifie les joueurs qui ont fait le plus de dégâts pendant les phases de split.
+        Identifies players who dealt the most damage during split phases.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.lvp_dmg_split()
 
@@ -68,10 +55,10 @@ class ADINA(Boss):
 
     def mvp_dmg_split(self):
         """
-        Identifie les MVP qui ont fait le moins de dégâts pendant les phases de split.
+        Identifies MVPs who dealt the least damage during split phases.
 
         Returns:
-            str: Message MVP formaté
+            str: Formatted MVP message
         """
         i_players, min_dmg, total_dmg = Analyzer.get_min_value(self.player_list, self.get_dmg_split,
                                                                exclude=[self.is_support])
@@ -84,10 +71,10 @@ class ADINA(Boss):
 
     def lvp_dmg_split(self):
         """
-        Identifie les LVP qui ont fait le plus de dégâts pendant les phases de split.
+        Identifies LVPs who dealt the most damage during split phases.
 
         Returns:
-            str: Message LVP formaté
+            str: Formatted LVP message
         """
         i_players, max_dmg, total_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_split)
         lvp_names = self.players_to_string(i_players)
@@ -99,13 +86,13 @@ class ADINA(Boss):
 
     def get_dmg_split(self, i_player: int):
         """
-        Calcule les dégâts totaux infligés par un joueur pendant les phases de split.
+        Calculates the total damage dealt by a player during split phases.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Dégâts totaux infligés pendant les phases de split
+            int: Total damage dealt during split phases
         """
         dmg_split1 = self.log.jcontent['phases'][2]['dpsStats'][i_player][0]
         dmg_split2 = self.log.jcontent['phases'][4]['dpsStats'][i_player][0]

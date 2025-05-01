@@ -5,16 +5,7 @@ from i18n.languages import language_config
 
 class MATTHIAS(Boss):
     """
-    Classe représentant le boss Matthias de la seconde aile de raid.
-
-    Cette classe implémente des méthodes spécifiques pour analyser les performances
-    des joueurs contre Matthias, en particulier concernant les contrôles et les sacrifices.
-
-    Attributes:
-        last (MATTHIAS): Référence à la dernière instance créée
-        name (str): Nom du boss "MATTHIAS"
-        wing (int): Numéro de l'aile (2)
-        boss_id (int): Identifiant du boss (16115)
+    Matthias de la seconde aile de raid.
     """
 
     last = None
