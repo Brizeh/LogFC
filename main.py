@@ -27,8 +27,11 @@ def debug_log(url):
 
 def main(input_string, **kwargs):
 
-    # Parse the input and retrieve the URLs
+    # Parse the input
     input_parser = InputParser(input_string)
+    print(input_parser)
+
+    # Retrieve the URLs
     urls = input_parser.urls
 
     # Récupérer les données pour chaque URL
@@ -51,7 +54,6 @@ def main(input_string, **kwargs):
         BossFactory.create_boss(log)
 
     # Générer et afficher le rapport
-    print(f"--- test\n")
     report_generator = ReportGenerator(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
     split_run_message = report_generator.generate()
     for message in split_run_message:

@@ -1,9 +1,18 @@
 # LogFC-Testing
-## How to ? :
-###  - Put all links in "src/input_logs.txt"
-###  - Run.bat
-## You can add custom names :
-### - associate anet_accounts with some nicknames in src/custom_names.json
+Welcome to the _Directeur de bûches_ official report generator!
+
+## How to run it?
+It's pretty straight-forward:
+- Put all links in `input/input_logs.txt`
+- If you want, associate anet accounts with some nicknames in `input/custom_names.json`
+- Run the `Run.bat`
+
+## Parameters
+You can use the following parameters after the `Run.bat` command:
+- `-l`: change the export language (_accepted values: FR, EN_)
+- `-i`: if you want to paste the log links list by yourself instead of using a file
+- `-r`: reward mode???
+- `-d`: debug mode??
 
 ## Library architecture
 ````text
