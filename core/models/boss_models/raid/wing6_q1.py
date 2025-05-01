@@ -6,7 +6,7 @@ from utils.maths import get_dist
 
 class Q1(Boss):
     """
-    Qadim (first) from the sixth raid wing.
+    Qadim (first)
     """
 
     last = None

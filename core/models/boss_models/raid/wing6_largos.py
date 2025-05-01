@@ -5,7 +5,7 @@ from i18n.languages import language_config
 
 class LARGOS(Boss):
     """
-    Twin Largos from the sixth raid wing.
+    Twin Largos
     """
 
     last = None

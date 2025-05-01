@@ -9,38 +9,38 @@ from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
 from utils.formatters import time_to_index
 
-# Type pour les fonctions de filtrage des joueurs
+# Type for player filtering functions
 PlayerFilter = Callable[[int], bool]
-# Type pour les valeurs de retour des fonctions get_value
+# Type for the return values of get_value functions
 T = TypeVar('T', int, float)
 
 class Boss:
     """
-    Classe de base représentant une rencontre de boss dans Guild Wars 2.
-    
-    Cette classe encapsule la logique commune pour toutes les rencontres de boss,
-    y compris l'analyse des logs, le suivi des joueurs et l'évaluation des performances.
-    
+    Base class representing a boss encounter in Guild Wars 2.
+
+    This class encapsulates common logic for all boss encounters,
+    including log parsing, player tracking, and performance evaluation.
+
     Attributes:
-        name (str) : Nom du boss (doit être défini par les sous-classes)
-        wing (int) : Numéro de l'aile où se trouve le boss (pour les raids)
-        boss_id (int) : Identifiant unique du boss dans le jeu
-        real_phase (str) : Phase principale à analyser pour les statistiques
+        name (str): Boss name (must be defined by subclasses)
+        wing (int): Wing number where the boss is located (for raids)
+        boss_id (int): Unique identifier of the boss in the game
+        real_phase (str): Main phase to analyze for statistics
     """
-    
-    # Attributs de classe par défaut, à surcharger dans les sous-classes
+
+    # Default class attributes, meant to be overridden in subclasses
     name: ClassVar[Optional[str]] = None
     wing: ClassVar[int] = 0
     boss_id: ClassVar[int] = -1
     real_phase: ClassVar[str] = "Full Fight"
 
-    # Constantes pour les IDs des buffs et mécaniques
+    # Constants for buff and mechanic IDs
     QUICK_ID: ClassVar[int] = 1187
     ALAC_ID: ClassVar[int] = 30328
     BANNER_IDS: ClassVar[List[int]] = [14449, 14417]
     FOOD_SWAP_ICON: ClassVar[str] = "https://wiki.guildwars2.com/images/d/d6/Champion_of_the_Crown.png"
 
-    # Valeurs de seuil
+    # Threshold values
     MIN_QUICK_CONTRIB: ClassVar[float] = 30
     MIN_ALAC_CONTRIB: ClassVar[float] = 30
     BUYER_DEATH_THRESHOLD: ClassVar[int] = 20000  # ms
@@ -48,10 +48,10 @@ class Boss:
 
     def __init__(self, log: Log) -> None:
         """
-        Initialise une rencontre de boss à partir d'un objet Log.
+        Initializes a boss encounter from a Log object.
 
         Args:
-            log: L'objet Log contenant les données de la rencontre
+            log: The Log object containing the encounter data
         """
         self.log: Log = log
         self.cm: bool = self.is_cm()
@@ -66,70 +66,70 @@ class Boss:
         self.real_phase_id: int = self.get_phase_id(self.real_phase)
         self.time_base: int = self.get_time_base()
 
-        # Listes pour suivre les joueurs MVP et LVP
+        # Lists to track MVP and LVP players
         self.mvp_accounts: List[str] = []
         self.lvp_accounts: List[str] = []
 
-        # Initialiser les joueurs dans le dictionnaire global
+        # Initialize players in the global dictionary
         self._initialize_players()
 
     def _initialize_players(self) -> None:
         """
-        Initialise les joueurs participant à cette rencontre dans le dictionnaire global.
-        
-        Pour chaque joueur, s'il existe déjà dans le dictionnaire ALL_PLAYERS,
-        ajoute ce boss à son historique. Sinon, crée un nouveau joueur.
+        Initializes the players involved in this encounter in the global dictionary.
+
+        For each player, if they already exist in the ALL_PLAYERS dictionary,
+        add this boss to their history. Otherwise, create a new player.
         """
         for i in self.player_list:
             account = self.get_player_account(i)
             player = ALL_PLAYERS.get(account)
-            
+
             if not player:
-                # Créer un nouveau joueur s'il n'existe pas encore
+                # Create a new player if not already present
                 from core.models.player import Player
                 new_player = Player(self, account)
                 ALL_PLAYERS[account] = new_player
             else:
-                # Ajouter ce boss à l'historique du joueur
+                # Add this boss to the player's history
                 player.add_boss(self)
 
     def __repr__(self) -> str:
         """
-        Représentation textuelle du boss pour le débogage.
+        String representation of the boss for debugging.
 
         Returns:
-            URL du log
+            Log URL
         """
         return self.log.url
 
     # -------------------------------------------------------------------------
-    # Méthodes pour récupérer les attributs du boss
+    # Methods to retrieve boss attributes
     # -------------------------------------------------------------------------
 
     def is_cm(self) -> bool:
         """
-        Détermine si cette rencontre est en mode challenge (CM).
+        Determines whether this encounter is in challenge mode (CM).
 
         Returns:
-            True si le combat est en mode CM, False sinon
+            True if the fight is in CM, False otherwise
         """
         return self.log.pjcontent.get('isCM', False)
 
     def get_log_name(self) -> str:
         """
-        Récupère le nom officiel de la rencontre depuis le log.
+        Retrieves the official name of the encounter from the log.
 
         Returns:
-            Nom de la rencontre
+            Name of the encounter
         """
         return self.log.pjcontent.get('fightName', 'Unknown')
 
     def get_mechanics(self) -> List[Dict[str, Any]]:
         """
-        Récupère les mécaniques du combat liées aux joueurs.
+        Retrieves the player-related mechanics of the fight.
 
         Returns:
-            Liste des mécaniques affectant les joueurs pendant le combat
+            List of mechanics affecting players during the fight
         """
         mechanics = []
         mechanic_map = self.log.jcontent.get('mechanicMap', [])
@@ -143,22 +143,22 @@ class Boss:
 
     def get_duration_ms(self) -> int:
         """
-        Récupère la durée totale du combat en millisecondes.
+        Retrieves the total duration of the fight in milliseconds.
 
         Returns:
-            Durée du combat en ms
+            Duration of the fight in ms
         """
         return self.log.pjcontent.get('durationMS', 0)
 
     def get_start_date(self) -> datetime:
         """
-        Récupère la date et l'heure de début du combat.
+        Retrieves the start date and time of the fight.
 
-        Convertit l'horodatage de début en objet datetime,
-        puis le convertit dans le fuseau horaire de Paris.
+        Converts the start timestamp to a datetime object,
+        and adjusts it to the Paris timezone.
 
         Returns:
-            Datetime au format fuseau horaire Paris
+            Datetime in Paris timezone
         """
         start_date_text = self.log.pjcontent.get('timeStartStd', '')
         if not start_date_text:
@@ -168,54 +168,54 @@ class Boss:
             start_date = datetime.strptime(start_date_text, DATE_FORMAT)
             return start_date.astimezone(PARIS_TIMEZONE)
         except ValueError:
-            # En cas d'erreur de parsing
+            # In case of parsing error
             return datetime.now(PARIS_TIMEZONE)
-    
+
     def get_end_date(self) -> datetime:
         """
-        Récupère la date et l'heure de fin du combat.
-        
-        Convertit l'horodatage de fin en objet datetime,
-        puis le convertit dans le fuseau horaire de Paris.
-        
+        Retrieves the end date and time of the fight.
+
+        Converts the end timestamp to a datetime object,
+        and adjusts it to the Paris timezone.
+
         Returns:
-            Datetime au format fuseau horaire Paris
+            Datetime in Paris timezone
         """
         end_date_text = self.log.pjcontent.get('timeEndStd', '')
         if not end_date_text:
             return datetime.now(PARIS_TIMEZONE)
-            
+
         date_format = "%Y-%m-%d %H:%M:%S %z"
         try:
             end_date = datetime.strptime(end_date_text, date_format)
             return end_date.astimezone(PARIS_TIMEZONE)
         except ValueError:
-            # En cas d'erreur de parsing
+            # In case of parsing error
             start_date = self.get_start_date()
             return start_date + timedelta(milliseconds=self.duration_ms)
 
     def get_wingman_time(self) -> Optional[List[int]]:
         """
-        Récupère les temps de référence Wingman pour ce boss.
+        Retrieves Wingman reference times for this boss.
 
-        Interroge l'API Wingman pour obtenir les durées médianes et de référence
-        pour ce boss, en fonction de son ID et du mode (CM ou normal).
+        Queries the Wingman API to get median and top benchmark durations
+        for this boss, depending on its ID and mode (CM or normal).
 
         Returns:
-            Liste contenant [temps_médian, temps_top] ou None en cas d'erreur
+            List containing [median_time, top_time] or None if an error occurs
         """
         from services.api.wingman import WingmanAPI
         return WingmanAPI.get_boss_benchmark(self.boss_id, self.cm)
 
     def get_player_list(self) -> List[int]:
         """
-        Récupère la liste des indices des joueurs participant au combat.
+        Retrieves the list of player indices participating in the fight.
 
-        Filtre les joueurs pour exclure ceux qui sont dans des groupes spéciaux (50+)
-        et ceux qui sont détectés comme des acheteurs (pour les ventes de raids).
+        Filters out players in special groups (50+) and those detected as buyers
+        (for raid selling purposes).
 
         Returns:
-            Liste des indices des joueurs participants réels
+            List of actual participant player indices
         """
         real_players = []
         players = self.log.pjcontent.get('players', [])
@@ -229,34 +229,34 @@ class Boss:
 
     def get_wingman_percentile(self) -> Optional[float]:
         """
-        Récupère le percentile Wingman pour ce combat.
+        Retrieves the Wingman percentile for this fight.
 
-        Interroge l'API Wingman pour obtenir le percentile du combat actuel
-        par rapport aux statistiques globales pour ce boss.
+        Queries the Wingman API to get the percentile of the current fight
+        compared to global statistics for this boss.
 
         Returns:
-            Le percentile du combat ou None si non disponible
+            Fight percentile or None if not available
         """
         from services.api.wingman import WingmanAPI
         time_stamp = int(self.get_start_date().timestamp())
         return WingmanAPI.get_percentile(self.boss_id, self.cm, self.duration_ms, time_stamp)
 
     # -------------------------------------------------------------------------
-    # Méthodes pour identifier les rôles des joueurs
+    # Methods to identify player roles
     # -------------------------------------------------------------------------
 
     def is_quick(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur fournit un bon uptime de célérité.
+        Checks if the player provides sufficient quickness uptime.
 
-        Un joueur est considéré comme fournisseur de célérité s'il
-        génère au moins MIN_QUICK_CONTRIB % d'uptime sur la phase principale.
+        A player is considered a quickness provider if they generate
+        at least MIN_QUICK_CONTRIB % uptime during the main phase.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est fournisseur de célérité, False sinon
+            True if the player provides quickness, False otherwise
         """
         boon_path = self.log.pjcontent.get('players', [])[i_player].get("groupBuffsActive", [])
         player_quick_contrib = 0
@@ -273,16 +273,16 @@ class Boss:
 
     def is_alac(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur fournit un bon uptime d'alacrity.
+        Checks if the player provides sufficient alacrity uptime.
 
-        Un joueur est considéré comme fournisseur d'alacrity s'il
-        génère au moins MIN_ALAC_CONTRIB % d'uptime sur la phase principale.
+        A player is considered an alacrity provider if they generate
+        at least MIN_ALAC_CONTRIB % uptime during the main phase.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est fournisseur d'alacrity, False sinon
+            True if the player provides alacrity, False otherwise
         """
         boon_path = self.log.pjcontent.get('players', [])[i_player].get("groupBuffsActive", [])
         player_alac_contrib = 0
@@ -299,19 +299,19 @@ class Boss:
 
     def is_support(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un rôle de support.
+        Checks if the player is playing a support role.
 
-        Un joueur est considéré comme support s'il:
-        - Fournit de la célérité
-        - Fournit de l'alacrity
-        - Est un Druid (avant le patch du 17/07/2022)
-        - Est un Bannerslave (avant le patch du 17/07/2022)
+        A player is considered support if they:
+        - Provide quickness
+        - Provide alacrity
+        - Are a Druid (before the 07/17/2022 patch)
+        - Are a Bannerslave (before the 07/17/2022 patch)
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est un support, False sinon
+            True if the player is support, False otherwise
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -319,7 +319,6 @@ class Boss:
 
         prof = players[i_player].get('profession', '')
 
-        # Support Druid avant le patch du 17 juillet 2022
         is_druid_supp = False
         pre_patch_date = datetime(2022, 7, 17, 23, 0, 0, tzinfo=pytz.FixedOffset(60))
         if prof == "Druid" and self.start_date < pre_patch_date:
@@ -332,29 +331,29 @@ class Boss:
 
     def is_dps(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un rôle de DPS (dégâts).
+        Checks if the player is playing a DPS (damage) role.
 
-        Un joueur est considéré comme DPS s'il n'est pas un support.
+        A player is considered DPS if they are not a support.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est un DPS, False sinon
+            True if the player is a DPS, False otherwise
         """
         return not self.is_support(i_player)
 
     def is_tank(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un rôle de tank.
+        Checks if the player is playing a tank role.
 
-        Un joueur est considéré comme tank s'il a de la ténacité (toughness).
+        A player is considered a tank if they have toughness.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est un tank, False sinon
+            True if the player is a tank, False otherwise
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -364,15 +363,15 @@ class Boss:
 
     def is_heal(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un rôle de healer.
+        Checks if the player is playing a healer role.
 
-        Un joueur est considéré comme healer s'il a du healing power.
+        A player is considered a healer if they have healing power.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est un healer, False sinon
+            True if the player is a healer, False otherwise
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -382,13 +381,13 @@ class Boss:
 
     def is_dead(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur est mort pendant le combat.
+        Checks if the player died during the encounter.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est mort, False sinon
+            True if the player died, False otherwise
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -402,22 +401,21 @@ class Boss:
 
     def is_buyer(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur est un acheteur (vente de raid).
+        Checks if the player is a buyer (raid sale).
 
-        Un joueur est considéré comme acheteur s'il:
-        - Meurt dans les premières 20 secondes du combat
-        - N'a pas de données de rotation
+        A player is considered a buyer if they:
+        - Die within the first 20 seconds of the fight
+        - Have no rotation data
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est un acheteur, False sinon
+            True if the player is a buyer, False otherwise
         """
         player_name = self.get_player_name(i_player)
         mechanics = self.log.pjcontent.get('mechanics', [])
 
-        # Vérifier si le joueur est mort tôt dans le combat
         if mechanics:
             death_history = [
                 death for mech in mechanics
@@ -430,7 +428,6 @@ class Boss:
                         death.get('actor') == player_name):
                     return True
 
-        # Vérifier si le joueur a des données de rotation
         try:
             rotation = self.get_player_rotation(i_player)
             if not rotation:
@@ -439,26 +436,25 @@ class Boss:
             return True
 
         return False
-
     def is_buff_up(self, i_player: int, target_time: int, buff_name: str) -> bool:
         """
-        Vérifie si un buff spécifique était actif sur un joueur à un moment donné.
+        Checks if a specific buff was active on a player at a given time.
 
         Args:
-            i_player: Indice du joueur à vérifier
-            target_time: Temps (en ms) auquel vérifier le buff
-            buff_name: Nom du buff à vérifier
+            i_player: Index of the player to check
+            target_time: Time (in ms) at which to check the buff
+            buff_name: Name of the buff to check
 
         Returns:
-            True si le buff était actif, False sinon
+            True if the buff was active, False otherwise
         """
         buffmap = self.log.pjcontent.get('buffMap', {})
         buff_id = None
 
-        # Trouver l'ID du buff à partir de son nom
+        # Find the buff ID based on its name
         for id_str, buff in buffmap.items():
             if buff.get('name') == buff_name:
-                # Les IDs dans buffMap commencent par 'b', donc on enlève le 'b'
+                # Buff IDs in buffMap start with 'b', so remove the 'b'
                 try:
                     buff_id = int(id_str[1:])
                     break
@@ -468,7 +464,7 @@ class Boss:
         if buff_id is None:
             return False
 
-        # Trouver les données du buff pour ce joueur
+        # Find the buff data for this player
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
             return False
@@ -484,11 +480,11 @@ class Boss:
         if not buff_data:
             return False
 
-        # Extraire les coordonnées temporelles et les états du buff
+        # Extract the time coordinates and buff states
         xbuffplot = [pos[0] for pos in buff_data]
         ybuffplot = [pos[1] for pos in buff_data]
 
-        # Trouver l'état du buff au moment cible
+        # Find the buff state at the target time
         left_value = None
         for time in xbuffplot:
             if time <= target_time:
@@ -504,30 +500,30 @@ class Boss:
 
     def is_dead_instant(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur est mort instantanément (sans être d'abord mis à terre).
+        Checks if the player died instantly (without being knocked down first).
 
-        Un joueur est considéré comme mort instantanément si:
-        - Il est mort sans être mis à terre auparavant
-        - Il a été mis à terre mais est mort plus de 8 secondes après
+        A player is considered to have died instantly if:
+        - They died without being knocked down first
+        - They were knocked down but died more than 8 seconds later
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est mort instantanément, False sinon
+            True if the player died instantly, False otherwise
         """
         downs_deaths = self.get_player_mech_history(i_player, ["Downed", "Dead"])
 
         if not downs_deaths:
             return False
 
-        # Vérifier si le dernier événement est une mort
+        # Check if the last event was a death
         if downs_deaths[-1].get('name') == "Dead":
-            # Mort sans être mis à terre
+            # Died without being knocked down
             if len(downs_deaths) == 1:
                 return True
 
-            # Mort longtemps après avoir été mis à terre
+            # Died long after being knocked down
             if len(downs_deaths) > 1:
                 time_diff = downs_deaths[-1].get('time', 0) - downs_deaths[-2].get('time', 0)
                 if time_diff > self.INSTANT_DEATH_TIME_DIFF:
@@ -537,16 +533,16 @@ class Boss:
 
     def is_condi(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un build de dégâts sur la durée (condition damage).
+        Checks if the player is playing a condition damage build.
 
-        Un joueur est considéré comme condi si ses dégâts de condition sont supérieurs
-        à ses dégâts directs.
+        A player is considered condi if their condition damage is higher
+        than their direct damage.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est condi, False sinon
+            True if the player is condi, False otherwise
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -563,31 +559,31 @@ class Boss:
 
     def is_power(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un build de dégâts directs (power damage).
+        Checks if the player is playing a power damage build.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est power, False sinon
+            True if the player is power, False otherwise
         """
         return not self.is_condi(i_player)
 
     def is_bannerslave(self, i_player: int) -> bool:
         """
-        Vérifie si le joueur joue un Warrior/Berserker bannerslave.
+        Checks if the player is playing a Warrior/Berserker bannerslave.
 
-        Applicable uniquement avant le patch du 17/07/2022.
+        This is only applicable before the patch on 17/07/2022.
 
         Args:
-            i_player: Indice du joueur à vérifier
+            i_player: Index of the player to check
 
         Returns:
-            True si le joueur est bannerslave, False sinon
+            True if the player is bannerslave, False otherwise
         """
         pre_patch_date = datetime(2022, 7, 17, 23, 0, 0, tzinfo=pytz.FixedOffset(60))
 
-        # Vérifier si le combat a eu lieu avant le patch
+        # Check if the combat took place before the patch
         if self.start_date >= pre_patch_date:
             return False
 
@@ -597,11 +593,11 @@ class Boss:
 
         prof = players[i_player].get('profession', '')
 
-        # Vérifier si le joueur est un Warrior/Berserker
+        # Check if the player is a Warrior/Berserker
         if prof not in ["Warrior", "Berserker"]:
             return False
 
-        # Vérifier s'il a fourni des buffs de bannière
+        # Check if they provided banner buffs
         group_buffs = players[i_player].get('groupBuffs', [])
         for buff in group_buffs:
             if buff.get('id') in self.BANNER_IDS:
@@ -610,44 +606,44 @@ class Boss:
         return False
 
     # -------------------------------------------------------------------------
-    # Méthodes pour accéder aux données des joueurs
+    # Methods to access player data
     # -------------------------------------------------------------------------
 
     def get_player_name(self, i_player: int) -> str:
         """
-        Récupère le nom du joueur.
+        Retrieves the name of the player.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Nom du joueur
+            Player's name
         """
         return self.log.jcontent.get('players', [])[i_player].get('name', 'Unknown')
 
     def get_player_account(self, i_player: int) -> str:
         """
-        Récupère le nom de compte du joueur.
+        Retrieves the player's account name.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Nom de compte du joueur (format: name.1234)
+            Player's account name (format: name.1234)
         """
         return self.log.pjcontent.get('players', [])[i_player].get('account', 'Unknown')
 
     def get_player_pos(self, i_player: int, start: int = 0, end: Optional[int] = None) -> List[List[float]]:
         """
-        Récupère les positions du joueur au cours du combat.
+        Retrieves the player's positions during the fight.
 
         Args:
-            i_player: Indice du joueur
-            start: Indice de début pour les positions
-            end: Indice de fin pour les positions (None = jusqu'à la fin)
+            i_player: Player index
+            start: Start index for positions
+            end: End index for positions (None = until the end)
 
         Returns:
-            Liste des positions [x, y, z] du joueur
+            List of [x, y, z] positions for the player
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -660,13 +656,13 @@ class Boss:
 
     def get_cc_boss(self, i_player: int) -> float:
         """
-        Récupère les dégâts de barre de défiance infligés au boss par le joueur.
+        Retrieves the defiance bar damage dealt to the boss by the player.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Dégâts de barre de défiance infligés au boss
+            Defiance bar damage to the boss
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -680,13 +676,13 @@ class Boss:
 
     def get_dmg_boss(self, i_player: int) -> int:
         """
-        Récupère les dégâts infligés au boss par le joueur.
+        Retrieves the damage dealt to the boss by the player.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Dégâts infligés au boss
+            Damage dealt to the boss
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -703,13 +699,13 @@ class Boss:
 
     def get_cc_total(self, i_player: int) -> float:
         """
-        Récupère les dégâts de barre de défiance infligés au total par le joueur.
+        Retrieves the total defiance bar damage dealt by the player.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Dégâts de barre de défiance infligés au total
+            Total defiance bar damage
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -723,13 +719,13 @@ class Boss:
 
     def get_player_id(self, name: str) -> Optional[int]:
         """
-        Récupère l'indice d'un joueur à partir de son nom.
+        Retrieves the index of a player by their name.
 
         Args:
-            name: Nom du joueur à rechercher
+            name: Player name to search
 
         Returns:
-            Indice du joueur ou None s'il n'est pas trouvé
+            Player index or None if not found
         """
         players = self.log.pjcontent.get('players', [])
 
@@ -741,13 +737,13 @@ class Boss:
 
     def get_player_spe(self, i_player: int) -> str:
         """
-        Récupère la spécialisation du joueur.
+        Retrieves the player's specialization.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Nom de la spécialisation
+            Name of the specialization
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -757,17 +753,17 @@ class Boss:
 
     def get_player_mech_history(self, i_player: int, mechs: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """
-        Récupère l'historique des mécaniques pour un joueur.
+        Retrieves the mechanic history for a player.
 
-        Collecte tous les événements de mécanique qui ont affecté le joueur pendant le combat,
-        avec possibilité de filtrer par types de mécaniques spécifiques.
+        Collects all mechanic events that affected the player during the fight,
+        with optional filtering by specific mechanic names.
 
         Args:
-            i_player: Indice du joueur
-            mechs: Liste des noms de mécaniques à filtrer (None = toutes)
+            i_player: Player index
+            mechs: List of mechanic names to filter (None = all)
 
         Returns:
-            Liste des événements de mécanique pour le joueur, triée par temps
+            List of mechanic events for the player, sorted by time
         """
         history = []
         player_name = self.get_player_name(i_player)
@@ -781,29 +777,27 @@ class Boss:
 
             for data in mech.get('mechanicsData', []):
                 if data.get('actor') == player_name:
-                    # Ajouter l'événement si mechs est vide ou si le nom de la mécanique est dans mechs
                     if not mechs or mech_name in mechs:
                         history.append({
                             "name": mech_name,
                             "time": data.get('time', 0)
                         })
 
-        # Trier les événements par temps croissant
         history.sort(key=lambda event: event.get("time", 0))
         return history
 
     def players_to_string(self, i_players: List[int]) -> str:
         """
-        Convertit une liste d'indices de joueurs en une chaîne formatée avec leurs noms.
+        Converts a list of player indices into a formatted string with their names.
 
-        Utilise les noms personnalisés si disponibles, sinon utilise les noms des joueurs dans le log.
-        Le résultat est formaté en Markdown pour l'affichage.
+        Uses custom names if available, otherwise falls back to the player's log name.
+        The result is formatted in Markdown for display.
 
         Args:
-            i_players: Liste des indices des joueurs
+            i_players: List of player indices
 
         Returns:
-            Chaîne formatée avec les noms des joueurs
+            Formatted string of player names
         """
         name_list = []
 
@@ -816,18 +810,17 @@ class Boss:
             else:
                 name_list.append(self.get_player_name(i))
 
-        # Formater la chaîne de résultat en style Markdown
         return "__" + '__ / __'.join(name_list) + "__"
 
     def get_player_death_timer(self, i_player: int) -> Optional[int]:
         """
-        Récupère le moment où le joueur est mort pendant le combat.
+        Retrieves the moment when the player died during the fight.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Temps de mort en ms depuis le début du combat, ou None si le joueur n'est pas mort
+            Death time in ms since start of the fight, or None if not dead
         """
         if not self.is_dead(i_player):
             return None
@@ -835,20 +828,19 @@ class Boss:
         mech_history = self.get_player_mech_history(i_player, ["Dead"])
 
         if mech_history:
-            # Renvoyer le temps de la dernière mort
             return mech_history[-1].get('time')
 
         return None
 
     def get_player_rotation(self, i_player: int) -> List[Dict[str, Any]]:
         """
-        Récupère la rotation des compétences du joueur pendant le combat.
+        Retrieves the player's skill rotation during the fight.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Liste des compétences utilisées par le joueur
+            List of skills used by the player
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -858,15 +850,15 @@ class Boss:
 
     def time_entered_area(self, i_player: int, center: List[float], radius: float) -> Optional[int]:
         """
-        Détermine le moment où le joueur est entré dans une zone circulaire.
+        Determines when the player entered a circular area.
 
         Args:
-            i_player: Indice du joueur
-            center: Coordonnées [x, y, z] du centre de la zone
-            radius: Rayon de la zone
+            i_player: Player index
+            center: Coordinates [x, y, z] of the center of the area
+            radius: Radius of the area
 
         Returns:
-            Temps en ms depuis le début du combat, ou None si le joueur n'est jamais entré dans la zone
+            Time in ms since the start of the fight, or None if never entered
         """
         from utils.maths import get_dist
 
@@ -874,7 +866,6 @@ class Boss:
         if not poses:
             return None
 
-        # Délai entre chaque position (ms)
         position_interval = 150
 
         for i, pos in enumerate(poses):
@@ -885,15 +876,15 @@ class Boss:
 
     def time_exited_area(self, i_player: int, center: List[float], radius: float) -> Optional[int]:
         """
-        Détermine le moment où le joueur est sorti d'une zone circulaire après y être entré.
+        Determines when the player exited a circular area after entering it.
 
         Args:
-            i_player: Indice du joueur
-            center: Coordonnées [x, y, z] du centre de la zone
-            radius: Rayon de la zone
+            i_player: Player index
+            center: Coordinates [x, y, z] of the center of the area
+            radius: Radius of the area
 
         Returns:
-            Temps en ms depuis le début du combat, ou None si le joueur n'est jamais sorti de la zone
+            Time in ms since the start of the fight, or None if never exited
         """
         from utils.maths import get_dist
 
@@ -901,13 +892,10 @@ class Boss:
         if time_enter is None:
             return None
 
-        # Délai entre chaque position (ms)
+        # Delay between each position (ms)
         position_interval = 150
-
-        # Indice de la position d'entrée
         i_enter = int(time_enter / position_interval)
 
-        # Récupérer les positions après l'entrée dans la zone
         poses = self.get_player_pos(i_player, start=i_enter)
         if not poses:
             return None
@@ -920,17 +908,15 @@ class Boss:
 
     def add_mvps(self, players: List[int]) -> None:
         """
-        Ajoute des joueurs à la liste des MVP (Most Valuable Players) pour ce combat.
+        Adds players to the MVP (Most Valuable Player) list for this fight.
 
-        Incrémente également le compteur de MVP pour chaque joueur dans le dictionnaire global.
+        Also increments the MVP count for each player in the global dictionary.
 
         Args:
-            players: Liste des indices des joueurs à ajouter comme MVP
+            players: List of player indices to mark as MVP
         """
-        # Récupérer les comptes des joueurs MVP
         self.mvp_accounts = [self.get_player_account(i) for i in players]
 
-        # Incrémenter le compteur de MVP pour chaque joueur
         for i in players:
             account = self.get_player_account(i)
             player = ALL_PLAYERS.get(account)
@@ -939,17 +925,15 @@ class Boss:
 
     def add_lvps(self, players: List[int]) -> None:
         """
-        Ajoute des joueurs à la liste des LVP (Least Valuable Players) pour ce combat.
+        Adds players to the LVP (Least Valuable Player) list for this fight.
 
-        Incrémente également le compteur de LVP pour chaque joueur dans le dictionnaire global.
+        Also increments the LVP count for each player in the global dictionary.
 
         Args:
-            players: Liste des indices des joueurs à ajouter comme LVP
+            players: List of player indices to mark as LVP
         """
-        # Récupérer les comptes des joueurs LVP
         self.lvp_accounts = [self.get_player_account(i) for i in players]
 
-        # Incrémenter le compteur de LVP pour chaque joueur
         for i in players:
             account = self.get_player_account(i)
             player = ALL_PLAYERS.get(account)
@@ -958,17 +942,16 @@ class Boss:
 
     def _get_dps_contrib(self, exclude: List[PlayerFilter] = None) -> Dict[str, float]:
         """
-        Calcule la contribution en dégâts de chaque joueur, normalisée sur une échelle de 0 à 20.
+        Computes each player's DPS contribution, normalized on a scale from 0 to 20.
 
-        Cette méthode permet d'obtenir une représentation relative des performances en dégâts,
-        où le joueur ayant fait le plus de dégâts obtient 20 points, et les autres sont
-        évalués proportionnellement.
+        This method gives a relative performance measure in terms of damage dealt,
+        with the top DPS player scoring 20 points and others proportionally less.
 
         Args:
-            exclude: Liste des fonctions de filtrage pour exclure certains joueurs
+            exclude: List of filtering functions to exclude certain players
 
         Returns:
-            Dictionnaire associant les comptes des joueurs à leur contribution normalisée
+            Dictionary mapping player accounts to their normalized contribution
         """
         if exclude is None:
             exclude = []
@@ -976,26 +959,20 @@ class Boss:
         dps_ranking = {}
         max_dps = 0
 
-        # Calculer les dégâts pour chaque joueur et trouver le maximum
         for i in self.player_list:
-            # Ignorer les joueurs exclus par les filtres
             if any(filter_func(i) for filter_func in exclude):
                 continue
 
             try:
-                # Récupérer les dégâts pour la phase principale
                 player_dps = self.get_dmg_boss(i)
 
-                # Mettre à jour le maximum
                 if player_dps > max_dps:
                     max_dps = player_dps
 
-                # Stocker les dégâts du joueur
                 dps_ranking[self.get_player_account(i)] = player_dps
             except (KeyError, IndexError):
                 continue
 
-        # Normaliser les valeurs sur une échelle de 0 à 20
         if max_dps > 0:
             for player in dps_ranking:
                 dps_ranking[player] = 20.0 * dps_ranking[player] / max_dps
@@ -1004,24 +981,24 @@ class Boss:
 
     def get_dps_ranking(self) -> Dict[str, float]:
         """
-        Récupère le classement des joueurs DPS selon leur contribution en dégâts.
+        Retrieves the DPS ranking of players based on damage contribution.
 
-        Les joueurs de support sont exclus de ce classement.
+        Support players are excluded from this ranking.
 
         Returns:
-            Dictionnaire associant les comptes des joueurs à leur contribution normalisée
+            Dictionary mapping player accounts to their normalized contribution
         """
         return self._get_dps_contrib([self.is_support])
 
     def get_player_group(self, i_player: int) -> int:
         """
-        Récupère le numéro du groupe auquel appartient le joueur.
+        Retrieves the group number the player belongs to.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Numéro du groupe
+            Group number
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -1031,15 +1008,15 @@ class Boss:
 
     def get_foodswap_count(self, i_player: int) -> int:
         """
-        Compte le nombre de fois où le joueur a changé de nourriture pendant le combat.
+        Counts how many times the player changed food during the fight.
 
-        Détecte les changements de buff de nourriture en cherchant l'icône spécifique.
+        Detects food buff changes by identifying a specific icon.
 
         Args:
-            i_player: Indice du joueur
+            i_player: Player index
 
         Returns:
-            Nombre de changements de nourriture
+            Number of food swaps
         """
         players = self.log.pjcontent.get('players', [])
         if i_player >= len(players):
@@ -1048,26 +1025,21 @@ class Boss:
         buff_map = self.log.pjcontent.get('buffMap', {})
         buff_uptimes = players[i_player].get('buffUptimes', [])
 
-        # IDs des buffs de nourriture
         food_swap_ids = []
 
-        # Identifier les buffs de nourriture par leur icône
         for buff_name, data in buff_map.items():
             if data.get('icon') == self.FOOD_SWAP_ICON:
                 try:
-                    # Les IDs dans buffMap commencent par 'b', donc on enlève le 'b'
-                    food_swap_ids.append(int(buff_name[1:]))
+                    food_swap_ids.append(int(buff_name[1:]))  # Remove 'b' prefix
                 except ValueError:
                     continue
 
         food_swap_count = 0
 
-        # Compter les changements d'état de chaque buff de nourriture
         for buff in buff_uptimes:
             if buff.get('id') in food_swap_ids:
                 states = buff.get('states', [])
                 for state in states:
-                    # L'état 1 indique que le buff est actif
                     if len(state) > 1 and state[1] == 1:
                         food_swap_count += 1
 
@@ -1079,31 +1051,31 @@ class Boss:
 
     def get_mvp_cc_boss(self, extra_exclude: List[Callable[[int], bool]] = None) -> Optional[str]:
         """
-        Identifie et récompense les joueurs avec la meilleure contribution au contrôle du boss (CC).
+        Identifies and rewards players with the best contribution to boss control (CC).
 
-        Trouve les joueurs qui ont fourni la valeur minimum de CC sur le boss principal,
-        les ajoute à la liste des MVP et génère un message formaté pour le rapport.
+        Finds the players who contributed the minimum CC value on the main boss,
+        adds them to the MVP list, and generates a formatted message for the report.
 
         Args:
-            extra_exclude: Liste de fonctions de filtrage supplémentaires pour exclure certains joueurs
+            extra_exclude: List of additional filtering functions to exclude certain players
 
         Returns:
-            Message formaté pour le rapport, ou None si aucun CC n'a été fait
+            Formatted message for the report, or None if no CC was done
         """
         if extra_exclude is None:
             extra_exclude = []
 
-        # Obtenir les joueurs avec la contribution CC minimale
+        # Get players with the minimum CC contribution
         i_players, min_cc, total_cc = Analyzer.get_min_value(self.player_list, self.get_cc_boss, exclude=extra_exclude)
 
-        # Si aucun joueur n'a fait de CC, ne pas générer de message
+        # If no players did CC, do not generate a message
         if total_cc == 0:
             return None
 
-        # Ajouter ces joueurs à la liste des MVP
+        # Add these players to the MVP list
         self.add_mvps(i_players)
 
-        # Préparer les variables pour le message
+        # Prepare variables for the message
         mvp_names = self.players_to_string(i_players)
         cc_ratio = min_cc / total_cc * 100
         number_mvp = len(i_players)
@@ -1121,31 +1093,31 @@ class Boss:
 
     def get_mvp_cc_total(self, extra_exclude: List[Callable[[int], bool]] = None) -> Optional[str]:
         """
-        Identifie et récompense les joueurs avec la meilleure contribution au contrôle total (CC).
+        Identifies and rewards players with the best contribution to total control (CC).
 
-        Trouve les joueurs qui ont fourni la valeur minimum de CC au total (boss + adds),
-        les ajoute à la liste des MVP et génère un message formaté pour le rapport.
+        Finds the players who contributed the minimum CC value in total (boss + adds),
+        adds them to the MVP list, and generates a formatted message for the report.
 
         Args:
-            extra_exclude: Liste de fonctions de filtrage supplémentaires pour exclure certains joueurs
+            extra_exclude: List of additional filtering functions to exclude certain players
 
         Returns:
-            Message formaté pour le rapport, ou None si aucun CC n'a été fait
+            Formatted message for the report, or None if no CC was done
         """
         if extra_exclude is None:
             extra_exclude = []
 
-        # Obtenir les joueurs avec la contribution CC minimale
+        # Get players with the minimum total CC contribution
         i_players, min_cc, total_cc = Analyzer.get_min_value(self.player_list, self.get_cc_total, exclude=extra_exclude)
 
-        # Si aucun joueur n'a fait de CC, ne pas générer de message
+        # If no players did CC, do not generate a message
         if total_cc == 0:
             return None
 
-        # Ajouter ces joueurs à la liste des MVP
+        # Add these players to the MVP list
         self.add_mvps(i_players)
 
-        # Préparer les variables pour le message
+        # Prepare variables for the message
         mvp_names = self.players_to_string(i_players)
         cc_ratio = min_cc / total_cc * 100
         number_mvp = len(i_players)
@@ -1163,23 +1135,23 @@ class Boss:
 
     def get_bad_dps(self, extra_exclude: List[Callable[[int], bool]] = None) -> Optional[str]:
         """
-        Identifie les joueurs DPS qui font moins de dégâts qu'un support.
+        Identifies DPS players who deal less damage than a support player.
 
-        Cette méthode recherche les joueurs de support ayant fait le plus de dégâts,
-        puis identifie les joueurs DPS dont les dégâts sont inférieurs à ce support.
-        Ces joueurs DPS sont considérés comme sous-performants et sont ajoutés à la liste des MVP
-        (ironiquement) pour souligner leur besoin d'amélioration.
+        This method looks for the support players who dealt the most damage,
+        then identifies DPS players whose damage is lower than that of the support.
+        These DPS players are considered underperforming and are added to the MVP list
+        (ironically) to highlight their need for improvement.
 
         Args:
-            extra_exclude: Liste de fonctions de filtrage supplémentaires pour exclure certains joueurs
+            extra_exclude: List of additional filtering functions to exclude certain players
 
         Returns:
-            Message formaté pour le rapport, ou None si aucun DPS n'est sous-performant
+            Formatted message for the report, or None if no DPS are underperforming
         """
         if extra_exclude is None:
             extra_exclude = []
 
-        # Trouver le support avec les dégâts les plus élevés
+        # Find the support player with the highest damage
         i_sup, sup_max_dmg, _ = Analyzer.get_max_value(
             self.player_list,
             self.get_dmg_boss,
@@ -1189,9 +1161,9 @@ class Boss:
         sup_name = self.players_to_string(i_sup)
         bad_dps = []
 
-        # Identifier les joueurs DPS qui font moins de dégâts que le meilleur support
+        # Identify DPS players who deal less damage than the best support
         for i in self.player_list:
-            # Exclure les joueurs qui ne sont pas pertinents pour cette analyse
+            # Exclude players who are not relevant to this analysis
             should_exclude = (
                     (extra_exclude and any(filter_func(i) for filter_func in extra_exclude)) or
                     self.is_dead(i) or
@@ -1204,13 +1176,13 @@ class Boss:
 
             dps = self.get_dmg_boss(i)
 
-            # Vérifier si ce DPS fait moins de dégâts que le meilleur support
+            # Check if this DPS does less damage than the best support
             if dps < sup_max_dmg:
-                # Exception spéciale pour les Spellbreakers sur le boss QUOIDIMM
+                # Special exception for Spellbreakers on the QUOIDIMM boss
                 if not (self.name == "QUOIDIMM" and self.get_player_spe(i) == "Spellbreaker"):
                     bad_dps.append(i)
 
-        # S'il y a des DPS sous-performants, générer un message
+        # If there are underperforming DPS, generate a message
         if bad_dps:
             self.add_mvps(bad_dps)
             bad_dps_name = self.players_to_string(bad_dps)
@@ -1228,82 +1200,82 @@ class Boss:
 
     def get_lvp_cc_boss(self) -> Optional[str]:
         """
-        Identifie et pénalise les joueurs avec la pire contribution au contrôle du boss (CC).
+        Identifies and penalizes players with the worst contribution to boss control (CC).
 
-        Trouve les joueurs qui ont fourni la valeur maximum de CC sur le boss principal,
-        les ajoute à la liste des LVP et génère un message formaté pour le rapport.
+        Finds the players who contributed the maximum CC value on the main boss,
+        adds them to the LVP list, and generates a formatted message for the report.
 
         Returns:
-            Message formaté pour le rapport, ou None si aucun CC n'a été fait
+            Formatted message for the report, or None if no CC was done
         """
-        # Obtenir les joueurs avec la contribution CC maximale
+        # Get players with the maximum CC contribution
         i_players, max_cc, total_cc = Analyzer.get_max_value(self.player_list, self.get_cc_boss)
 
-        # Si aucun joueur n'a fait de CC, ne pas générer de message
+        # If no players did CC, do not generate a message
         if total_cc == 0:
             return None
 
-        # Ajouter ces joueurs à la liste des LVP
+        # Add these players to the LVP list
         self.add_lvps(i_players)
 
-        # Préparer les variables pour le message
+        # Prepare variables for the message
         lvp_names = self.players_to_string(i_players)
         cc_ratio = max_cc / total_cc * 100
 
-        # Générer le message
+        # Generate the message
         return language_config.selected_language["LVP BOSS CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
 
     def get_lvp_cc_total(self) -> Optional[str]:
         """
-        Identifie et pénalise les joueurs avec la pire contribution au contrôle total (CC).
+        Identifies and penalizes players with the worst contribution to total control (CC).
 
-        Trouve les joueurs qui ont fourni la valeur maximum de CC au total (boss + adds),
-        les ajoute à la liste des LVP et génère un message formaté pour le rapport.
+        Finds the players who contributed the maximum CC value in total (boss + adds),
+        adds them to the LVP list, and generates a formatted message for the report.
 
         Returns:
-            Message formaté pour le rapport, ou None si aucun CC n'a été fait
+            Formatted message for the report, or None if no CC was done
         """
-        # Obtenir les joueurs avec la contribution CC maximale
+        # Get players with the maximum total CC contribution
         i_players, max_cc, total_cc = Analyzer.get_max_value(self.player_list, self.get_cc_total)
 
-        # Si aucun joueur n'a fait de CC, ne pas générer de message
+        # If no players did CC, do not generate a message
         if total_cc == 0:
             return None
 
-        # Ajouter ces joueurs à la liste des LVP
+        # Add these players to the LVP list
         self.add_lvps(i_players)
 
-        # Préparer les variables pour le message
+        # Prepare variables for the message
         lvp_names = self.players_to_string(i_players)
         cc_ratio = max_cc / total_cc * 100
 
-        # Générer le message
+        # Generate the message
         return language_config.selected_language["LVP TOTAL CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
 
     def get_lvp_dps(self) -> str:
         """
-        Identifie et pénalise les joueurs avec la pire contribution aux dégâts.
+        Identifies and penalizes players with the worst damage contribution.
 
-        Trouve les joueurs qui ont fait le plus de dégâts au boss,
-        les ajoute à la liste des LVP et génère un message formaté pour le rapport.
-        Cette méthode vérifie également si le joueur a changé de nourriture fréquemment,
-        ce qui peut expliquer sa mauvaise performance.
+        Finds the players who dealt the most damage to the boss,
+        adds them to the LVP list, and generates a formatted message for the report.
+        This method also checks if the player frequently changed food,
+        which could explain their poor performance.
 
         Returns:
-            Message formaté pour le rapport
+            Formatted message for the report
         """
-        # Obtenir les joueurs avec les dégâts maximaux
+        # Get players with the maximum damage
         i_players, max_dmg, total_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_boss)
 
-        # Calculer les statistiques supplémentaires
+        # Calculate additional statistics
         dmg_ratio = max_dmg / total_dmg * 100 if total_dmg > 0 else 0
         lvp_dps_name = self.players_to_string(i_players)
         dps = max_dmg / self.duration_ms if self.duration_ms > 0 else 0
 
-        # Vérifier les changements de nourriture
+        # Check for food changes
         food_swap_count = self.get_foodswap_count(i_players[0]) if i_players else 0
 
-        # Ajouter ces joueurs à la liste des LVP
+        # Add these players to the LVP list
         self.add_lvps(i_players)
 
         if food_swap_count:
@@ -1321,27 +1293,26 @@ class Boss:
                 dmg_ratio=dmg_ratio,
                 dps=dps
             )
-
     # -------------------------------------------------------------------------
-    # Données liées au boss
+    # Boss-related data
     # -------------------------------------------------------------------------
 
     def get_pos_boss(self, start: int = 0, end: Optional[int] = None) -> List[List[float]]:
         """
-        Récupère les positions du boss principal au cours du combat.
+        Retrieves the main boss's positions during the fight.
 
-        Parcourt les cibles (targets) pour trouver celle qui correspond à un boss connu
-        et renvoie ses positions.
+        Iterates through the targets to find one that matches a known boss
+        and returns its positions.
 
         Args:
-            start: Indice de début pour les positions (défaut = 0)
-            end: Indice de fin pour les positions (None = jusqu'à la fin)
+            start: Starting index for positions (default = 0)
+            end: Ending index for positions (None = until the end)
 
         Returns:
-            Liste des positions [x, y, z] du boss
+            List of [x, y, z] positions of the boss
 
         Raises:
-            ValueError: Si aucun boss n'est trouvé dans les cibles
+            ValueError: If no boss is found among the targets
         """
         targets = self.log.pjcontent.get('targets', [])
 
@@ -1356,18 +1327,18 @@ class Boss:
 
     def get_phase_timers(self, target_phase: str, in_milliseconds: bool = False) -> Tuple[int, int]:
         """
-        Récupère les temps de début et de fin d'une phase spécifique du combat.
+        Retrieves the start and end times of a specific fight phase.
 
         Args:
-            target_phase: Nom de la phase à rechercher
-            in_milliseconds: Si True, renvoie les temps en millisecondes,
-                            sinon en indices de position
+            target_phase: Name of the phase to look for
+            in_milliseconds: If True, returns times in milliseconds;
+                             otherwise, in position indices
 
         Returns:
-            Tuple (début, fin) représentant les temps ou indices de la phase
+            Tuple (start, end) representing the phase times or indices
 
         Raises:
-            ValueError: Si la phase n'est pas trouvée
+            ValueError: If the phase is not found
         """
         phases = self.log.pjcontent.get('phases', [])
 
@@ -1379,36 +1350,36 @@ class Boss:
                 if in_milliseconds:
                     return start, end
 
-                # Convertir en indices de position
+                # Convert to position indices
                 return time_to_index(start, self.time_base), time_to_index(end, self.time_base)
 
         raise ValueError(f'Phase "{target_phase}" not found')
 
     def get_mech_value(self, i_player: int, mech_name: str, phase: str = "Full Fight") -> int:
         """
-        Récupère le nombre d'occurrences d'une mécanique pour un joueur dans une phase donnée.
+        Retrieves the number of occurrences of a mechanic for a player during a specific phase.
 
         Args:
-            i_player: Indice du joueur
-            mech_name: Nom de la mécanique à rechercher
-            phase: Nom de la phase (défaut = "Full Fight")
+            i_player: Player index
+            mech_name: Name of the mechanic to look for
+            phase: Name of the phase (default = "Full Fight")
 
         Returns:
-            Nombre d'occurrences de la mécanique pour ce joueur
+            Number of mechanic occurrences for this player
         """
         phase_id = self.get_phase_id(phase)
 
-        # Créer la liste des noms de mécaniques
+        # Create the list of mechanic names
         mechs_list = []
         for mech in self.mechanics:
             mechs_list.append(mech.get('name', ''))
 
-        # Vérifier si la mécanique existe
+        # Check if the mechanic exists
         if mech_name in mechs_list:
             i_mech = mechs_list.index(mech_name)
 
             try:
-                # Accéder aux statistiques de mécanique avec vérification des indices
+                # Access mechanic stats with index checks
                 phases = self.log.jcontent.get('phases', [])
                 if phase_id < len(phases):
                     mech_stats = phases[phase_id].get('mechanicStats', [])
@@ -1416,23 +1387,22 @@ class Boss:
                     if i_player < len(mech_stats) and i_mech < len(mech_stats[i_player]):
                         return mech_stats[i_player][i_mech][0]
             except (IndexError, KeyError, TypeError):
-                # En cas d'erreur, retourner 0
+                # Return 0 in case of any error
                 pass
 
         return 0
 
     def boss_hp_to_time(self, hp: float) -> Optional[int]:
         """
-        Convertit un pourcentage de santé du boss en temps écoulé depuis le début du combat.
+        Converts a boss HP percentage to the time elapsed since the start of the fight.
 
-        Cette méthode trouve le premier moment où le boss a atteint un pourcentage de santé
-        inférieur à la valeur spécifiée.
+        This method finds the first moment when the boss's HP fell below the given percentage.
 
         Args:
-            hp: Pourcentage de santé du boss (0-100)
+            hp: Boss health percentage (0-100)
 
         Returns:
-            Temps en ms où le boss avait ce pourcentage de santé, ou None si non trouvé
+            Time in ms when the boss had this HP percentage, or None if not found
         """
         targets = self.log.pjcontent.get('targets', [])
         if not targets:
@@ -1441,7 +1411,7 @@ class Boss:
         hp_percents = targets[0].get('healthPercents', [])
 
         for timer in hp_percents:
-            # Vérifier que timer est une liste avec au moins 2 éléments
+            # Ensure timer is a list with at least 2 elements
             if isinstance(timer, list) and len(timer) > 1:
                 if timer[1] < hp:
                     return timer[0]
@@ -1450,13 +1420,13 @@ class Boss:
 
     def get_mechanic_history(self, name: str) -> List[Dict[str, Any]]:
         """
-        Récupère l'historique complet d'une mécanique spécifique pendant le combat.
+        Retrieves the full history of a specific mechanic during the fight.
 
         Args:
-            name: Nom complet de la mécanique
+            name: Full name of the mechanic
 
         Returns:
-            Liste des occurrences de la mécanique, ou liste vide si non trouvée
+            List of occurrences of the mechanic, or an empty list if not found
         """
         mechanics = self.log.pjcontent.get('mechanics', [])
 
@@ -1468,13 +1438,13 @@ class Boss:
 
     def get_phase_id(self, name: str) -> int:
         """
-        Récupère l'identifiant d'une phase du combat à partir de son nom.
+        Retrieves the ID of a fight phase by its name.
 
         Args:
-            name: Nom de la phase
+            name: Name of the phase
 
         Returns:
-            ID de la phase, ou 0 si non trouvée
+            Phase ID, or 0 if not found
         """
         phases = self.log.pjcontent.get('phases', [])
 
@@ -1486,28 +1456,27 @@ class Boss:
 
     def get_time_base(self) -> int:
         """
-        Calcule l'intervalle de temps entre chaque position enregistrée.
+        Calculates the time interval between each recorded position.
 
-        Cette valeur est utilisée pour convertir les indices de position en timestamps.
-        Elle représente le rapport entre la durée totale du combat et le nombre de positions
-        enregistrées.
+        This value is used to convert position indices to timestamps.
+        It represents the ratio between the total fight duration and the number of recorded positions.
 
         Returns:
-            Intervalle de temps en millisecondes
+            Time interval in milliseconds
         """
         players = self.log.pjcontent.get('players', [])
         if not players:
-            return 150  # Valeur par défaut
+            return 150  # Default value
 
-        # Accéder au premier joueur pour obtenir les données de replay
+        # Access the first player's replay data
         combat_data = players[0].get('combatReplayData', {})
         start = combat_data.get('start', 0)
         end = combat_data.get('end', 0)
         positions = combat_data.get('positions', [])
 
         if not positions or end <= start:
-            return 150  # Valeur par défaut
+            return 150  # Default value
 
-        # Calculer l'intervalle en divisant la durée totale par le nombre de positions
+        # Calculate the interval by dividing total duration by number of positions
         delta = end - start
         return int(delta / len(positions))

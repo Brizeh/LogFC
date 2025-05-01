@@ -1,5 +1,3 @@
-
-"""
 from core.models.boss import Boss
 from core.models.log import Log
 from core.stats.analyzer import Analyzer
@@ -8,73 +6,73 @@ from i18n.languages import language_config
 
 class KODANS(Boss):
     """
-    Kodans de la saga Icebrood.
+    Kodans from the Icebrood Saga.
     """
-    
+
     last = None
     name = "KODANS"
     boss_id = 22343
     wing = "IBS"
-    
+
     def __init__(self, log: Log):
         """
-        Initialise une instance de Kodans.
-        
+        Initializes an instance of Kodans.
+
         Args:
-            log (Log): Objet contenant les données du journal de combat
+            log (Log): Object containing the combat log data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
         self.lvp = self.get_lvp()
         KODANS.last = self
-        
+
     def get_mvp(self):
         """
-        Récupère le message pour le joueur le plus performant.
-        
+        Retrieves the message for the most effective player.
+
         Returns:
-            str: Message pour le joueur le plus performant ou None
+            str: Message for the most effective player or None
         """
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
             return msg_bad_dps
         return None
-    
+
     def get_lvp(self):
         """
-        Récupère le message pour le joueur avec le plus de dégâts.
-        
+        Retrieves the message for the player with the most damage.
+
         Returns:
-            str: Message pour le joueur avec le plus de dégâts
+            str: Message for the player with the most damage
         """
         return self.get_lvp_dps()
-    
+
     def get_lvp_dps(self):
         """
-        Calcule et formate le message pour le joueur avec le plus de dégâts.
-        Prend en compte les dégâts combinés des deux cibles.
-        
+        Calculates and formats the message for the player with the most damage.
+        Takes into account the combined damage to both targets.
+
         Returns:
-            str: Message formaté pour le joueur avec le plus de dégâts
+            str: Formatted message for the player with the most damage
         """
         i_players, max_dmg, tot_dmg = Analyzer.get_max_value(self.player_list, self.get_dmg_boss)
         lvp_dps_name = self.players_to_string(i_players)
-        dps = max_dmg / self.duration_ms 
+        dps = max_dmg / self.duration_ms
         dmg_ratio = max_dmg / tot_dmg * 100
         self.add_lvps(i_players)
         return language_config.selected_language["LVP DPS"].format(
             lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=dmg_ratio
         )
-    
+
     def get_dmg_boss(self, i_player: int):
         """
-        Calcule les dégâts totaux infligés par un joueur aux deux cibles du boss.
-        
+        Calculates the total damage inflicted by a player to both boss targets.
+
         Args:
-            i_player (int): Index du joueur dans les données
-            
+            i_player (int): Player index in the data
+
         Returns:
-            int: Somme des dégâts infligés aux deux cibles
+            int: Sum of damage inflicted to both targets
         """
         boss1_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][0][self.real_phase_id]['damage']
         boss2_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][1][self.real_phase_id]['damage']

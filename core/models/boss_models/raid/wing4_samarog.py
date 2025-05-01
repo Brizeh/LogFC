@@ -6,7 +6,7 @@ from i18n.languages import language_config
 
 class SAMAROG(Boss):
     """
-    Samarog de la quatrième aile de raid.
+    Samarog
     """
 
     last = None
@@ -14,7 +14,7 @@ class SAMAROG(Boss):
     wing = 4
     boss_id = 17188
 
-    # Coordonnées des coins de l'arène
+    # Arena corner coordinates
     top_left_corn = [278.0, 645.2]
     top_right_corn = [667.6, 660.7]
     bot_left_corn = [299.4, 58.6]
@@ -23,10 +23,10 @@ class SAMAROG(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de SAMAROG avec un log spécifique.
+        Initializes a SAMAROG instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -35,13 +35,13 @@ class SAMAROG(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Samarog.
+        Determines the MVP (Most Valuable Player) for the Samarog fight.
 
-        Vérifie d'abord les joueurs empalés, puis les traîtres, et enfin les joueurs
-        avec peu de CC (excluant les joueurs fixés).
+        First checks impaled players, then traitors, and finally players
+        with low CC (excluding fixated players).
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_impaled = self.mvp_impaled()
         if msg_impaled:
@@ -55,10 +55,10 @@ class SAMAROG(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Samarog.
+        Determines the LVP (Least Valuable Player) for the Samarog fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_cc_boss()
 
@@ -66,10 +66,10 @@ class SAMAROG(Boss):
 
     def mvp_impaled(self):
         """
-        Identifie les MVP qui ont été empalés.
+        Identifies MVPs who were impaled.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été empalé
+            str: Formatted MVP message or None if no player was impaled
         """
         i_players = self.get_impaled()
         mvp_names = self.players_to_string(i_players)
@@ -84,10 +84,10 @@ class SAMAROG(Boss):
 
     def mvp_traitors(self):
         """
-        Identifie les MVP qui ont trahi d'autres joueurs (avec des verts).
+        Identifies MVPs who betrayed other players (with greens).
 
         Returns:
-            str: Message MVP formaté ou None si aucune trahison n'a eu lieu
+            str: Formatted MVP message or None if no betrayal occurred
         """
         i_trait, i_vict = self.get_traitors()
         trait_names = self.players_to_string(i_trait)
@@ -105,16 +105,16 @@ class SAMAROG(Boss):
 
     def got_impaled(self, i_player: int):
         """
-        Vérifie si un joueur a été empalé.
+        Checks if a player was impaled.
 
-        Un joueur est considéré comme empalé s'il est mort instantanément après
-        avoir été touché par Sweep ou Shock Wave.
+        A player is considered impaled if they died instantly after
+        being hit by Sweep or Shock Wave.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a été empalé, False sinon
+            bool: True if the player was impaled, False otherwise
         """
         if self.is_dead_instant(i_player):
             mech_history = self.get_player_mech_history(i_player)
@@ -129,13 +129,13 @@ class SAMAROG(Boss):
 
     def is_fix(self, i_player: int):
         """
-        Vérifie si un joueur a été fixé par Samarog au moins 3 fois.
+        Checks if a player was fixated by Samarog at least 3 times.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a été fixé au moins 3 fois, False sinon
+            bool: True if the player was fixated at least 3 times, False otherwise
         """
         return self.get_mech_value(i_player, "Fixate: Samarog") >= 3
 
@@ -143,10 +143,10 @@ class SAMAROG(Boss):
 
     def get_impaled(self):
         """
-        Récupère la liste des joueurs qui ont été empalés.
+        Retrieves the list of players who were impaled.
 
         Returns:
-            list: Liste des indices des joueurs empalés
+            list: List of indices of impaled players
         """
         i_players = []
         for i in self.player_list:
@@ -156,10 +156,10 @@ class SAMAROG(Boss):
 
     def get_traitors(self):
         """
-        Identifie les joueurs qui ont trahi d'autres joueurs avec des mécaniques vertes.
+        Identifies players who betrayed other players with green mechanics.
 
         Returns:
-            tuple: Tuple contenant (traîtres, victimes)
+            tuple: Tuple containing (traitors, victims)
         """
         traitors, victims = [], []
         big_greens = self.get_mechanic_history("Big Green")

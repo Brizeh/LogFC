@@ -5,7 +5,7 @@ from i18n.languages import language_config
 
 class CAIRN(Boss):
     """
-    Cairn de la quatrième aile de raid.
+    Cairn
     """
 
     last = None
@@ -15,10 +15,10 @@ class CAIRN(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de CAIRN avec un log spécifique.
+        Initializes a CAIRN instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -27,13 +27,13 @@ class CAIRN(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Cairn.
+        Determines the MVP (Most Valuable Player) for the Cairn fight.
 
-        Vérifie d'abord les joueurs avec le plus de téléportations, puis les joueurs
-        avec un DPS significativement bas.
+        First checks players with the most teleports, then players
+        with significantly low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_tp = self.mvp_tp()
         if msg_tp:
@@ -47,10 +47,10 @@ class CAIRN(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Cairn.
+        Determines the LVP (Least Valuable Player) for the Cairn fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -58,10 +58,10 @@ class CAIRN(Boss):
 
     def mvp_tp(self):
         """
-        Identifie les MVP basés sur le nombre élevé de téléportations.
+        Identifies MVPs based on high number of teleports.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur ne répond au critère
+            str: Formatted MVP message or None if no player meets the criteria
         """
         i_players, max_tp, _ = Analyzer.get_max_value(self.player_list, self.get_tp)
         mvp_names = self.players_to_string(i_players)
@@ -79,12 +79,12 @@ class CAIRN(Boss):
 
     def get_tp(self, i_player: int):
         """
-        Récupère le nombre de téléportations oranges pour un joueur.
+        Retrieves the number of orange teleports for a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre de téléportations oranges
+            int: Number of orange teleports
         """
         return self.get_mech_value(i_player, 'Orange TP')

@@ -5,7 +5,7 @@ from i18n.languages import language_config
 
 class DEIMOS(Boss):
     """
-    Deimos de la quatrième aile de raid.
+    Deimos
     """
 
     last = None
@@ -16,10 +16,10 @@ class DEIMOS(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de DEIMOS avec un log spécifique.
+        Initializes a DEIMOS instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -28,13 +28,13 @@ class DEIMOS(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Deimos.
+        Determines the MVP (Most Valuable Player) for the Deimos fight.
 
-        Vérifie d'abord les joueurs avec le plus d'huiles noires déclenchées,
-        puis les joueurs touchés par des pizzas.
+        First checks players with the most triggered black oils,
+        then players hit by pizzas.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_black = self.mvp_black()
         if msg_black:
@@ -48,12 +48,12 @@ class DEIMOS(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Deimos.
+        Determines the LVP (Least Valuable Player) for the Deimos fight.
 
-        Vérifie d'abord les joueurs avec beaucoup de larmes, puis les joueurs avec un DPS élevé.
+        First checks players with many tears, then players with high DPS.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         msg_tears = self.lvp_tears()
         if msg_tears:
@@ -63,10 +63,10 @@ class DEIMOS(Boss):
 
     def get_dps_ranking(self):
         """
-        Calcule le classement DPS des joueurs pour Deimos en excluant les supports et sacrifiés.
+        Calculates the DPS ranking of players for Deimos excluding supports and sacrificed players.
 
         Returns:
-            dict: Dictionnaire associant les joueurs à leur score DPS
+            dict: Dictionary associating players with their DPS score
         """
         return self._get_dps_contrib([self.is_support, self.is_sac])
 
@@ -74,10 +74,10 @@ class DEIMOS(Boss):
 
     def mvp_black(self):
         """
-        Identifie les MVP basés sur le déclenchement d'huiles noires.
+        Identifies MVPs based on black oil triggering.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a déclenché beaucoup d'huiles
+            str: Formatted MVP message or None if no player triggered many oils
         """
         i_players, max_black, _ = Analyzer.get_max_value(self.player_list, self.get_black_trigger)
         mvp_names = self.players_to_string(i_players)
@@ -94,10 +94,10 @@ class DEIMOS(Boss):
 
     def mvp_pizza(self):
         """
-        Identifie les MVP qui ont été touchés par des pizzas.
+        Identifies MVPs who were hit by pizzas.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été touché par des pizzas
+            str: Formatted MVP message or None if no player was hit by pizzas
         """
         i_players = self.get_pizzaed()
         mvp_names = self.players_to_string(i_players)
@@ -112,10 +112,10 @@ class DEIMOS(Boss):
 
     def lvp_tears(self):
         """
-        Identifie les LVP basés sur le nombre élevé de larmes reçues.
+        Identifies LVPs based on high number of tears received.
 
         Returns:
-            str: Message LVP formaté ou None si aucun joueur n'a reçu beaucoup de larmes
+            str: Formatted LVP message or None if no player received many tears
         """
         i_players, max_tears, _ = Analyzer.get_max_value(self.player_list, self.get_tears)
         lvp_names = self.players_to_string(i_players)
@@ -130,13 +130,13 @@ class DEIMOS(Boss):
 
     def got_pizzaed(self, i_player: int):
         """
-        Vérifie si un joueur est mort à cause d'une pizza.
+        Checks if a player died due to a pizza.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur est mort à cause d'une pizza, False sinon
+            bool: True if the player died due to a pizza, False otherwise
         """
         if self.is_dead_instant(i_player):
             mech_history = self.get_player_mech_history(i_player)
@@ -149,13 +149,13 @@ class DEIMOS(Boss):
 
     def is_sac(self, i_player: int):
         """
-        Vérifie si un joueur a été sacrifié (vert choisi).
+        Checks if a player was sacrificed (chosen green).
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a été sacrifié, False sinon
+            bool: True if the player was sacrificed, False otherwise
         """
         greens = self.get_mechanic_history('Chosen (Green)')
         if not greens:
@@ -166,34 +166,34 @@ class DEIMOS(Boss):
 
     def get_black_trigger(self, i_player: int):
         """
-        Récupère le nombre d'huiles noires déclenchées par un joueur.
+        Retrieves the number of black oils triggered by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre d'huiles noires déclenchées
+            int: Number of black oils triggered
         """
         return self.get_mech_value(i_player, "Black Oil Trigger")
 
     def get_tears(self, i_player: int):
         """
-        Récupère le nombre de larmes reçues par un joueur.
+        Retrieves the number of tears received by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre de larmes reçues
+            int: Number of tears received
         """
         return self.get_mech_value(i_player, "Tear")
 
     def get_pizzaed(self):
         """
-        Récupère la liste des joueurs tués par des pizzas.
+        Retrieves the list of players killed by pizzas.
 
         Returns:
-            list: Liste des indices des joueurs tués par des pizzas
+            list: List of indices of players killed by pizzas
         """
         pizzaed = []
         for i in self.player_list:

@@ -9,7 +9,6 @@ from i18n.languages import language_config
 class VG(Boss):
     """
     Vale Guardian
-    des téléportations pour éviter des dégâts et assurer la mécanique des secteurs.
     """
 
     # Attributs de classe

@@ -5,7 +5,7 @@ from i18n.languages import language_config
 
 class KC(Boss):
     """
-    Keep Construct (KC) de la troisième aile de raid.
+    Keep Construct (KC)
     """
 
     last = None
@@ -15,10 +15,10 @@ class KC(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de KC avec un log spécifique.
+        Initializes a KC instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -27,12 +27,12 @@ class KC(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Keep Construct.
+        Determines the MVP (Most Valuable Player) for the Keep Construct fight.
 
-        Vérifie d'abord les joueurs avec peu d'orbes gérées, puis les joueurs avec un DPS faible.
+        First checks players with few orbs handled, then players with low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_orb = self.mvp_orb_kc()
         if msg_orb:
@@ -46,12 +46,12 @@ class KC(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Keep Construct.
+        Determines the LVP (Least Valuable Player) for the Keep Construct fight.
 
-        Identifie les joueurs avec le nombre le plus élevé d'orbes gérées.
+        Identifies players with the highest number of orbs handled.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.lvp_orb_kc()
 
@@ -59,10 +59,10 @@ class KC(Boss):
 
     def mvp_orb_kc(self):
         """
-        Identifie les MVP basés sur la faible gestion des orbes.
+        Identifies MVPs based on low orb handling.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur ne répond au critère
+            str: Formatted MVP message or None if no player meets the criteria
         """
         i_players, min_orb, _ = Analyzer.get_min_value(self.player_list, self.get_good_orb)
         mvp_names = self.players_to_string(i_players)
@@ -82,10 +82,10 @@ class KC(Boss):
 
     def lvp_orb_kc(self):
         """
-        Identifie les LVP basés sur la gestion élevée des orbes.
+        Identifies LVPs based on high orb handling.
 
         Returns:
-            str: Message LVP formaté
+            str: Formatted LVP message
         """
         i_players, max_orb, _ = Analyzer.get_max_value(self.player_list, self.get_good_orb)
         lvp_names = self.players_to_string(i_players)
@@ -96,14 +96,14 @@ class KC(Boss):
 
     def get_good_orb(self, i_player: int):
         """
-        Calcule le score d'orbes pour un joueur donné, en tenant compte des orbes bien gérées
-        et des orbes mal gérées.
+        Calculates the orb score for a given player, taking into account well-handled orbs
+        and poorly handled orbs.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Score d'orbes (positif pour une bonne gestion, négatif pour une mauvaise)
+            int: Orb score (positive for good handling, negative for poor handling)
         """
         good_red_orbs = self.get_mech_value(i_player, 'Good Red Orb')
         good_white_orbs = self.get_mech_value(i_player, 'Good White Orb')

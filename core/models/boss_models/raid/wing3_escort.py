@@ -6,7 +6,7 @@ from utils.maths import get_dist
 
 class ESCORT(Boss):
     """
-    Escort de la troisième aile de raid.
+    Escort
     """
 
     last = None
@@ -25,10 +25,10 @@ class ESCORT(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de ESCORT avec un log spécifique.
+        Initializes an ESCORT instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -37,26 +37,26 @@ class ESCORT(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour l'escorte.
+        Determines the MVP (Most Valuable Player) for the escort.
 
-        Vérifie si des joueurs ont été touchés par les mines.
+        Checks if players have been hit by mines.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_mine = self.mvp_mine()
         if msg_mine:
             return msg_mine
-        return
+        return None
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour l'escorte.
+        Determines the LVP (Least Valuable Player) for the escort.
 
-        Vérifie d'abord les problèmes avec les tours, puis les appels excessifs de Glenna.
+        First checks for issues with towers, then excessive Glenna calls.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         msg_tower = self.lvp_tower()
         if msg_tower:
@@ -67,10 +67,10 @@ class ESCORT(Boss):
 
     def mvp_mine(self):
         """
-        Identifie les MVP basés sur le déclenchement de mines.
+        Identifies MVPs based on mine triggering.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a déclenché de mine
+            str: Formatted MVP message or None if no player triggered a mine
         """
         i_players = self.get_mined_players()
         if i_players:
@@ -80,16 +80,16 @@ class ESCORT(Boss):
                 return language_config.selected_language["ESCORT MVP MINE S"].format(mvp_names=mvp_names)
             else:
                 return language_config.selected_language["ESCORT MVP MINE P"].format(mvp_names=mvp_names)
-        return
+        return None
 
     ################################ LVP ################################
 
     def lvp_glenna(self):
         """
-        Identifie les LVP basés sur le nombre d'appels à Glenna.
+        Identifies LVPs based on the number of Glenna calls.
 
         Returns:
-            str: Message LVP formaté
+            str: Formatted LVP message
         """
         i_players, max_call, _ = Analyzer.get_max_value(self.player_list, self.get_glenna_call)
         lvp_names = self.players_to_string(i_players)
@@ -98,17 +98,17 @@ class ESCORT(Boss):
 
     def lvp_tower(self):
         """
-        Identifie les LVP basés sur l'activation incorrecte des tours.
+        Identifies LVPs based on incorrect tower activation.
 
         Returns:
-            str: Message LVP formaté ou None si les tours ont été correctement activées
+            str: Formatted LVP message or None if towers were correctly activated
         """
         towers = self.get_towers()
         lvp_names = self.players_to_string(towers)
         for i in self.player_list:
             for n in range(1, 6):
                 if self.is_tower_n(i, n) and not self.is_tower(i):
-                    return
+                    return None
         self.add_lvps(towers)
         if len(towers) == 1:
             return language_config.selected_language["ESCORT LVP TOWER S"].format(lvp_names=lvp_names)
@@ -118,26 +118,26 @@ class ESCORT(Boss):
 
     def got_mined(self, i_player: int):
         """
-        Vérifie si un joueur a été touché par une mine.
+        Checks if a player was hit by a mine.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a été touché, False sinon
+            bool: True if the player was hit, False otherwise
         """
         return self.get_mech_value(i_player, "Mine Detonation Hit") > 0
 
     def is_tower_n(self, i_player: int, n: int):
         """
-        Vérifie si un joueur a activé une tour spécifique.
+        Checks if a player activated a specific tower.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
-            n (int): Numéro de la tour (1-5)
+            i_player (int): Index of the player to check
+            n (int): Tower number (1-5)
 
         Returns:
-            bool: True si le joueur a activé la tour, False sinon
+            bool: True if the player activated the tower, False otherwise
         """
         poses = self.get_player_pos(i_player)
         tower = ESCORT.towers[n - 1]
@@ -148,13 +148,13 @@ class ESCORT(Boss):
 
     def is_tower(self, i_player: int):
         """
-        Vérifie si un joueur a activé toutes les tours.
+        Checks if a player activated all towers.
 
         Args:
-            i_player (int): Indice du joueur à vérifier
+            i_player (int): Index of the player to check
 
         Returns:
-            bool: True si le joueur a activé toutes les tours, False sinon
+            bool: True if the player activated all towers, False otherwise
         """
         for n in range(1, 6):
             if not self.is_tower_n(i_player, n):
@@ -165,10 +165,10 @@ class ESCORT(Boss):
 
     def get_mined_players(self):
         """
-        Récupère la liste des joueurs touchés par des mines.
+        Retrieves the list of players hit by mines.
 
         Returns:
-            list: Liste des indices des joueurs touchés par des mines
+            list: List of indices of players hit by mines
         """
         p = []
         for i in self.player_list:
@@ -178,22 +178,22 @@ class ESCORT(Boss):
 
     def get_glenna_call(self, i_player: int):
         """
-        Récupère le nombre d'appels "Over Here!" lancés par un joueur.
+        Retrieves the number of "Over Here!" calls made by a player.
 
         Args:
-            i_player (int): Indice du joueur
+            i_player (int): Player index
 
         Returns:
-            int: Nombre d'appels
+            int: Number of calls
         """
         return self.get_mech_value(i_player, "Over Here! Cast")
 
     def get_towers(self):
         """
-        Récupère la liste des joueurs ayant activé toutes les tours.
+        Retrieves the list of players who activated all towers.
 
         Returns:
-            list: Liste des indices des joueurs ayant activé toutes les tours
+            list: List of indices of players who activated all towers
         """
         towers = []
         for i in self.player_list:

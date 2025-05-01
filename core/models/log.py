@@ -6,16 +6,16 @@ from typing import Optional, Dict, Any
 
 class Log:
     """
-    Représente un fichier log d'une rencontre GW2.
-    Stocke les URLs et les données JSON extraites du log.
+    Represents a log file of a GW2 encounter.
+    Stores URLs and JSON data extracted from the log.
     """
 
     def __init__(self, url: str):
         """
-        Initialise un objet Log.
+        Initializes a Log object.
 
         Args:
-            url: L'URL du log sur dps.report
+            url: The URL of the log on dps.report
         """
         self.url: str = url
         self.jcontent: Optional[Dict[str, Any]] = None
@@ -23,10 +23,10 @@ class Log:
 
     def set_jcontent(self, response: Optional[Response]) -> None:
         """
-        Définit le contenu JSON principal du log.
-        
+        Sets the main JSON content of the log.
+
         Args:
-            response: La réponse HTTP contenant les données JSON
+            response: The HTTP response containing the JSON data
         """
         if response and response.ok:
             # Get the whole content from the response
@@ -44,10 +44,10 @@ class Log:
 
     def set_pjcontent(self, response: Optional[Response]) -> None:
         """
-        Définit le contenu JSON des métadonnées du log.
-        
+        Sets the JSON content of the log metadata.
+
         Args:
-            response: La réponse HTTP contenant les données JSON
+            response: The HTTP response containing the JSON data
         """
         if response and response.ok:
             # Directly load the JSON from the response content
@@ -56,7 +56,6 @@ class Log:
             status = response.status_code if response else "No response"
             print(f"Error during log metadata download: {status}")
 
-
     def __repr__(self) -> str:
-        """Représentation textuelle de l'objet Log."""
+        """Text representation of the Log object."""
         return f"Log({self.url})"

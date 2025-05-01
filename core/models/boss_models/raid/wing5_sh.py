@@ -5,7 +5,7 @@ from i18n.languages import language_config
 
 class SH(Boss):
     """
-    Soulless Horror (SH) from the fifth raid wing.
+    Soulless Horror (SH)
     """
 
     last = None
@@ -23,7 +23,7 @@ class SH(Boss):
 
     def __init__(self, log):
         """
-        Initializes a SH instance with a specific log.
+        Initializes an SH instance with a specific log.
 
         Args:
             log: The Log object containing the combat data
@@ -66,7 +66,7 @@ class SH(Boss):
 
     def mvp_wall(self):
         """
-        Identifies MVPs who were hit by a wall.
+        Identifies MVPs hit by a wall.
 
         Returns:
             str: Formatted MVP message or None if no player was hit by a wall
@@ -133,9 +133,9 @@ class SH(Boss):
             last_pos = self.get_player_pos(i_player)[-1]
             death_time = self.get_player_death_timer(i_player)
             fell_at_begin = get_dist(SH.center_arena, last_pos) > SH.radius2
-            fell_to_radius23 = death_time > self.boss_hp_to_time(90) + 2500 and death_time < self.boss_hp_to_time(
+            fell_to_radius23 = self.boss_hp_to_time(90) + 2500 < death_time < self.boss_hp_to_time(
                 66) + 2500 and get_dist(SH.center_arena, last_pos) > SH.radius3
-            fell_to_radius34 = death_time > self.boss_hp_to_time(66) + 2500 and death_time < self.boss_hp_to_time(
+            fell_to_radius34 = self.boss_hp_to_time(66) + 2500 < death_time < self.boss_hp_to_time(
                 33) + 2500 and get_dist(SH.center_arena, last_pos) > SH.radius4
             fell_to_radius45 = death_time > self.boss_hp_to_time(33) + 2500 and get_dist(SH.center_arena,
                                                                                         last_pos) > SH.radius5

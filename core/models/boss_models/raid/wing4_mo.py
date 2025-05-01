@@ -4,7 +4,7 @@ from i18n.languages import language_config
 
 class MO(Boss):
     """
-    Mursaat Overseer (MO) de la quatrième aile de raid.
+    Mursaat Overseer (MO)
     """
 
     last = None
@@ -14,10 +14,10 @@ class MO(Boss):
 
     def __init__(self, log):
         """
-        Initialise une instance de MO avec un log spécifique.
+        Initializes a MO instance with a specific log.
 
         Args:
-            log: L'objet Log contenant les données du combat
+            log: The Log object containing the combat data
         """
         super().__init__(log)
         self.mvp = self.get_mvp()
@@ -26,12 +26,12 @@ class MO(Boss):
 
     def get_mvp(self):
         """
-        Détermine le MVP (Most Valuable Player) pour le combat contre Mursaat Overseer.
+        Determines the MVP (Most Valuable Player) for the Mursaat Overseer fight.
 
-        Vérifie d'abord les joueurs touchés par les pics, puis les joueurs avec un DPS faible.
+        First checks players hit by spikes, then players with low DPS.
 
         Returns:
-            str: Message formaté indiquant le MVP et la raison, ou None si aucun MVP
+            str: Formatted message indicating the MVP and reason, or None if no MVP
         """
         msg_pic = self.mvp_pic()
         if msg_pic:
@@ -41,10 +41,10 @@ class MO(Boss):
 
     def get_lvp(self):
         """
-        Détermine le LVP (Least Valuable Player) pour le combat contre Mursaat Overseer.
+        Determines the LVP (Least Valuable Player) for the Mursaat Overseer fight.
 
         Returns:
-            str: Message formaté indiquant le LVP et la raison, ou None si aucun LVP
+            str: Formatted message indicating the LVP and reason, or None if no LVP
         """
         return self.get_lvp_dps()
 
@@ -52,10 +52,10 @@ class MO(Boss):
 
     def mvp_pic(self):
         """
-        Identifie les MVP qui ont été touchés par les pics.
+        Identifies MVPs who were hit by spikes.
 
         Returns:
-            str: Message MVP formaté ou None si aucun joueur n'a été touché par les pics
+            str: Formatted MVP message or None if no player was hit by spikes
         """
         i_players = self.get_piced()
         mvp_names = self.players_to_string(i_players)
@@ -72,10 +72,10 @@ class MO(Boss):
 
     def get_piced(self):
         """
-        Récupère la liste des joueurs tués instantanément (probablement par des pics).
+        Retrieves the list of players killed instantly (probably by spikes).
 
         Returns:
-            list: Liste des indices des joueurs tués par des pics
+            list: List of indices of players killed by spikes
         """
         piced = []
         for i in self.player_list:

@@ -3,7 +3,7 @@ from core.models.boss import Boss
 
 class CA(Boss):
     """
-    Conjured Amalgamate (CA) from the sixth raid wing.
+    Conjured Amalgamate (CA)
     """
 
     last = None
