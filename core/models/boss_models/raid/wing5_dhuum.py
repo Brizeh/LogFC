@@ -30,7 +30,7 @@ class DHUUM(Boss):
         """
         Determines the MVP (Most Valuable Player) for the Dhuum fight.
 
-        First checks players with many cracks, then players
+        First, check players with many cracks, then players
         with significantly low DPS (excluding green carriers).
 
         Returns:
