@@ -54,40 +54,40 @@ class BossFactory:
         "greer": GREER,
         "deci" : DECIMA,
         "ura"  : URA,
-        #
-        # #  IBS BOSSES
-        # "ice"  : ICE,
-        # "falln": KODANS,
-        # "frae" : FRAENIR,
-        # "whisp": WOJ,
-        # "bone" : BONESKINNER,
-        #
-        # #  EOD BOSSES
-        # "trin" : AH,
-        # "ankka": XJ,
-        # "li"   : KO,
-        # "void" : HT,
-        # "olc"  : OLC,
-        #
-        # #  SOTO BOSSES
-        # "dagda": DAGDA,
-        # "cerus": CERUS,
-        #
-        # #  FRAC BOSSES
-        # "mama" : MAMA,
-        # "siax" : SIAX,
-        # "enso" : ENSOLYSS,
-        #
-        # "skor" : SKORVALD,
-        # "arriv": ARTSARIIV,
-        # "arkk" : ARKK,
-        #
-        # "ai"   : DARKAI,
-        #
-        # "kana" : KANAXAI,
-        #
-        # "eparc": EPARCH,
-        #
+
+        #  IBS BOSSES
+        "ice"  : ICE,
+        "falln": KODANS,
+        "frae" : FRAENIR,
+        "whisp": WOJ,
+        "bone" : BONESKINNER,
+
+        #  EOD BOSSES
+        "trin" : AH,
+        "ankka": XJ,
+        "li"   : KO,
+        "void" : HT,
+        "olc"  : OLC,
+
+        #  SOTO BOSSES
+        "dagda": DAGDA,
+        "cerus": CERUS,
+
+        #  FRAC BOSSES
+        "mama" : MAMA,
+        "siax" : SIAX,
+        "enso" : ENSOLYSS,
+
+        "skor" : SKORVALD,
+        "arriv": ARTSARIIV,
+        "arkk" : ARKK,
+
+        "ai"   : DARKAI,
+
+        "kana" : KANAXAI,
+
+        "eparc": EPARCH,
+
         #  YES
         "golem": GOLEM
     }
