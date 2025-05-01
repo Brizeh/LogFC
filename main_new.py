@@ -1,35 +1,28 @@
-from argparse import ArgumentParser
 from time import perf_counter
 
 import grequests
 
-from config.settings import DEFAULT_LANGUAGE, DEFAULT_INPUT_FILE, REQUEST_HEADERS, DPS_REPORT_JSON_URL, ALL_BOSSES, \
-    ALL_PLAYERS, DEFAULT_TITLE
+from config.settings import REQUEST_HEADERS, DPS_REPORT_JSON_URL, ALL_BOSSES, ALL_PLAYERS, DEFAULT_TITLE
 from core.factories.boss_factory import BossFactory
 from core.models.log import Log
 from i18n.languages import language_config
+from services.parsers.argument_parser import make_parser
 from services.parsers.input_parser import InputParser
 from views.report_generator import ReportGenerator
 
 
-# from core.factories.boss_factory import BossFactory
-# from services.parsers.input_parser import InputParser
-
-
-def _make_parser() -> ArgumentParser:
-    with open(DEFAULT_INPUT_FILE, "r") as file:
-        default_input = file.read()
-    parser = ArgumentParser()
-    parser.add_argument('-d', '--debug', action='store_true', required=False)
-    parser.add_argument('-l', '--language', required=False, default=DEFAULT_LANGUAGE)
-    parser.add_argument('-r', '--reward', action='store_true', required=False)
-    parser.add_argument('-i', '--input', required=False, default=default_input)
-    return parser
-
-
 def debug_log(url):
-    # ... code pour déboguer un log spécifique ...
-    pass
+    log = Log(url)
+    jcontent = grequests.get(url)
+    pjcontent = grequests.get(DPS_REPORT_JSON_URL, params={"permalink": url}, headers=REQUEST_HEADERS)
+    responses = grequests.map([jcontent, pjcontent], size=2)
+    log.set_jcontent(responses[0])
+    log.set_pjcontent(responses[1])
+    BossFactory.create_boss(log)
+    boss = ALL_BOSSES[0]
+    print(boss.start_date)
+    print(boss.mvp)
+    print(boss.lvp)
 
 
 def main(input_string, **kwargs):
@@ -70,7 +63,7 @@ if __name__ == "__main__":
     start_time = perf_counter()
 
     # Initialize the parser with the default parameters
-    args = _make_parser().parse_args()
+    args = make_parser().parse_args()
 
     # Define the language to use in the report
     language_config.set_language(args.language)
