@@ -1,4 +1,5 @@
 # Application parameters
+import json
 from datetime import timezone, timedelta
 
 DEFAULT_LANGUAGE = "EN"
@@ -102,9 +103,11 @@ EXTRA_BOSS_DICT = {
     19645: "golem"
 }
 
-CUSTOM_NAMES = {
-    # ... vos définitions actuelles ...
-}
+try:
+    with open("../input/custom_names.json") as file:
+        CUSTOM_NAMES = json.load(file)
+except (FileNotFoundError, json.JSONDecodeError, PermissionError):
+    CUSTOM_NAMES = {}
 
 # Initialisation des variables globales
 ALL_BOSSES = []
