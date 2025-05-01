@@ -7,51 +7,62 @@
 
 ## Library architecture
 ````text
-projet/
+LogFC/
 ├── README.md
 ├── config/
 │   ├── __init__.py
-│   └── settings.py             # Constantes, configurations, paramètres par défaut
+│   └── settings.py             # Constants, configurations, default parameters
 ├── core/
 │   ├── __init__.py
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── log.py              # Représente un fichier log
-│   │   ├── player.py           # Classe Player et comportements associés
-│   │   └── boss.py             # Classe Boss (déplacée de boss_class.py)
-│   │   └── sub_models/
+│   │   ├── log.py              # Represents a log file
+│   │   ├── player.py           # Player class and associated behaviors
+│   │   ├── boss.py             # Base Boss class with common functionality
+│   │   └── boss_models/        # Organized boss models by content type
 │   │       ├── __init__.py
-│   │       ├── raid_bosses.py   # Classes spécifiques aux boss de raid
-│   │       ├── ibs_bosses.py    # Classes spécifiques aux boss d'IBS
-│   │       ├── eod_bosses.py    # Classes spécifiques aux boss d'EOD
-│   │       ├── soto_bosses.py   # Classes spécifiques aux boss de SOTO
-│   │       └── frac_bosses.py   # Classes spécifiques aux boss de fractales
+│   │       ├── golem.py        # Golem-specific implementation
+│   │       ├── raid/           # Raid bosses organized by wings
+│   │       │   ├── __init__.py
+│   │       │   ├── wing1_vg.py
+│   │       │   ├── wing1_gors.py
+│   │       │   └── ... 
+│   │       ├── fractals/       # Fractal bosses
+│   │       │   └── ...
+│   │       ├── eod/            # End of Dragons bosses
+│   │       │   └── ...
+│   │       ├── ibs/            # Icebrood Saga bosses
+│   │       │   └── ...
+│   │       └── soto/           # Secrets of the Obscure bosses
+│   │           └── ...
 │   ├── factories/
 │   │   ├── __init__.py
-│   │   └── boss_factory.py     # Crée les instances de boss spécifiques
+│   │   └── boss_factory.py     # Creates specific boss instances
 │   └── stats/
 │       ├── __init__.py
-│       └── analyzer.py         # Logique d'analyse des stats (déplacée de la classe Stats)
+│       └── analyzer.py         # Stats analysis logic (moved from Stats class)
 ├── services/
 │   ├── __init__.py
 │   ├── api/
 │   │   ├── __init__.py
-│   │   ├── wingman.py          # Interactions avec l'API Wingman
-│   │   └── dps_report.py       # Interactions avec l'API DPS Report
+│   │   ├── wingman.py          # Interactions with Wingman API
+│   │   └── dps_report.py       # Interactions with DPS Report API
 │   └── parsers/
 │       ├── __init__.py
-│       └── input_parser.py     # Parsing des entrées utilisateur
+│       └── input_parser.py     # Parsing user inputs
 ├── utils/
 │   ├── __init__.py
-│   ├── formatters.py           # Fonctions de formatage (disp_time etc.)
-│   ├── maths.py                # Fonctions utilitaires pour les calculs
-│   └── analyzer.py             # Outils d'analyse statistique
+│   ├── formatters.py           # Formatting functions (disp_time etc.)
+│   ├── maths.py                # Utility functions for calculations
+│   └── analyzer.py             # Statistical analysis tools
 ├── i18n/
 │   ├── __init__.py
-│   └── languages.py            # Gestion des langues et traductions
+│   ├── languages.py            # Language management and translations
+│   └── languages_dict/         # Language dictionaries
+│       ├── french.py           # French translations
+│       └── english.py          # English translations
 ├── views/
 │   ├── __init__.py
-│   └── report_generator.py     # Génération de rapports (remplace func.get_message_reward)
-└── main.py                     # Point d'entrée principal
-
+│   └── report_generator.py     # Report generation (replaces func.get_message_reward)
+└── main.py                     # Main entry point
 ````

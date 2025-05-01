@@ -3,43 +3,43 @@ Package contenant les modèles de boss pour l'analyse des logs de raid.
 """
 
 # Import des classes de l'aile 1
-from core.models.boss_models.raid.raid_wing1_vg import VG
-from core.models.boss_models.raid.raid_wing1_gors import GORS
-from core.models.boss_models.raid.raid_wing1_sabetha import SABETHA
+from core.models.boss_models.raid.wing1_vg import VG
+from core.models.boss_models.raid.wing1_gors import GORS
+from core.models.boss_models.raid.wing1_sabetha import SABETHA
 
 # Import des classes de l'aile 2
-from core.models.boss_models.raid.raid_wing2_sloth import SLOTH
-from core.models.boss_models.raid.raid_wing2_matthias import MATTHIAS
+from core.models.boss_models.raid.wing2_sloth import SLOTH
+from core.models.boss_models.raid.wing2_matthias import MATTHIAS
 
 # Import des classes de l'aile 3
-from core.models.boss_models.raid.raid_wing3_escort import ESCORT
-from core.models.boss_models.raid.raid_wing3_kc import KC
-from core.models.boss_models.raid.raid_wing3_xera import XERA
+from core.models.boss_models.raid.wing3_escort import ESCORT
+from core.models.boss_models.raid.wing3_kc import KC
+from core.models.boss_models.raid.wing3_xera import XERA
 
 # Import des classes de l'aile 4
-from core.models.boss_models.raid.raid_wing4_cairn import CAIRN
-from core.models.boss_models.raid.raid_wing4_mo import MO
-from core.models.boss_models.raid.raid_wing4_samarog import SAMAROG
-from core.models.boss_models.raid.raid_wing4_deimos import DEIMOS
+from core.models.boss_models.raid.wing4_cairn import CAIRN
+from core.models.boss_models.raid.wing4_mo import MO
+from core.models.boss_models.raid.wing4_samarog import SAMAROG
+from core.models.boss_models.raid.wing4_deimos import DEIMOS
 
 # Import des classes de l'aile 5
-from core.models.boss_models.raid.raid_wing5_sh import SH
-from core.models.boss_models.raid.raid_wing5_dhuum import DHUUM
+from core.models.boss_models.raid.wing5_sh import SH
+from core.models.boss_models.raid.wing5_dhuum import DHUUM
 
 # Import des classes de l'aile 6
-from core.models.boss_models.raid.raid_wing6_ca import CA
-from core.models.boss_models.raid.raid_wing6_largos import LARGOS
-from core.models.boss_models.raid.raid_wing6_q1 import Q1
+from core.models.boss_models.raid.wing6_ca import CA
+from core.models.boss_models.raid.wing6_largos import LARGOS
+from core.models.boss_models.raid.wing6_q1 import Q1
 
 # Import des classes de l'aile 7
-from core.models.boss_models.raid.raid_wing7_adina import ADINA
-from core.models.boss_models.raid.raid_wing7_sabir import SABIR
-from core.models.boss_models.raid.raid_wing7_qtp import QTP
+from core.models.boss_models.raid.wing7_adina import ADINA
+from core.models.boss_models.raid.wing7_sabir import SABIR
+from core.models.boss_models.raid.wing7_qtp import QTP
 
 # Import des classes de l'aile 8
-from core.models.boss_models.raid.raid_wing8_greer import GREER
-from core.models.boss_models.raid.raid_wing8_decima import DECIMA
-from core.models.boss_models.raid.raid_wing8_ura import URA
+from core.models.boss_models.raid.wing8_greer import GREER
+from core.models.boss_models.raid.wing8_decima import DECIMA
+from core.models.boss_models.raid.wing8_ura import URA
 
 # IBS
 from core.models.boss_models.ibs.ice import ICE
