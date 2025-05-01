@@ -41,12 +41,35 @@ from core.models.boss_models.raid.raid_wing8_greer import GREER
 from core.models.boss_models.raid.raid_wing8_decima import DECIMA
 from core.models.boss_models.raid.raid_wing8_ura import URA
 
+# IBS
+from core.models.boss_models.ibs.ice import ICE
+from core.models.boss_models.ibs.kodans import KODANS
+from core.models.boss_models.ibs.fraenir import FRAENIR
+from core.models.boss_models.ibs.woj import WOJ
+from core.models.boss_models.ibs.boneskinner import BONESKINNER
+
 # End of Dragon
 from core.models.boss_models.eod.mai_trin import AH
 from core.models.boss_models.eod.ankka import XJ
 from core.models.boss_models.eod.ko import KO
 from core.models.boss_models.eod.ht import HT
 from core.models.boss_models.eod.olc import OLC
+
+# SOTO
+from core.models.boss_models.soto.dagda import DAGDA
+from core.models.boss_models.soto.cerus import CERUS
+
+# Fractacls
+from core.models.boss_models.fractals.mama import MAMA
+from core.models.boss_models.fractals.siax import SIAX
+from core.models.boss_models.fractals.ensolyss import ENSOLYSS
+from core.models.boss_models.fractals.skorvald import SKORVALD
+from core.models.boss_models.fractals.artsariiv import ARTSARIIV
+from core.models.boss_models.fractals.arkk import ARKK
+from core.models.boss_models.fractals.dark_ai import DARKAI
+from core.models.boss_models.fractals.kanaxai import KANAXAI
+from core.models.boss_models.fractals.eparch import EPARCH
+
 
 # Import de la classe Golem
 from core.models.boss_models.golem import GOLEM
@@ -63,8 +86,21 @@ __all__ = [
     'ADINA', 'SABIR', 'QTP',
     'GREER', 'DECIMA', 'URA',
 
+    # IBS
+    'ICE', 'KODANS', 'FRAENIR', 'WOJ', 'BONESKINNER',
+
     # EOD
     'AH', 'XJ', 'KO', 'HT', 'OLC',
+
+    # SOTO
+    'DAGDA', 'CERUS',
+
+    # Fractals
+    'MAMA', 'SIAX', 'ENSOLYSS',
+    'SKORVALD', 'ARTSARIIV', 'ARKK',
+    'DARKAI',
+    'KANAXAI',
+    'EPARCH',
 
     # Golem
     'GOLEM',
