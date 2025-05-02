@@ -1,7 +1,7 @@
 from typing import Dict, Type, Optional
 
 from config.settings import BOSS_DICT, EXTRA_BOSS_DICT, ALL_BOSSES
-from core.models.boss import Boss
+from core.models.boss import (Boss)
 from core.models.boss_models import *
 from core.models.log import Log
 
