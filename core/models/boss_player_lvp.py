@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from config.settings import ALL_PLAYERS
-from core.models.boss_player_lvp_mvp import PlayerDamageMixin
+from core.models.boss_player_xvp import PlayerDamageMixin
 from core.stats.analyzer import Analyzer
 from i18n.languages import language_config
 
