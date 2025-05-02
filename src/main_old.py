@@ -1,13 +1,12 @@
 from argparse import ArgumentParser
 from time import perf_counter
 import grequests
-from src import func
-
-from src.const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
-from src.models.log_class import Log
-from src.models.boss_facto import BossFactory
-from i18n.languages import language_config
-from src.input import InputParser
+import func
+from const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
+from models.log_class import Log
+from models.boss_facto import BossFactory
+from languages import LANGUES
+from input import InputParser
 
 def _make_parser() -> ArgumentParser:
     with open(DEFAULT_INPUT_FILE, "r") as file:
@@ -48,6 +47,7 @@ def main(input_string, **kwargs) -> None:
         logs[i].set_pjcontent(responses[2*i+1])
     for log in logs:
         BossFactory.create_boss(log)
+    #print(ALL_BOSSES[0])
     print("\n")
     split_run_message = func.get_message_reward(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
     for message in split_run_message:
@@ -57,8 +57,8 @@ def main(input_string, **kwargs) -> None:
 if __name__ == "__main__":
     print("Starting\n")
     start_time = perf_counter()
+    LANGUES["selected_language"] = LANGUES["EN"]
     args = _make_parser().parse_args()
-    language_config.set_language(args.language)
     main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
     #debugLog("https://dps.report/i7N1-20241214-142308_frae")
     end_time = perf_counter()

@@ -1,4 +1,4 @@
-from src.const import BOSS_DICT
+from const import BOSS_DICT
 import re
 from datetime import datetime
 

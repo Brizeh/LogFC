@@ -1,7 +1,6 @@
-from src.models.boss_class import Boss, Stats
-from src.models.log_class import Log
-from src.func import *
-from i18n.languages import language_config
+from models.boss_class import Boss, Stats
+from models.log_class import Log
+from func import *
 
 ################################ MAMA ################################
 
@@ -204,9 +203,9 @@ class KANAXAI(Boss):
         dmg_ratio                   = max_dmg / tot_dmg * 100
         dps                         = max_dmg / self.duration_ms
         if linkCount:
-            return language_config.selected_language["KANAXAI LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps, linkCount=linkCount)
+            return LANGUES["selected_language"]["KANAXAI LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps, linkCount=linkCount)
         else:
-            return language_config.selected_language["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
+            return LANGUES["selected_language"]["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
     
     ################################ DATA MECHAS ################################
     
