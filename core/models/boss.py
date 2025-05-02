@@ -66,7 +66,7 @@ class Boss(PlayerLvpMixin, PlayerMvpMixin, PlayerGameplayMixin, BossEncounterMix
         return self.log.url
 
     # -------------------------------------------------------------------------
-    # TODO: A trier
+    # Generic methods
     # -------------------------------------------------------------------------
 
     def get_dmg_boss(self, i_player: int) -> int:
