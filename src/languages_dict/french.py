@@ -121,8 +121,8 @@ french = {
     "FRAENIR MVP FROZEN P": "⬗ *[**MVP** : {mvp_names} se sont fait geler **{max_frozen}** fois]*",
     
     "FRAENIR LVP SAK": "⬗ *[**LVP** : {lvp_dps_name} qui a fait **{dps:.1f}kdps** (**{dmg_ratio:.1f}%** de la squad) avec **{sak_count} SAK** (soit **{sak_ratio:.1f}%** de son dps)]*",
-    ################################ WOJ ################################
     
+    ################################ WOJ ################################
     "WOJ MVP CHAINS": "⬗ *[**MVP** : {mvp_name} a pris **{max_dmg}** dégâts de **chaines** (**{ratio:.1f}%** de la squad)]*",
     
     ################################ BONESKINNER ################################
@@ -152,8 +152,8 @@ french = {
     "MVP TOTAL CC S"  : "⬗ *[**MVP** : {mvp_names} n'a mis que **{min_cc:.0f}** de **CC** (**{cc_ratio:.1f}%** de la squad)]*",
     "MVP TOTAL CC P"  : "⬗ *[**MVP** : {mvp_names} n'ont mis que **{min_cc:.0f}** de **CC** (**{cc_ratio:.1f}%** de la squad)]*",
     
-    "MVP BAD DPS S"   : "⬗ *[**MVP** : {bad_dps_name} qui en **DPS** a fait moins de **dégats** que {sup_name} qui joue **support** on le rappelle]*",
-    "MVP BAD DPS P"   : "⬗ *[**MVP** : {bad_dps_name} qui en **DPS** ont fait moins de **dégats** que {sup_name} qui joue **support** on le rappelle]*",
+    "MVP BAD DPS S"   : "⬗ *[**MVP** : {bad_dps_name} qui en **DPS** a fait moins de **dégats** que {sup_name} <a:retrosmall:1327594797451448403> qui joue **support** on le rappelle]*",
+    "MVP BAD DPS P"   : "⬗ *[**MVP** : {bad_dps_name} qui en **DPS** ont fait moins de **dégats** que {sup_name} <a:retrosmall:1327594797451448403> qui joue **support** on le rappelle]*",
     
     "LVP BOSS CC"     : "⬗ *[**LVP** : {lvp_names} merci d'avoir fait **{max_cc:.0f}** de **CC** (**{cc_ratio:.1f}%** de la squad)]*",
     "LVP TOTAL CC"    : "⬗ *[**LVP** : {lvp_names} merci d'avoir fait **{max_cc:.0f}** de **CC** (**{cc_ratio:.1f}%** de la squad)]*",

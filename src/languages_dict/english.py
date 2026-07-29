@@ -1,5 +1,3 @@
-#  THANKS TO ARKADIA FOR TRANSLATION
-
 english = {
     ################################ VG ################################
     "VG MVP BLEU S": "⬗ *[**MVP** : {mvp_names} got teleported to Narnia **{max_bleu}** times]*",
@@ -114,6 +112,10 @@ english = {
     
     ################################ QTP ################################
     
+    ################################ ICEBROOD ################################
+    
+    ################################ KODANS ################################
+    
     ################################ FRAENIR ################################
     "FRAENIR MVP FROZEN S": "⬗ *[**MVP** : {mvp_names} got frozen **{max_frozen}** times]*",
     "FRAENIR MVP FROZEN P": "⬗ *[**MVP** : {mvp_names} got frozen **{max_frozen}** times]*",
@@ -122,6 +124,8 @@ english = {
     
     ################################ WOJ ################################
     "WOJ MVP CHAINS": "⬗ *[**MVP** : {mvp_name} took **{max_dmg}** damage from **chains** (**{ratio:.1f}%** of the squad)]*",
+    
+    ################################ BONESKINNER ################################
     
     ################################ AH ################################
     "AH MVP EXPOSED S": "⬗ *[**MVP** : {mvp_names} cummulated **{max_exposed}** **exposed** effects]*",
@@ -148,8 +152,8 @@ english = {
     "MVP TOTAL CC S"  : "⬗ *[**MVP** : {mvp_names} only did **{min_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
     "MVP TOTAL CC P"  : "⬗ *[**MVP** : {mvp_names} only did **{min_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
     
-    "MVP BAD DPS S"   : "⬗ *[**MVP** : {bad_dps_name} as **DPS** did as much **damage** as {sup_name} who is **support** as a reminder]*",
-    "MVP BAD DPS P"   : "⬗ *[**MVP** : {bad_dps_name} as **DPS** did as much **damage** as {sup_name} who is **support** as a reminder]*",
+    "MVP BAD DPS S"   : "⬗ *[**MVP** : {bad_dps_name} as **DPS** did less **damage** as {sup_name} <a:retrosmall:1327594797451448403> who is **support** as a reminder]*",
+    "MVP BAD DPS P"   : "⬗ *[**MVP** : {bad_dps_name} as **DPS** did less **damage** as {sup_name} <a:retrosmall:1327594797451448403> who is **support** as a reminder]*",
     
     "LVP BOSS CC"     : "⬗ *[**LVP** : {lvp_names} thanks for doing **{max_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
     "LVP TOTAL CC"    : "⬗ *[**LVP** : {lvp_names} thanks for doing **{max_cc:.0f}** **CC** (**{cc_ratio:.1f}%** of the squad)]*",
