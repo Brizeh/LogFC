@@ -1145,12 +1145,6 @@ class SH(Boss):
         
     def get_mvp(self):
         mvp = []
-        msg_wall = self.mvp_wall()
-        if msg_wall:
-            mvp.append(msg_wall)
-        msg_fall = self.mvp_fall()
-        if msg_fall:
-            mvp.append(msg_fall)
         msg_cc = self.get_mvp_cc_boss()
         if msg_cc:
             mvp.append(msg_cc)
@@ -1161,9 +1155,9 @@ class SH(Boss):
     
     def get_lvp(self):
         lvp = []
-        msg_wall = self.get_lvp_cc_boss()
-        if msg_wall:
-            lvp.append(msg_wall)
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
         msg_dps = self.get_lvp_dps()
         if msg_dps:
             lvp.append(msg_dps)
@@ -1171,8 +1165,8 @@ class SH(Boss):
         
         
     ################################ MVP ################################
-    
-    def mvp_wall(self):
+    # Work in progress, not sure if I will keep it in the final version of the bot
+    """def mvp_wall(self):
         i_players = self.get_walled_players()
         mvp_names = self.players_to_string(i_players)
         self.add_mvps(i_players)
@@ -1225,7 +1219,7 @@ class SH(Boss):
         for i in self.player_list:
             if self.has_fallen(i):
                 fallen.append(i)
-        return fallen
+        return fallen"""
 
 ################################ DHUUM ################################
 
