@@ -77,6 +77,7 @@ if __name__ == "__main__":
     start_time = perf_counter()
     LANGUES["selected_language"] = LANGUES["FR"]
     args = _make_parser().parse_args()
+    # HELLO
     main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
     #debugLog("https://dps.report/SVKq-20260209-213956_qadim")
     print(f"\nFinished in {perf_counter() - start_time:.2f} seconds")
