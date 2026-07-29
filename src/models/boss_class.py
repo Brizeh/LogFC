@@ -623,6 +623,8 @@ class Boss:
     
     def get_lvp_dps(self):
         i_players, max_dmg, total_dmg = Stats.get_max_value(self, self.get_dmg_boss)
+        if total_dmg == 0:
+            return
         dmg_ratio                     = max_dmg / total_dmg * 100
         lvp_dps_name                  = self.players_to_string(i_players)
         dps                           = max_dmg / self.duration_ms
