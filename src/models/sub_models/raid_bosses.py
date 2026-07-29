@@ -1483,6 +1483,8 @@ class Q1(Boss):
         fdp              = []
         start_p1, end_p1 = self.get_phase_timers("Qadim P1")
         start_p2, end_p2 = self.get_phase_timers("Qadim P2")
+        if start_p1 is None or start_p2 is None:
+            return fdp
         for i in self.player_list:
             if not self.is_tank(i):
                 add_fdp = True
