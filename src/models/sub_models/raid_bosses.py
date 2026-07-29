@@ -750,6 +750,8 @@ class XERA(Boss):
         fdp     = []
         delta   = 6000
         i_delta = time_to_index(delta, self.time_base)
+        if not tp_data:
+            return fdp
         for e in tp_data:
             tp_time     = e['time']
             
