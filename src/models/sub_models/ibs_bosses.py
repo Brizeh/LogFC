@@ -13,18 +13,21 @@ class ICE(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         ICE.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
         
 ################################ KODANS ################################
 
@@ -37,18 +40,21 @@ class KODANS(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         KODANS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ LVP ################################
     
@@ -66,8 +72,7 @@ class KODANS(Boss):
         boss1_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][0][self.real_phase_id]['damage']
         boss2_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][1][self.real_phase_id]['damage']
         return boss1_dmg + boss2_dmg
-        
-    
+          
 ################################ FRAENIR ################################
 
 class FRAENIR(Boss):
@@ -79,24 +84,24 @@ class FRAENIR(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp     = self.get_mvp()
-        self.lvp     = self.get_lvp()
         FRAENIR.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_frozen = self.get_frozen_mvp()
         if msg_frozen:
-            return msg_frozen
+            mvp.append(msg_frozen)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
+        lvp = []
         msg_sak = self.get_lvp_sak()
         if msg_sak:
-            return msg_sak
-        return self.get_lvp_dps()
+            lvp.append(msg_sak)
+        return lvp
     
     ################################ MVP ################################
     
@@ -160,21 +165,24 @@ class WOJ(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         WOJ.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_chains = self.get_chain_mvp()
         if msg_chains:
-            return msg_chains
+            mvp.append(msg_chains)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ MVP ################################
     
@@ -209,21 +217,21 @@ class BONESKINNER(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp         = self.get_mvp()
-        self.lvp         = self.get_lvp()
         BONESKINNER.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
+        lvp = []
         msg_sak = self.get_lvp_sak()
         if msg_sak:
-            return msg_sak
-        return self.get_lvp_dps()
+            lvp.append(msg_sak)
+        return lvp
     
     ################################ LVP ################################
     

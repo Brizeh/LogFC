@@ -56,6 +56,7 @@ _BOSS_FACTORY = {
     #  SOTO BOSSES
     "dagda": DAGDA,
     "cerus": CERUS,
+    "kela" : KELA,
 
     #  FRAC BOSSES
     "mama" : MAMA,

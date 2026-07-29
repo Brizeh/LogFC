@@ -13,21 +13,24 @@ class DAGDA(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         DAGDA.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_debil = self.mvp_debil()
         if msg_debil:
-            return msg_debil
+            mvp.append(msg_debil)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ MVP ################################
     
@@ -69,15 +72,45 @@ class CERUS(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
-        DAGDA.last = self
+        CERUS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
+    
+################################ KELA ################################
+
+class KELA(Boss):
+    
+    last    = None
+    name    = "KELA"
+    boss_id = 27124
+    wing    = "SOTO"
+    
+    def __init__(self, log: Log):
+        super().__init__(log)
+        KELA.last = self
+        
+    def get_mvp(self):
+        mvp = []
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        return mvp
+    
+    def get_lvp(self):
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp

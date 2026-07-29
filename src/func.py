@@ -1,7 +1,7 @@
 import math
 from datetime import timedelta
 
-from const import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS
+from const import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS, DUPS_CHECKER
 from languages import LANGUES
 
 def time_to_index(time: int, base):  # time in millisecond
@@ -64,7 +64,14 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
         account = player.account
         custom_name = CUSTOM_NAMES.get(account)
         if custom_name:
-            mvp_names.append(custom_name)
+            if type(custom_name) == str:
+                mvp_names.append(custom_name)
+            else:
+                discord_name = custom_name.get("discord")
+                if discord_name:
+                    mvp_names.append(discord_name)
+                else:
+                    mvp_names.append(custom_name.get("nickname"))
         else:
             mvp_names.append(player.name)
             
@@ -72,7 +79,14 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
         account = player.account
         custom_name = CUSTOM_NAMES.get(account)
         if custom_name:
-            lvp_names.append(custom_name)
+            if type(custom_name) == str:
+                lvp_names.append(custom_name)
+            else:
+                discord_name = custom_name.get("discord")
+                if discord_name:
+                    lvp_names.append(discord_name)
+                else:
+                    lvp_names.append(custom_name.get("nickname"))
         else:
             lvp_names.append(player.name)
 
@@ -121,23 +135,40 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
             run_message += LANGUES["selected_language"][wingname].format(wing_duration=wing_duration)
         
         for boss in wing:
-            boss_name = boss.name + (" CM" if boss.cm else "")
-            boss_duration = disp_time(timedelta(seconds=boss.duration_ms / 1000))
-            boss_url = boss.log.url
+            boss_name      = boss.name + (" CM" if boss.cm else "")
+            boss_duration  = disp_time(timedelta(seconds=boss.duration_ms / 1000))
+            boss_url       = boss.log.url
             boss_percentil = boss.wingman_percentile
+            fail_count = len(DUPS_CHECKER.get(boss.log.short_name))-1
+            fail_msg       = ""
+            if fail_count:
+                fail_msg = f" *{fail_count} fails* :x:"
             if boss_percentil is not None:
                 notes_nb += 1
                 total_wingman_score += boss_percentil
-                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration} ({boss_percentil}%{EMOTE_WINGMAN})**\n"
+                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration} ({boss_percentil}%{EMOTE_WINGMAN})**"
             else:
-                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration}**\n"
+                run_message += f"* **[{boss_name}]({boss_url})** **{boss_duration}**"
+            if boss.name in ["BONESKINNER", "WOJ", "FRAENIR", "KODANS", "ICEBROOD"]:
+                if boss.duration_ms < 180000:
+                    run_message += " :first_place:"
+                elif boss.duration_ms < 300000:
+                    run_message += " :second_place:"
+                else:
+                    run_message += " :third_place:"
+            run_message += f"{fail_msg}\n"
             run_message = cut_text(run_message)
 
-            if boss.mvp:
-                run_message += boss.mvp + "\n"
-                run_message = cut_text(run_message)
-            if boss.lvp:
-                run_message += boss.lvp + "\n"
+            for mvp in boss.mvp:
+                if mvp:
+                    run_message += mvp + "\n"
+                    run_message = cut_text(run_message)
+            for lvp in boss.lvp:
+                if lvp:
+                    run_message += lvp + "\n"
+                    run_message = cut_text(run_message)
+            if boss.box:
+                run_message += boss.box + "\n"
                 run_message = cut_text(run_message)
             if boss.name != "ESCORT":
                 for player_account, dps_mark in boss.get_dps_ranking().items():
@@ -148,13 +179,16 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
     if number_boss > 2:
         mvps = ', '.join(mvp_names)
         lvps = ', '.join(lvp_names)
-        note_wingman = total_wingman_score / notes_nb
+        note_wingman = None
+        if notes_nb:
+            note_wingman = total_wingman_score / notes_nb
         if max_mvp_score > 1:
             run_message += LANGUES["selected_language"]["MVP"].format(mvps=mvps, max_mvp_score=max_mvp_score)
         if max_lvp_score > 1:
             run_message += LANGUES["selected_language"]["LVP"].format(lvps=lvps, max_lvp_score=max_lvp_score)
         run_message += LANGUES["selected_language"]["TIME"].format(run_duration=run_duration)
-        run_message += LANGUES["selected_language"]["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
+        if note_wingman:
+            run_message += LANGUES["selected_language"]["WINGMAN"].format(note_wingman=note_wingman, emote_wingman=EMOTE_WINGMAN)
 
     
     """player_rankings = list(filter(
@@ -166,9 +200,25 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
         run_message += f"\n{r[0]} a la note moyenne de {r[1]:0.2f}/20 en dps"
     """
     
+    
+    boxers = []
+    for account, player in ALL_PLAYERS.items():
+        if player.boxWins is not None:
+            boxers.append(player)
+    if boxers:
+        if boxers[0].boxWins > boxers[1].boxWins:
+            run_message += f"# :boxing_gloves: {boxers[0].nickname} a battu {boxers[1].nickname} :boxing_gloves:\n"
+            run_message += f"# {boxers[0].boxWins} : {boxers[1].boxWins}"
+        if boxers[0].boxWins < boxers[1].boxWins:
+            run_message += f"# :boxing_gloves: {boxers[1].nickname} a battu {boxers[0].nickname} :boxing_gloves:\n"
+            run_message += f"# {boxers[1].boxWins} : {boxers[0].boxWins}"
+        if boxers[0].boxWins == boxers[1].boxWins:
+            run_message += f"# :boxing_gloves: {boxers[0].nickname} ex æquo {boxers[1].nickname} Nous dormissâmes :boxing_gloves:\n"
+            run_message += f"# {boxers[0].boxWins} : {boxers[1].boxWins}"
+    run_message = cut_text(run_message)
     split_message.append(run_message)
-
     logs.clear()
     players.clear()
+    DUPS_CHECKER.clear()
 
     return split_message

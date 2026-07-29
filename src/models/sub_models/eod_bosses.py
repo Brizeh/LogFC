@@ -13,21 +13,24 @@ class AH(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         AH.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_exposed = self.expose_mvp()
         if msg_exposed:
-            return msg_exposed
+            mvp.append(msg_exposed)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ MVP ################################
     
@@ -74,8 +77,7 @@ class AH(Boss):
         mai_trin_dmg = targetDmg[0][0]["damage"]
         echo_dmg     = targetDmg[1][0]["damage"]
         return mai_trin_dmg + echo_dmg 
-                
-    
+                   
 ################################ ANKKA ################################
 
 class XJ(Boss):
@@ -87,21 +89,24 @@ class XJ(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         XJ.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_cc = self.get_mvp_cc_total()
         if msg_cc:
-            return msg_cc
+            mvp.append(msg_cc)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ KO ################################
 
@@ -114,21 +119,24 @@ class KO(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         KO.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_debil = self.mvp_debil()
         if msg_debil:
-            return msg_debil
+            mvp.append(msg_debil)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ LVP ################################
     
@@ -183,18 +191,21 @@ class HT(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         HT.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ OLC ################################
 
@@ -207,18 +218,24 @@ class OLC(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         OLC.last = self
         
     def get_mvp(self):
+        mvp = []
+        msg_olc = self.get_mvp_olc()
+        if msg_olc:
+            mvp.append(msg_olc)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ LVP ################################
     
@@ -230,7 +247,48 @@ class OLC(Boss):
         self.add_lvps(i_players)
         return LANGUES["selected_language"]["LVP DPS"].format(lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
     
+    ################################ MVP ################################
+    
+    def get_mvp_olc(self):
+        red_timers     = self.get_mechanic_history("DualHrz.C")
+        green_timers   = self.get_mechanic_history("PrnVrx.C")
+        blue_timers    = self.get_mechanic_history("CrckWind.C")
+        exposed_timers = self.get_mechanic_history("Exposed")
+        mvps           = {}
+        max_mvps       = {}
+        for event in exposed_timers:
+            player_id = self.player_name_to_id(event["actor"])
+            rgb = {"red":0, "green":0, "blue":0}
+            for red in red_timers:
+                if abs(event["time"]-red["time"]) < 10000:
+                    rgb["red"] += 1
+            for green in green_timers:
+                if abs(event["time"]-green["time"]) < 10000:
+                    rgb["green"] += 1
+            for blue in blue_timers:
+                if abs(event["time"]-blue["time"]) < 10000:
+                    rgb["blue"] += 1
+            if rgb["red"] == 0 and rgb["green"] == 0 and rgb["blue"] == 0:
+                continue
+            else:
+                mvps[player_id] = rgb
+        max_rgb = 0
+        for player_id, rgb in mvps.items():
+            if rgb["red"] + rgb["green"] + rgb["blue"] > max_rgb:
+                max_rgb = rgb["red"] + rgb["green"] + rgb["blue"]
+        if max_rgb != 0:
+            for player_id, rgb in mvps.items():
+                if rgb["red"] + rgb["green"] + rgb["blue"] == max_rgb:
+                    max_mvps[player_id] = rgb
+        self.add_mvps(list(max_mvps.keys()))
+        msg = ""
+        for player_id, rgb in max_mvps.items():
+            mvp_name = self.players_to_string([player_id])
+            msg += LANGUES["selected_language"]["OLC MVP EXPOSED"].format(mvp_name=mvp_name, red=rgb["red"], green=rgb["green"], blue=rgb["blue"])+"\n"           
+        return msg[:-1]
+    
     ################################ DATA MECHAS ################################
     
     def get_dmg_boss(self, i_player: int):
         return self.log.pjcontent["players"][i_player]["dpsAll"][0]["damage"]
+    

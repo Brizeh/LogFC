@@ -14,18 +14,20 @@ class VG(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         VG.last  = self
         
     def get_mvp(self):
-        msg_bleu= self.mvp_bleu()
+        mvp = []
+        msg_bleu = self.mvp_bleu()
         if msg_bleu:
-            return msg_bleu
-        return    
+            mvp.append(msg_bleu)
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        return [self.get_lvp_dps()]
 
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_condi])
@@ -34,9 +36,7 @@ class VG(Boss):
     
     def mvp_bleu(self):
         i_players, max_bleu, _ = Stats.get_max_value(self, self.get_bleu)
-        mvp_names              = self.players_to_string(i_players)
-        if max_bleu < 3:
-            return self.get_bad_dps(extra_exclude=[self.is_condi])
+        mvp_names              = self.players_to_string(i_players)  
         if max_bleu > 1:
             self.add_mvps(i_players)
             nb_players = len(i_players)
@@ -72,26 +72,32 @@ class GORS(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp  = self.get_mvp()
-        self.lvp  = self.get_lvp()
         GORS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_egg = self.mvp_egg()
         if msg_egg:
-            return msg_egg
+            mvp.append(msg_egg)
         
         msg_dmg_split = self.mvp_dmg_split()
         if msg_dmg_split:
-            return msg_dmg_split
+            mvp.append(msg_dmg_split)
         
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps     
-        return
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.lvp_dmg_split()
+        lvp = []
+        msg_split = self.lvp_dmg_split()
+        if msg_split:
+            lvp.append(msg_split)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
         
     ################################ MVP ################################
     
@@ -133,8 +139,10 @@ class GORS(Boss):
         
     def get_dmg_split(self, i_player: int):
         dmg_split   = 0
-        dmg_split_1 = self.log.jcontent['phases'][3]['dpsStatsTargets'][i_player]
-        dmg_split_2 = self.log.jcontent['phases'][6]['dpsStatsTargets'][i_player]
+        split_1_id = self.get_phase_id("Split 1")
+        split_2_id = self.get_phase_id("Split 2")
+        dmg_split_1 = self.log.jcontent['phases'][split_1_id]['dpsStatsTargets'][i_player]
+        dmg_split_2 = self.log.jcontent['phases'][split_2_id]['dpsStatsTargets'][i_player]
         for add_split1, add_split2 in zip(dmg_split_1,dmg_split_2):
             dmg_split += add_split1[0] + add_split2[0]
         return dmg_split
@@ -165,27 +173,33 @@ class SABETHA(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp     = self.get_mvp()
-        self.lvp     = self.get_lvp()
         SABETHA.last = self
         
     def get_mvp(self):
-        
+        mvp = []
         msg_terrorists = self.mvp_terrorists()
         if msg_terrorists:
-            return msg_terrorists
+            mvp.append(msg_terrorists)
         
         msg_dmg_split = self.mvp_dmg_split()
         if msg_dmg_split:
-            return self.mvp_dmg_split()
+            mvp.append(msg_dmg_split)
         
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_cannon])
         if msg_bad_dps:
-            return msg_bad_dps
-        return
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.lvp_dmg_split()
+        lvp = []
+        msg_split = self.lvp_dmg_split()
+        if msg_split:
+            lvp.append(msg_split)
+        
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_cannon])
@@ -291,27 +305,35 @@ class SLOTH(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         SLOTH.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_tantrum = self.mvp_tantrum()
         if msg_tantrum:
-            return msg_tantrum
+            mvp.append(msg_tantrum)
         
         msg_cc = self.mvp_cc_sloth()
         if msg_cc:
-            return msg_cc
+            mvp.append(msg_cc)
         
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_shroom])
         if msg_bad_dps:
-            return msg_bad_dps
+            mvp.append(msg_bad_dps)
         
-        return    
+        return mvp  
         
     def get_lvp(self):
-        return self.get_lvp_cc_boss()
+        lvp = []
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+        
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps) 
+            
+        return lvp
         
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_shroom])
@@ -370,16 +392,31 @@ class MATTHIAS(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp      = self.get_mvp()
-        self.lvp      = self.get_lvp()
         MATTHIAS.last = self
         
     def get_mvp(self):
-        return self.mvp_cc_matthias()
+        mvp = []
+        msg_cc = self.mvp_cc_matthias()
+        if msg_cc:
+            mvp.append(msg_cc)
+        
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps) 
+        return mvp
         
     def get_lvp(self):
-        return self.lvp_cc_matthias()
-          
+        lvp = []
+        msg_cc = self.lvp_cc_matthias()
+        if msg_cc:
+            lvp.append(msg_cc)
+        
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+            
+        return lvp
+      
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_sac])
 
@@ -434,21 +471,27 @@ class ESCORT(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         ESCORT.last = self 
         
     def get_mvp(self):
+        mvp = []
         msg_mine = self.mvp_mine()
         if msg_mine:
-            return msg_mine
-        return
+            mvp.append(msg_mine)
+            
+        return mvp
        
     def get_lvp(self):
+        lvp = []
         msg_tower = self.lvp_tower()
         if msg_tower:
-            return msg_tower
-        return self.lvp_glenna()
+            lvp.append(msg_tower)
+            
+        msg_glenna = self.lvp_glenna()
+        if msg_glenna:
+            lvp.append(msg_glenna)
+            
+        return lvp
     
     ################################ MVP ################################
     
@@ -532,20 +575,31 @@ class KC(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         KC.last  = self  
         
     def get_mvp(self):
+        mvp = []
         msg_orb = self.mvp_orb_kc()
         if msg_orb:
-            return msg_orb
+            mvp.append(msg_orb)
+            
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
+            mvp.append(msg_bad_dps)
+            
+        return mvp
     
     def get_lvp(self):
-        return self.lvp_orb_kc()
+        lvp = []
+        msg_orb = self.lvp_orb_kc()
+        if msg_orb:
+            lvp.append(msg_orb)
+        
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+            
+        return lvp
         
     ################################ MVP ################################
             
@@ -555,7 +609,7 @@ class KC(Boss):
         if min_orb < 7:
             self.add_mvps(i_players)
             if min_orb < 0:
-                return LANGUES["selected_language"]["KC MVP BAD ORBS"].format(mvp_names=mvp_names, min_orb=-min_orb)
+                return LANGUES["selected_language"]["KC MVP BAD ORB"].format(mvp_names=mvp_names, min_orb=-min_orb)
             if min_orb == 0:
                 return LANGUES["selected_language"]["KC MVP 0 ORB"].format(mvp_names=mvp_names)
             else:
@@ -604,24 +658,35 @@ class XERA(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp  = self.get_mvp()
-        self.lvp  = self.get_lvp()
         XERA.last = self  
         
     def get_mvp(self):
+        mvp = []
         msg_fdp = self.mvp_fdp_xera()
         if msg_fdp:
-            return msg_fdp
+            mvp.append(msg_fdp)
+            
         msg_glide = self.mvp_glide()
         if msg_glide:
-            return msg_glide
-        return self.get_mvp_cc_boss()
+            mvp.append(msg_glide)
+            
+        msg_cc = self.get_mvp_cc_boss()
+        if msg_cc:
+            mvp.append(msg_cc)  
+            
+        return mvp
     
     def get_lvp(self):
+        lvp = []
         msg_minijeu = self.lvp_minijeu()
         if msg_minijeu:
-            return msg_minijeu
-        return self.get_lvp_cc_boss()    
+            lvp.append(msg_minijeu)
+            
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+        
+        return lvp
         
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support])
@@ -685,7 +750,7 @@ class XERA(Boss):
             tp_time     = e['time']
             
             player_name = e['actor']
-            i_player    = self.get_player_id(player_name)
+            i_player    = self.player_name_to_id(player_name)
             tp_time    += 2000  # 1s de delais pour etre sur
             i_time      = time_to_index(tp_time, self.time_base)
             pos_player  = self.get_player_pos(i_player, i_time, i_time + i_delta)
@@ -715,21 +780,26 @@ class CAIRN(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         CAIRN.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_tp = self.mvp_tp()
         if msg_tp:
-            return msg_tp  
+            mvp.append(msg_tp)
+             
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps    
-        return          
+            mvp.append(msg_bad_dps)   
+             
+        return mvp      
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
       
     ################################ MVP ################################
     
@@ -768,18 +838,27 @@ class MO(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         MO.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_pic = self.mvp_pic()
         if msg_pic:
-            return msg_pic
-        return self.get_bad_dps()
+            mvp.append(msg_pic)
+            
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps)
+        
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()   
+        lvp = []
+        msg_dps = self.get_lvp_dps()   
+        if msg_dps:
+            lvp.append(msg_dps)
+            
+        return lvp
         
     ################################ MVP ################################
     
@@ -827,23 +906,41 @@ class SAMAROG(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp     = self.get_mvp()
-        self.lvp     = self.get_lvp()
         SAMAROG.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_impaled = self.mvp_impaled()
         if msg_impaled:
-            return msg_impaled
+            mvp.append(msg_impaled)
         
         msg_bisou = self.mvp_traitors()
         if msg_bisou:
-            return msg_bisou
+            mvp.append(msg_bisou)
         
-        return self.get_mvp_cc_boss(extra_exclude=[self.is_fix])
+        msg_cc = self.get_mvp_cc_boss(extra_exclude=[self.is_fix])
+        if msg_cc:
+            mvp.append(msg_cc)
+            
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_cc_boss()
+        lvp = []
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+            
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        
+        return lvp
+        
+        
     
     ################################ MVP ################################ 
     
@@ -915,8 +1012,8 @@ class SAMAROG(Boss):
                     big_actor   = big['actor']
                     green_time  = small['time']
                     if fail_actor in [big_actor, small_actor] and np.abs(fail_time - green_time) < 7000:
-                        victims.append(self.get_player_id(big_actor))
-                        traitors.append(self.get_player_id(small_actor))
+                        victims.append(self.player_name_to_id(big_actor))
+                        traitors.append(self.player_name_to_id(small_actor))
         return traitors, victims 
 
 ################################ DEIMOS ################################
@@ -927,28 +1024,30 @@ class DEIMOS(Boss):
     name       = "DEIMOS"
     wing       = 4
     boss_id    = 17154
-    real_phase = "100% - 10%"
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         DEIMOS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_black = self.mvp_black()
         if msg_black:
-            return msg_black
+            mvp.append(msg_black)
         msg_pizza = self.mvp_pizza()
         if msg_pizza:
-            return msg_pizza
-        return
+            mvp.append(msg_pizza)
+        return mvp
     
     def get_lvp(self):
+        lvp = []
         msg_tears = self.lvp_tears()
         if msg_tears:
-            return msg_tears
-        return self.get_lvp_dps()
+            lvp.append(msg_tears)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_sac])
@@ -1016,6 +1115,13 @@ class DEIMOS(Boss):
             if self.got_pizzaed(i):
                 pizzaed.append(i)
         return pizzaed
+    
+    def get_dmg_boss(self, i_player: int):
+        p10010id = self.get_phase_id("100% - 10%")
+        p100id   = self.get_phase_id("10% - 0%") 
+        d10010   = self.log.pjcontent['players'][i_player]['dpsTargets'][0][p10010id]['damage']
+        d100     = self.log.pjcontent['players'][i_player]['dpsTargets'][0][p100id]['damage']
+        return d10010 + d100
 
 ################################ SH ################################
 
@@ -1035,21 +1141,34 @@ class SH(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         SH.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_wall = self.mvp_wall()
         if msg_wall:
-            return msg_wall
+            mvp.append(msg_wall)
         msg_fall = self.mvp_fall()
         if msg_fall:
-            return msg_fall
-        return self.get_mvp_cc_boss()
+            mvp.append(msg_fall)
+        msg_cc = self.get_mvp_cc_boss()
+        if msg_cc:
+            mvp.append(msg_cc)
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps: 
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_cc_boss()
+        lvp = []
+        msg_wall = self.get_lvp_cc_boss()
+        if msg_wall:
+            lvp.append(msg_wall)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
+        
         
     ################################ MVP ################################
     
@@ -1120,21 +1239,24 @@ class DHUUM(Boss):
     
     def __init__(self, log: Log):    
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         DHUUM.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_cracks = self.mvp_cracks()
         if msg_cracks:
-            return msg_cracks
+            mvp.append(msg_cracks)
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_green])
         if msg_bad_dps:
-            return msg_bad_dps
-        return
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     def get_dps_ranking(self):
         return self._get_dps_contrib([self.is_support, self.is_green])
@@ -1177,15 +1299,21 @@ class CA(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         CA.last  = self
         
     def get_mvp(self):
-        return self.get_bad_dps()
+        mvp = []
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
   
     ################################ MVP ################################
     
@@ -1199,9 +1327,7 @@ class CA(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
-
-    
+    ################################ DATA MECHAS ################################  
 
 ################################ LARGOS ################################
 
@@ -1214,18 +1340,27 @@ class LARGOS(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         LARGOS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_dash = self.mvp_dash()
         if msg_dash:
-            return msg_dash
-        return
+            mvp.append(msg_dash)
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_cc_total()
+        lvp = []
+        msg_cc = self.get_lvp_cc_total()
+        if msg_cc:
+            lvp.append(msg_cc)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     ################################ MVP ################################
         
@@ -1293,24 +1428,27 @@ class Q1(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         Q1.last  = self
         
     def get_mvp(self):
+        mvp = []
         msg_fdp = self.mvp_fdp()
         if msg_fdp:
-            return msg_fdp
+            mvp.append(msg_fdp)
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
+            mvp.append(msg_bad_dps)
         msg_wave = self.mvp_wave()
         if msg_wave:
-            return msg_wave
-        return
+            mvp.append(msg_wave)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps) 
+        return lvp
         
     ################################ MVP ################################
     
@@ -1380,18 +1518,28 @@ class ADINA(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         ADINA.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return self.mvp_dmg_split()
+            mvp.append(msg_bad_dps)
+            
+        msg_split = self.mvp_dmg_split()
+        if msg_split:
+            mvp.append(msg_split)
+        return mvp
     
     def get_lvp(self):
-        return self.lvp_dmg_split()
+        lvp = []
+        msg_split = self.lvp_dmg_split()
+        if msg_split:
+            lvp.append(msg_split)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
         
     ################################ MVP ################################
 
@@ -1421,8 +1569,7 @@ class ADINA(Boss):
         dmg_split1 = self.log.jcontent['phases'][2]['dpsStats'][i_player][0]
         dmg_split2 = self.log.jcontent['phases'][4]['dpsStats'][i_player][0]
         dmg_split3 = self.log.jcontent['phases'][6]['dpsStats'][i_player][0]
-        return dmg_split1 + dmg_split2 + dmg_split3
-        
+        return dmg_split1 + dmg_split2 + dmg_split3    
 
 ################################ SABIR ################################
 
@@ -1435,15 +1582,27 @@ class SABIR(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp   = self.get_mvp()
-        self.lvp   = self.get_lvp()
         SABIR.last = self
         
     def get_mvp(self):
-        return self.get_mvp_cc_boss()
+        mvp = []
+        msg_cc = self.get_mvp_cc_boss()
+        if msg_cc:
+            mvp.append(msg_cc)
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_cc_boss()
+        lvp = []
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     ################################ MVP ################################
     
@@ -1459,8 +1618,6 @@ class SABIR(Boss):
     
     ################################ DATA MECHAS ################################
 
-    
-
 ################################ QTP ################################
 
 class QTP(Boss):
@@ -1472,24 +1629,27 @@ class QTP(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         QTP.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_pylon])
         if msg_bad_dps:
-            return msg_bad_dps
+            mvp.append(msg_bad_dps)
         msg_cc = self.get_mvp_cc_total(extra_exclude=[self.is_pylon])
         if msg_cc:
-            return msg_cc
-        return
+            mvp.append(msg_cc)
+        return mvp
     
     def get_lvp(self):
+        lvp = []
         msg_cc = self.get_lvp_cc_total()
         if msg_cc:
-            return msg_cc
-        return self.get_lvp_dps() 
+            lvp.append(msg_cc)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     def is_alac(self, i_player: int):
         min_alac_contrib     = 30
@@ -1551,15 +1711,27 @@ class GREER(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         GREER.last = self
         
     def get_mvp(self):
-        return self.get_bad_dps()
+        mvp = []
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps)
+        msg_cc = self.get_mvp_cc_boss()
+        if msg_cc:
+            mvp.append(msg_cc)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     ################################ MVP ################################
     
@@ -1586,15 +1758,27 @@ class DECIMA(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         DECIMA.last = self
         
     def get_mvp(self):
-        return self.get_bad_dps()
+        mvp = []
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps)
+        msg_cc = self.get_mvp_cc_boss()
+        if msg_cc:
+            mvp.append(msg_cc)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_cc = self.get_lvp_cc_boss()
+        if msg_cc:
+            lvp.append(msg_cc)
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     ################################ MVP ################################
     
@@ -1621,15 +1805,21 @@ class URA(Boss):
 
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         GREER.last = self
         
     def get_mvp(self):
-        return self.get_bad_dps()
+        mvp = []
+        msg_dps = self.get_bad_dps()
+        if msg_dps:
+            mvp.append(msg_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
 
     ################################ MVP ################################
     
@@ -1644,7 +1834,6 @@ class URA(Boss):
     
     
     ################################ DATA MECHAS ################################
-
     
 ################################ GOLEM CHAT STANDARD ################################
 

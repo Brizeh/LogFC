@@ -1,11 +1,13 @@
-from const import BOSS_DICT
+from const import BOSS_DICT, DUPS_CHECKER
 import re
 from datetime import datetime
 
 class InputParser:
-    def __init__(self, input_string):
+    def __init__(self, input_string, project=False):
         self.input = input_string
+        self.project = project
         self.urls = self.detectUrls()
+        
         
     def __str__(self):
         title = f"{len(self.urls)} urls detected :\n"
@@ -21,20 +23,21 @@ class InputParser:
 
         # Utilisation de re.finditer pour identifier toutes les correspondances
         matches = [match.group(0) for match in re.finditer(regex_full, self.input)]
-
         # Affichage des résultats
-        dupsChecker = {}
-        for match in matches:
-            end = match.split("_")[-1]
-            if dupsChecker.get(end):
-                dupsChecker[end].append(match)
-            else:
-                dupsChecker[end] = [match]
+        if not self.project:
+            for match in matches:
+                end = match.split("_")[-1]
+                if DUPS_CHECKER.get(end):
+                    DUPS_CHECKER[end].append(match)
+                else:
+                    DUPS_CHECKER[end] = [match]
+        else:
+            return list(set(matches.copy()))
         
         def extract_timestamp(url):
             timestamp_str = url.split('_')[0] # Extract the timestamp part (e.g., '20241124-205115')
             date = timestamp_str.split('-')[1]+"-"+timestamp_str.split('-')[2]
             return datetime.strptime(date, "%Y%m%d-%H%M%S")
     
-        return [max(urlz, key=extract_timestamp) for urlz in dupsChecker.values()]
+        return [max(urlz, key=extract_timestamp) for urlz in DUPS_CHECKER.values()]
     

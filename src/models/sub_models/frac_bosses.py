@@ -13,18 +13,21 @@ class MAMA(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp  = self.get_mvp()
-        self.lvp  = self.get_lvp()
         MAMA.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ SIAX ################################
 
@@ -37,18 +40,21 @@ class SIAX(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp = self.get_mvp()
-        self.lvp = self.get_lvp()
         SIAX.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ ENSOLYSS ################################
 
@@ -61,18 +67,21 @@ class ENSOLYSS(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp      = self.get_mvp()
-        self.lvp      = self.get_lvp()
         ENSOLYSS.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ SKORVALD ################################
 
@@ -85,18 +94,21 @@ class SKORVALD(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp      = self.get_mvp()
-        self.lvp      = self.get_lvp()
         SKORVALD.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ ARTSARIIV ################################
 
@@ -109,18 +121,21 @@ class ARTSARIIV(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp       = self.get_mvp()
-        self.lvp       = self.get_lvp()
         ARTSARIIV.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp  
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ ARKK ################################
 
@@ -133,18 +148,21 @@ class ARKK(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp  = self.get_mvp()
-        self.lvp  = self.get_lvp()
         ARKK.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ DARK AI ################################
 
@@ -157,18 +175,21 @@ class DARKAI(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         DARKAI.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
 ################################ KANAXAI ################################
 
@@ -181,18 +202,21 @@ class KANAXAI(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp     = self.get_mvp()
-        self.lvp     = self.get_lvp()
         KANAXAI.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
     
     ################################ LVP ################################
     
@@ -232,8 +256,7 @@ class KANAXAI(Boss):
                       ):
                         linkCount += 1
         return linkCount
-                
-        
+                      
 ################################ EPARCH ################################
 
 class EPARCH(Boss):
@@ -245,15 +268,18 @@ class EPARCH(Boss):
     
     def __init__(self, log: Log):
         super().__init__(log)
-        self.mvp    = self.get_mvp()
-        self.lvp    = self.get_lvp()
         EPARCH.last = self
         
     def get_mvp(self):
+        mvp = []
         msg_bad_dps = self.get_bad_dps()
         if msg_bad_dps:
-            return msg_bad_dps
-        return    
+            mvp.append(msg_bad_dps)
+        return mvp
     
     def get_lvp(self):
-        return self.get_lvp_dps()
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp

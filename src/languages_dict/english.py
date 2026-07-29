@@ -45,7 +45,7 @@ english = {
     "ESCORT LVP TOWER P": "⬗ *[**LVP** : {lvp_names} who **succeded** all of their **solo cap**]*",
     
     ################################ KC ################################
-    "KC MVP ORB"  : "⬗ *[**MVP** : {mvp_names} gived **{min_orb} orbs** to the **boss**]*",
+    "KC MVP BAD ORB"  : "⬗ *[**MVP** : {mvp_names} gave **{min_orb} orbs** to the **boss**]*",
     "KC MVP 0 ORB": "⬗ *[**MVP** : {mvp_names} who dodged every **orbs** in the fight]*",
     "KC MVP ORB"  : "⬗ *[**MVP** : {mvp_names} only with **{min_orb} orbs** collected in the fight]*",
     
@@ -134,6 +134,9 @@ english = {
     ################################ KANAXAI ################################
     "KANAXAI LVP DPS": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad) with **{linkCount} tether**]*",
     
+    ################################ OLC ################################
+    "OLC MVP EXPOSED": "⬗ *[**MVP** : __{mvp_name}__ empowered **{red}** :red_square: | **{green}** :green_square: | **{blue}** :blue_square:]*",
+    
     ################################ GENERAL ################################
     "MVP BOSS 0 CC S" : "⬗ *[**MVP** : {mvp_names} didn't do any **CC**]*",
     "MVP BOSS 0 CC P" : "⬗ *[**MVP** : {mvp_names} didn't do any **CC**]*",
@@ -165,7 +168,7 @@ english = {
     "MVP"         : "# [GREAT MVP : {mvps} with {max_mvp_score} titles]\n",
     "LVP"         : "# [GREAT LVP : {lvps} with {max_lvp_score} titles]\n",
     "TIME"        : "# Total time : {run_duration}\n",
-    "WINGMAN"     : "# Average wingman grade : {note_wingman:.2f}%{emote_wingman}",
+    "WINGMAN"     : "# Average wingman grade : {note_wingman:.2f}%{emote_wingman}\n",
     
     "MALVEILLANCE": "Ongoing malevolence...",
     "UPLOAD"      : "### *Upload by"

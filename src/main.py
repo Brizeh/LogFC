@@ -1,13 +1,27 @@
 from argparse import ArgumentParser
 from time import perf_counter
 import grequests
-import func
+import json
 
-from const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
+import func
+from const import ARXIV, REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
 from models.log_class import Log
 from models.boss_facto import BossFactory
 from languages import LANGUES
 from input import InputParser
+
+import matplotlib.pyplot as plt
+
+def printjson(data: dict) -> None:
+    try:
+        name = next(
+            key for key, value in globals().items()
+            if value is data
+        )
+    except:
+        name ="data"
+    with open(f"{name}.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
 def _make_parser() -> ArgumentParser:
     with open(DEFAULT_INPUT_FILE, "r") as file:
@@ -29,9 +43,12 @@ def debugLog(url):
     BossFactory.create_boss(log)
     boss = ALL_BOSSES[0]
     print(boss.start_date)
-    print(boss.mvp)
-    print(boss.lvp)
-    # YES
+    if boss.mvp:
+        for mvp in boss.mvp:
+            print(mvp)
+    if boss.lvp:
+        for lvp in boss.lvp:
+            print(lvp)
 
 def main(input_string, **kwargs) -> None:
     input = InputParser(input_string)
@@ -49,6 +66,7 @@ def main(input_string, **kwargs) -> None:
     for log in logs:
         BossFactory.create_boss(log)
     print("\n")
+    
     split_run_message = func.get_message_reward(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
     for message in split_run_message:
         print(message)
@@ -57,9 +75,8 @@ def main(input_string, **kwargs) -> None:
 if __name__ == "__main__":
     print("Starting\n")
     start_time = perf_counter()
-    LANGUES["selected_language"] = LANGUES["EN"]
+    LANGUES["selected_language"] = LANGUES["FR"]
     args = _make_parser().parse_args()
     main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
-    #debugLog("https://dps.report/i7N1-20241214-142308_frae")
-    end_time = perf_counter()
-    print(f"--- {end_time - start_time:.3f} seconds ---\n")
+    #debugLog("https://dps.report/SVKq-20260209-213956_qadim")
+    print(f"\nFinished in {perf_counter() - start_time:.2f} seconds")

@@ -43,7 +43,7 @@ french = {
     "ESCORT LVP TOWER P": "⬗ *[**LVP** : {lvp_names} qui ont **réussit** tous leurs **duo cap**]*",
     
     ################################ KC ################################
-    "KC MVP ORB": "⬗ *[**MVP** : {mvp_names} qui ont donné **{min_orb} orbes** au **Boss**]*",
+    "KC MVP BAD ORB": "⬗ *[**MVP** : {mvp_names} qui ont donné **{min_orb} orbes** au **Boss**]*",
     "KC MVP 0 ORB": "⬗ *[**MVP** : {mvp_names} avec aucune **orbe** collectée sur tout le fight]*",
     "KC MVP ORB": "⬗ *[**MVP** : {mvp_names} avec seulement **{min_orb} orbes** collectées sur tout le fight]*",
     
@@ -138,6 +138,9 @@ french = {
     ################################ KANAXAI ################################
     "KANAXAI LVP DPS": "⬗ *[**LVP** : {lvp_dps_name} qui a fait **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** de la squad) avec **{linkCount} tether**]*",
     
+    ################################ OLC ################################
+    "OLC MVP EXPOSED": "⬗ *[**MVP** : {mvp_name} a renforcé **{red}** :red_square: **{green}** :green_square: **{blue}** :blue_square:]*",
+    
     ################################ GENERAL ################################
     "MVP BOSS 0 CC S" : "⬗ *[**MVP** : {mvp_names} n'a pas mis de **CC**]*",
     "MVP BOSS 0 CC P" : "⬗ *[**MVP** : {mvp_names} n'ont pas mis de **CC**]*",
@@ -169,7 +172,7 @@ french = {
     "MVP"         : "# [GRAND MVP : {mvps} avec {max_mvp_score} titres]\n",
     "LVP"         : "# [GRAND LVP : {lvps} avec {max_lvp_score} titres]\n",
     "TIME"        : "# Temps total : {run_duration}\n",
-    "WINGMAN"     : "# Note Wingman moyenne : {note_wingman:.2f}%{emote_wingman}",
+    "WINGMAN"     : "# Note Wingman moyenne : {note_wingman:.2f}%{emote_wingman}\n",
     
     "MALVEILLANCE": "Malveillance en cours...",
     "UPLOAD"      : "### *Upload par"
