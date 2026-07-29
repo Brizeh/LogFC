@@ -104,7 +104,7 @@ class GORS(Boss):
     def mvp_dmg_split(self):
         i_players, min_dmg, total_dmg = Stats.get_min_value(self, self.get_dmg_split, exclude=[self.is_support])
         dps_total_dmg                 = Stats.get_tot_value(self, self.get_dmg_split, exclude=[self.is_support])
-        if min_dmg/dps_total_dmg < 1/6*0.75:
+        if min_dmg/dps_total_dmg < 1/6*0.75 and total_dmg:
             self.add_mvps(i_players)
             mvp_names = self.players_to_string(i_players)
             dmg_ratio = min_dmg / total_dmg * 100
@@ -126,9 +126,10 @@ class GORS(Boss):
     def lvp_dmg_split(self):
         i_players, max_dmg, total_dmg = Stats.get_max_value(self, self.get_dmg_split)
         lvp_names                     = self.players_to_string(i_players)
-        dmg_ratio                     = max_dmg / total_dmg * 100
-        self.add_lvps(i_players)
-        return LANGUES["selected_language"]["GORS LVP SPLIT"].format(lvp_names=lvp_names, max_dmg=max_dmg, dmg_ratio=dmg_ratio)
+        if total_dmg:
+            dmg_ratio = max_dmg / total_dmg * 100
+            self.add_lvps(i_players)
+            return LANGUES["selected_language"]["GORS LVP SPLIT"].format(lvp_names=lvp_names, max_dmg=max_dmg, dmg_ratio=dmg_ratio)
 
     ################################ CONDITIONS ###############################
     
@@ -209,7 +210,7 @@ class SABETHA(Boss):
     def mvp_dmg_split(self):
         i_players, min_dmg, total_dmg = Stats.get_min_value(self, self.get_dmg_split, exclude=[self.is_support,self.is_cannon])
         dps_total_dmg                 = Stats.get_tot_value(self, self.get_dmg_split, exclude=[self.is_support])
-        if min_dmg/dps_total_dmg < 1/6*0.75:
+        if min_dmg/dps_total_dmg < 1/6*0.75 and total_dmg:
             self.add_mvps(i_players) 
             dmg_ratio = min_dmg / total_dmg * 100
             mvp_names = self.players_to_string(i_players)
@@ -229,9 +230,10 @@ class SABETHA(Boss):
     def lvp_dmg_split(self):
         i_players, max_dmg, total_dmg = Stats.get_max_value(self, self.get_dmg_split)
         lvp_names                     = self.players_to_string(i_players)
-        dmg_ratio                     = max_dmg / total_dmg * 100
-        self.add_lvps(i_players)
-        return LANGUES["selected_language"]["SABETHA LVP SPLIT"].format(lvp_names=lvp_names, dmg_ratio=dmg_ratio)
+        if total_dmg:
+            dmg_ratio                     = max_dmg / total_dmg * 100
+            self.add_lvps(i_players)
+            return LANGUES["selected_language"]["SABETHA LVP SPLIT"].format(lvp_names=lvp_names, dmg_ratio=dmg_ratio)
 
     ################################ CONDITIONS ###############################
     
@@ -342,7 +344,7 @@ class SLOTH(Boss):
     
     def mvp_cc_sloth(self):
         i_players, min_cc, total_cc = Stats.get_min_value(self, self.get_cc_boss, exclude=[self.is_shroom])  
-        if min_cc < 800:
+        if min_cc < 800 and total_cc:
             self.add_mvps(i_players)
             cc_ratio  = min_cc / total_cc * 100
             mvp_names = self.players_to_string(i_players)
@@ -424,22 +426,24 @@ class MATTHIAS(Boss):
     
     def mvp_cc_matthias(self):
         i_players, min_cc, total_cc = Stats.get_min_value(self, self.get_cc_total, exclude=[self.is_sac])
-        cc_ratio                    = min_cc / total_cc * 100
-        mvp_names                   = self.players_to_string(i_players)
-        self.add_mvps(i_players)
-        if min_cc == 0:
-            return LANGUES["selected_language"]["MATTHIAS MVP 0 CC"].format(mvp_names=mvp_names)
-        else:
-            return LANGUES["selected_language"]["MATTHIAS MVP CC"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+        if total_cc:
+            cc_ratio                    = min_cc / total_cc * 100
+            mvp_names                   = self.players_to_string(i_players)
+            self.add_mvps(i_players)
+            if min_cc == 0:
+                return LANGUES["selected_language"]["MATTHIAS MVP 0 CC"].format(mvp_names=mvp_names)
+            else:
+                return LANGUES["selected_language"]["MATTHIAS MVP CC"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
         
     ################################ LVP ################################
             
     def lvp_cc_matthias(self):
-        i_players, max_cc, total_cc = Stats.get_max_value(self, self.get_cc_total)       
-        cc_ratio                    = max_cc / total_cc * 100
-        lvp_names                   = self.players_to_string(i_players)
-        self.add_lvps(i_players)
-        return LANGUES["selected_language"]["MATTHIAS LVP CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
+        i_players, max_cc, total_cc = Stats.get_max_value(self, self.get_cc_total)
+        if total_cc:    
+            cc_ratio                    = max_cc / total_cc * 100
+            lvp_names                   = self.players_to_string(i_players)
+            self.add_lvps(i_players)
+            return LANGUES["selected_language"]["MATTHIAS LVP CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
     
     ################################ CONDITIONS ###############################
     
@@ -1540,18 +1544,20 @@ class ADINA(Boss):
     def mvp_dmg_split(self):
         i_players, min_dmg, total_dmg = Stats.get_min_value(self, self.get_dmg_split, exclude=[self.is_support])
         mvp_names                     = self.players_to_string(i_players)
-        dmg_ratio                     = min_dmg / total_dmg * 100
-        self.add_mvps(i_players)
-        return LANGUES["selected_language"]["ADINA MVP SPLIT"].format(mvp_names=mvp_names, dmg_ratio=dmg_ratio)
+        if total_dmg:
+            dmg_ratio                     = min_dmg / total_dmg * 100
+            self.add_mvps(i_players)
+            return LANGUES["selected_language"]["ADINA MVP SPLIT"].format(mvp_names=mvp_names, dmg_ratio=dmg_ratio)
     
     ################################ LVP ################################    
     
     def lvp_dmg_split(self):
         i_players, max_dmg, total_dmg = Stats.get_max_value(self, self.get_dmg_split) 
         lvp_names                     = self.players_to_string(i_players)
-        dmg_ratio                     = max_dmg / total_dmg * 100
-        self.add_lvps(i_players)
-        return LANGUES["selected_language"]["ADINA LVP SPLIT"].format(lvp_names=lvp_names, dmg_ratio=dmg_ratio)
+        if total_dmg:
+            dmg_ratio                     = max_dmg / total_dmg * 100
+            self.add_lvps(i_players)
+            return LANGUES["selected_language"]["ADINA LVP SPLIT"].format(lvp_names=lvp_names, dmg_ratio=dmg_ratio)
     
     ################################ CONDITIONS ################################
     
