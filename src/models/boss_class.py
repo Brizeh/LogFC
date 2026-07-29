@@ -650,6 +650,7 @@ class Boss:
                     return start, end
                 return func.time_to_index(start, self.time_base), func.time_to_index(end, self.time_base)
         print(f'{target_phase} not found')
+        return None, None
     
     def get_mech_value(self, i_player: int, mech_name: str, phase: str="Full Fight"):
         phase      = self.get_phase_id(phase)
