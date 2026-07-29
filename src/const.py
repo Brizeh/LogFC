@@ -1,8 +1,11 @@
 import json
+from pathlib import Path
+
+_PACKAGE_DIR = Path(__file__).resolve().parent
 
 DEFAULT_LANGUAGE = "FR"
 DEFAULT_TITLE = "Run"
-DEFAULT_INPUT_FILE = "src/input_logs.txt"
+DEFAULT_INPUT_FILE = str(_PACKAGE_DIR / "input_logs.txt")
 
 BIG = float('inf')
 
@@ -178,7 +181,7 @@ REQUEST_HEADERS = {
 }
 
 try:
-    with open("gw2_analyzer/custom_names.json", encoding="utf-8") as file:
+    with open(_PACKAGE_DIR / "custom_names.json", encoding="utf-8") as file:
         CUSTOM_NAMES = json.load(file)
 except:
     CUSTOM_NAMES = {}
