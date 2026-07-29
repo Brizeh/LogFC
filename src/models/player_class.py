@@ -1,4 +1,4 @@
-from const import CUSTOM_NAMES, ALL_MECHS
+from ..const import CUSTOM_NAMES, ALL_MECHS
 
 class Player:
     def __init__(self, boss, account: str):

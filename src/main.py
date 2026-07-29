@@ -3,12 +3,12 @@ from time import perf_counter
 import grequests
 import json
 
-import func
-from const import ARXIV, REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
-from models.log_class import Log
-from models.boss_facto import BossFactory
-from languages import LANGUES
-from input import InputParser
+from . import func
+from .const import ARXIV, REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
+from .models.log_class import Log
+from .models.boss_facto import BossFactory
+from .languages import LANGUES
+from .input import InputParser
 
 import matplotlib.pyplot as plt
 

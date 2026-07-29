@@ -1,4 +1,4 @@
-from const import BOSS_DICT, DUPS_CHECKER
+from .const import BOSS_DICT, DUPS_CHECKER
 import re
 from datetime import datetime
 

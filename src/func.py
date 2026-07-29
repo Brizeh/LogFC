@@ -1,8 +1,8 @@
 import math
 from datetime import timedelta
 
-from const import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS, DUPS_CHECKER
-from languages import LANGUES
+from .const import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS, DUPS_CHECKER
+from .languages import LANGUES
 
 def time_to_index(time: int, base):  # time in millisecond
     return int(time / base)

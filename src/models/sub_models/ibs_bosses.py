@@ -1,6 +1,6 @@
-from models.boss_class import Boss, Stats
-from models.log_class import Log
-from func import *
+from ..boss_class import Boss, Stats
+from ..log_class import Log
+from ...func import *
 
 ################################ ICEBROOD CONSTRUCT ################################
 

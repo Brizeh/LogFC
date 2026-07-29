@@ -2,11 +2,11 @@ from datetime import datetime, timedelta, timezone
 import requests
 import pytz
 
-from models.player_class import *
-from const import ALL_PLAYERS, BOSS_DICT, CUSTOM_NAMES, BIG, EXTRA_MECHS, ALL_MECHS, ARXIV
-from models.log_class import Log
-import func
-from languages import LANGUES
+from .player_class import *
+from ..const import ALL_PLAYERS, BOSS_DICT, CUSTOM_NAMES, BIG, EXTRA_MECHS, ALL_MECHS, ARXIV
+from .log_class import Log
+from .. import func
+from ..languages import LANGUES
 
 class Boss:  
 
