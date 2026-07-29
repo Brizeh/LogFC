@@ -341,17 +341,15 @@ class Boss:
     def add_mvps(self, players: list[int]):
         self.mvp_accounts = [self.get_player_account(i) for i in players]
         for i in players:
-            player = ALL_PLAYERS.get(self.get_player_account(i))
-            self.add_player_stat("Titles", "MVP", 1, player, description="Number of MVP titles")           
             account = self.get_player_account(i)
+            self.add_player_stat("Titles", "MVP", 1, account, description="Number of MVP titles")
             ALL_PLAYERS[account].mvps += 1
-                
+
     def add_lvps(self, players: list[int]):
         self.lvp_accounts = [self.get_player_account(i) for i in players]
         for i in players:
-            player = ALL_PLAYERS.get(self.get_player_account(i))
             account = self.get_player_account(i)
-            self.add_player_stat("Titles", "LVP", 1, player, description="Number of LVP titles")
+            self.add_player_stat("Titles", "LVP", 1, account, description="Number of LVP titles")
             ALL_PLAYERS[account].lvps += 1
             
     def _get_dps_contrib(self, exclude: list[classmethod]=[]):
@@ -479,132 +477,97 @@ class Boss:
             else:
                 return LANGUES["selected_language"]["MVP BAD DPS P"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
             
-    def add_boss_mechs(self):
-        names = [mech['name'] for mech in self.mechanics]
-        mechStats = self.log.jcontent['phases'][0]['mechanicStats']
-        for i in self.player_list:
-            player = ALL_PLAYERS.get(self.get_player_account(i))
-            for name, value in zip(names,mechStats[i]):
-                if player.boss_mechs.get(name):
-                    player.boss_mechs[name] += value[0]
-                else:
-                    player.boss_mechs[name] = value[0]
-                    
-    def add_player_stat(self, category: str, stat: str, value, player: Player, description: str = None):
+    def add_player_stat(self, category: str, stat: str, value, account: str, description: str = None):
         if description:
-            if not EXTRA_MECHS.get(category):
-                EXTRA_MECHS[category] = {}
-            if not EXTRA_MECHS[category].get(stat):
-                EXTRA_MECHS[category][stat] = description
-        
-        if player.player_mechs.get(category, {}).get(stat):
-            if ALL_MECHS.get(category):
-                if ALL_MECHS[category].get("avg"+stat) is None and "avg" not in stat:
-                    ALL_MECHS[category]["avg"+stat] = f"Average {stat} uptime"
-            player.player_mechs[category][stat]["value"] += value
-            player.player_mechs[category][stat]["presence"] += 1
-        elif player.player_mechs.get(category):
-            player.player_mechs[category][stat] = {"value": value, "description": EXTRA_MECHS.get(category).get(stat), "presence": 1}
-        else:
-            player.player_mechs[category] = {}
-            player.player_mechs[category][stat] = {"value": value, "description": EXTRA_MECHS.get(category).get(stat), "presence": 1}
-            
-        true_description = player.player_mechs[category][stat]["description"]
-        url = self.log.url
-        name = player.account
-        if CUSTOM_NAMES.get(name):
-            name = CUSTOM_NAMES[name].get("nickname")
-        if not ARXIV.get(url):
-            ARXIV[url] = {}
-        if not ARXIV[url].get(name):
-            ARXIV[url][name] = {}
-        if not ARXIV[url][name].get(category):
-            ARXIV[url][name][category] = {}
-        ARXIV[url][name][category][stat] = {"value": value, "description": true_description}
-        if "avg" not in stat:
-            ARXIV[url][name][category]["avg"+stat] = {"value": value, "description": f"Average {true_description} Uptime"}
+            EXTRA_MECHS.setdefault(category, {}).setdefault(stat, description)
+        if ALL_MECHS.get(category) and "avg" not in stat:
+            ALL_MECHS[category].setdefault("avg" + stat, f"Average {stat} uptime")
+
+        stat_description = ALL_MECHS.get(category, {}).get(stat) or EXTRA_MECHS.get(category, {}).get(stat)
+        arxiv_stats = ARXIV.setdefault(self.log.url, {}).setdefault(account, {}).setdefault(category, {})
+        arxiv_stats[stat] = {"value": value, "description": stat_description}
         
                     
     def add_players_mechs(self):
         for i in self.player_list:
-            player = ALL_PLAYERS.get(self.get_player_account(i))
+            account = self.get_player_account(i)
             # Damage stats
             dmgTarget = self.log.pjcontent['players'][i]['dpsTargets'][0][0]
             dmgAll = self.log.pjcontent['players'][i]['dpsAll'][0]
-            self.add_player_stat("Damage Stats", "DmgTarget", dmgTarget["damage"], player)
-            self.add_player_stat("Damage Stats", "DmgPowerTarget", dmgTarget["powerDamage"], player)
-            self.add_player_stat("Damage Stats", "DmgCondiTarget", dmgTarget["condiDamage"], player)
-            self.add_player_stat("Damage Stats", "CcTarget", dmgTarget["breakbarDamage"], player)
-            self.add_player_stat("Damage Stats", "DmgAll", dmgAll["damage"], player)
-            self.add_player_stat("Damage Stats", "DmgPowerAll", dmgAll["powerDamage"], player)
-            self.add_player_stat("Damage Stats", "DmgCondiAll", dmgAll["condiDamage"], player)
-            self.add_player_stat("Damage Stats", "CcAll", dmgAll["breakbarDamage"], player)
-            
+            self.add_player_stat("Damage Stats", "DmgTarget", dmgTarget["damage"], account)
+            self.add_player_stat("Damage Stats", "DmgPowerTarget", dmgTarget["powerDamage"], account)
+            self.add_player_stat("Damage Stats", "DmgCondiTarget", dmgTarget["condiDamage"], account)
+            self.add_player_stat("Damage Stats", "CcTarget", dmgTarget["breakbarDamage"], account)
+            self.add_player_stat("Damage Stats", "DmgAll", dmgAll["damage"], account)
+            self.add_player_stat("Damage Stats", "DmgPowerAll", dmgAll["powerDamage"], account)
+            self.add_player_stat("Damage Stats", "DmgCondiAll", dmgAll["condiDamage"], account)
+            self.add_player_stat("Damage Stats", "CcAll", dmgAll["breakbarDamage"], account)
+
             # Gameplay stats
             statsAll = self.log.pjcontent['players'][i]['statsAll'][0]
-            self.add_player_stat("Gameplay Stats", "TimeWasted", statsAll["timeWasted"], player)
-            self.add_player_stat("Gameplay Stats", "BadCancels", statsAll["wasted"], player)
-            self.add_player_stat("Gameplay Stats", "TimeSaved", statsAll["timeSaved"], player)
-            self.add_player_stat("Gameplay Stats", "GoodCancels", statsAll["saved"], player)
-            self.add_player_stat("Gameplay Stats", "WeaponSwaps", statsAll["swapCount"], player)
-            self.add_player_stat("Gameplay Stats", "avgCombatUptime", statsAll["skillCastUptime"], player)
-            self.add_player_stat("Gameplay Stats", "avgCombatNoAAUptime", statsAll["skillCastUptimeNoAA"], player)
-            self.add_player_stat("Gameplay Stats", "avgDistSqd", statsAll["stackDist"], player)
-            self.add_player_stat("Gameplay Stats", "avgDistCom", statsAll["distToCom"], player)
-                
+            self.add_player_stat("Gameplay Stats", "TimeWasted", statsAll["timeWasted"], account)
+            self.add_player_stat("Gameplay Stats", "BadCancels", statsAll["wasted"], account)
+            self.add_player_stat("Gameplay Stats", "TimeSaved", statsAll["timeSaved"], account)
+            self.add_player_stat("Gameplay Stats", "GoodCancels", statsAll["saved"], account)
+            self.add_player_stat("Gameplay Stats", "WeaponSwaps", statsAll["swapCount"], account)
+            self.add_player_stat("Gameplay Stats", "avgCombatUptime", statsAll["skillCastUptime"], account)
+            self.add_player_stat("Gameplay Stats", "avgCombatNoAAUptime", statsAll["skillCastUptimeNoAA"], account)
+            self.add_player_stat("Gameplay Stats", "avgDistSqd", statsAll["stackDist"], account)
+            self.add_player_stat("Gameplay Stats", "avgDistCom", statsAll["distToCom"], account)
+
             # Offensive stats
             statsTarget = self.log.pjcontent['players'][i]['statsTargets'][0][0]
             critHit, critableHit = statsTarget["criticalRate"], statsTarget["critableDirectDamageCount"]
             if critableHit == 0:
                 critableHit = 1
-            self.add_player_stat("Offensive Stats", "avgCritRate", critHit/critableHit*100, player)
+            self.add_player_stat("Offensive Stats", "avgCritRate", critHit/critableHit*100, account)
             flankHit, allHit = statsTarget["flankingRate"], statsTarget["connectedDirectDamageCount"]
             if allHit == 0:
                 allHit = 1
-            self.add_player_stat("Offensive Stats", "avgFlankRate", flankHit/allHit*100, player)
+            self.add_player_stat("Offensive Stats", "avgFlankRate", flankHit/allHit*100, account)
             power90Hit, powerHit = statsTarget["connectedPowerAbove90HPCount"], statsTarget["connectedPowerCount"]
             if powerHit == 0:
                 powerHit = 1
-            self.add_player_stat("Offensive Stats", "avgWritPower", power90Hit/powerHit*100, player)
+            self.add_player_stat("Offensive Stats", "avgWritPower", power90Hit/powerHit*100, account)
             condi90Hit, condiHit = statsTarget["connectedConditionAbove90HPCount"], statsTarget["connectedConditionCount"]
             if condiHit == 0:
                 condiHit = 1
-            self.add_player_stat("Offensive Stats", "avgWritCondi", condi90Hit/condiHit*100, player)
+            self.add_player_stat("Offensive Stats", "avgWritCondi", condi90Hit/condiHit*100, account)
             glanceHit = statsTarget["glanceRate"]
-            self.add_player_stat("Offensive Stats", "avgGlanceRate", glanceHit/allHit*100, player)
-            
+            self.add_player_stat("Offensive Stats", "avgGlanceRate", glanceHit/allHit*100, account)
+
             # Defensive stats
             defenses = self.log.pjcontent['players'][i]['defenses'][0]
-            self.add_player_stat("Defensive Stats", "DmgTaken", defenses["damageTaken"], player)
-            self.add_player_stat("Defensive Stats", "PowerDmgTaken", defenses["powerDamageTaken"], player)
-            self.add_player_stat("Defensive Stats", "CondiDmgTaken", defenses["conditionDamageTaken"], player)
-            self.add_player_stat("Defensive Stats", "BreakbarDmgTaken", defenses["breakbarDamageTaken"], player)
-            self.add_player_stat("Defensive Stats", "DmgBarrier", defenses["damageBarrier"], player)
-            self.add_player_stat("Defensive Stats", "Interrupted", defenses["interruptedCount"], player)
-            self.add_player_stat("Defensive Stats", "Cced", defenses["receivedCrowdControl"], player)
-            self.add_player_stat("Defensive Stats", "CcTime", defenses["receivedCrowdControlDuration"]/1000, player)
-            self.add_player_stat("Defensive Stats", "Evaded", defenses["evadedCount"], player)
-            self.add_player_stat("Defensive Stats", "Blocked", defenses["blockedCount"], player)
-            self.add_player_stat("Defensive Stats", "Dodged", defenses["dodgeCount"], player)
-            self.add_player_stat("Defensive Stats", "Downed", defenses["downCount"], player)
-            self.add_player_stat("Defensive Stats", "DownedTime", defenses["downDuration"]/1000, player)
-            self.add_player_stat("Defensive Stats", "Dead", defenses["deadCount"], player)
-            self.add_player_stat("Defensive Stats", "DeadTime", defenses["deadDuration"]/1000, player)
-                
+            self.add_player_stat("Defensive Stats", "DmgTaken", defenses["damageTaken"], account)
+            self.add_player_stat("Defensive Stats", "PowerDmgTaken", defenses["powerDamageTaken"], account)
+            self.add_player_stat("Defensive Stats", "CondiDmgTaken", defenses["conditionDamageTaken"], account)
+            self.add_player_stat("Defensive Stats", "BreakbarDmgTaken", defenses["breakbarDamageTaken"], account)
+            self.add_player_stat("Defensive Stats", "DmgBarrier", defenses["damageBarrier"], account)
+            self.add_player_stat("Defensive Stats", "Interrupted", defenses["interruptedCount"], account)
+            self.add_player_stat("Defensive Stats", "Cced", defenses["receivedCrowdControl"], account)
+            self.add_player_stat("Defensive Stats", "CcTime", defenses["receivedCrowdControlDuration"]/1000, account)
+            self.add_player_stat("Defensive Stats", "Evaded", defenses["evadedCount"], account)
+            self.add_player_stat("Defensive Stats", "Blocked", defenses["blockedCount"], account)
+            self.add_player_stat("Defensive Stats", "Dodged", defenses["dodgeCount"], account)
+            self.add_player_stat("Defensive Stats", "Downed", defenses["downCount"], account)
+            self.add_player_stat("Defensive Stats", "DownedTime", defenses["downDuration"]/1000, account)
+            self.add_player_stat("Defensive Stats", "Dead", defenses["deadCount"], account)
+            self.add_player_stat("Defensive Stats", "DeadTime", defenses["deadDuration"]/1000, account)
+
             # Support stats
             support = self.log.pjcontent['players'][i]['support'][0]
-            self.add_player_stat("Support Stats", "CondiCleans", support["condiCleanse"], player)
-            self.add_player_stat("Support Stats", "CondiCleansTime", support["condiCleanseTime"], player)
-            self.add_player_stat("Support Stats", "SelfCleans", support["condiCleanseSelf"], player)
-            self.add_player_stat("Support Stats", "SelfCleansTime", support["condiCleanseTimeSelf"], player)
-            self.add_player_stat("Support Stats", "BoonStrips", support["boonStrips"], player)
-            self.add_player_stat("Support Stats", "BoonStripsTime", support["boonStripsTime"], player)
-            self.add_player_stat("Support Stats", "StunBreak", support["stunBreak"], player)
-            self.add_player_stat("Support Stats", "StunBreakTime", support["removedStunDuration"]/1000, player)
-            self.add_player_stat("Support Stats", "Resurrects", support["resurrects"], player)
-            self.add_player_stat("Support Stats", "ResurrectTime", support["resurrectTime"], player)
-            self.add_player_stat("Support Stats", "avgBoons", statsAll["avgBoons"], player)
-                
+            self.add_player_stat("Support Stats", "CondiCleans", support["condiCleanse"], account)
+            self.add_player_stat("Support Stats", "CondiCleansTime", support["condiCleanseTime"], account)
+            self.add_player_stat("Support Stats", "SelfCleans", support["condiCleanseSelf"], account)
+            self.add_player_stat("Support Stats", "SelfCleansTime", support["condiCleanseTimeSelf"], account)
+            self.add_player_stat("Support Stats", "BoonStrips", support["boonStrips"], account)
+            self.add_player_stat("Support Stats", "BoonStripsTime", support["boonStripsTime"], account)
+            self.add_player_stat("Support Stats", "StunBreak", support["stunBreak"], account)
+            self.add_player_stat("Support Stats", "StunBreakTime", support["removedStunDuration"]/1000, account)
+            self.add_player_stat("Support Stats", "Resurrects", support["resurrects"], account)
+            self.add_player_stat("Support Stats", "ResurrectTime", support["resurrectTime"], account)
+            self.add_player_stat("Support Stats", "avgBoons", statsAll["avgBoons"], account)
+
             # Buffs
             buffUptimesActive = self.log.pjcontent["players"][i]["buffUptimesActive"]
             for buff in buffUptimesActive:
@@ -621,8 +584,8 @@ class Boss:
                         EXTRA_MECHS[category][name] = f"{description} Total Usage"
                         EXTRA_MECHS[category]["avg"+name] = f"Average {description} Uptime"
                     # Add player mech
-                    self.add_player_stat(category, name, uptime, player)
-                    
+                    self.add_player_stat(category, name, uptime, account)
+
             # Mechanics
             mech_history = self.get_player_mech_history(i)
             data_mech = {}
@@ -633,7 +596,7 @@ class Boss:
                     data_mech[mech["name"]] = {"value": 1, "description": f"{mech['fullName']} : {mech['description']}"}
             for name, mech in data_mech.items():
                 if name != "Dead" and name != "Downed" and name != "Got up" and name != "Res":
-                    self.add_player_stat("Mechanics", name, mech["value"], player, description=mech["description"])
+                    self.add_player_stat("Mechanics", name, mech["value"], account, description=mech["description"])
     
     ################################ LVP ################################
     
@@ -723,11 +686,11 @@ class Boss:
         return int(delta/lpos)
     
     def getBuff(self, buffId: int):
-        buffMap = self.log.pjcontent["buffMap"]
-        for id, buff in buffMap.items():
-            if int(id[1:]) == buffId:
-                return buff
-        return
+        if not hasattr(self, "_buff_by_id"):
+            self._buff_by_id = {
+                int(id_[1:]): buff for id_, buff in self.log.pjcontent["buffMap"].items()
+            }
+        return self._buff_by_id.get(buffId)
     
 class Stats:
     @staticmethod

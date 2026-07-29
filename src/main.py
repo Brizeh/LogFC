@@ -66,7 +66,6 @@ def main(input_string, **kwargs) -> None:
     for log in logs:
         BossFactory.create_boss(log)
     print("\n")
-    
     split_run_message = func.get_message_reward(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
     for message in split_run_message:
         print(message)
