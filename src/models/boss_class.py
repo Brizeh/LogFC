@@ -61,8 +61,7 @@ class Boss:
         for mechanic in mechanic_map:
             is_player_mechanic = mechanic['playerMech']
             if is_player_mechanic:
-                mechs.append(mechanic)
-                
+                mechs.append(mechanic)    
         return mechs
     
     def get_duration_ms(self):
@@ -587,13 +586,10 @@ class Boss:
                     self.add_player_stat(category, name, uptime, account)
 
             # Mechanics
-            mech_history = self.get_player_mech_history(i)
+            mech_values = self.log.jcontent['phases'][0]['mechanicStats'][i]
             data_mech = {}
-            for mech in mech_history:
-                if data_mech.get(mech["name"]):
-                    data_mech[mech["name"]]["value"] += 1
-                else:
-                    data_mech[mech["name"]] = {"value": 1, "description": f"{mech['fullName']} : {mech['description']}"}
+            for mech, values in zip(self.mechanics, mech_values):
+                data_mech[mech["shortName"]] = {"value": values[0], "description": f"{mech['name']} : {mech['description']}"}
             for name, mech in data_mech.items():
                 if name != "Dead" and name != "Downed" and name != "Got up" and name != "Res":
                     self.add_player_stat("Mechanics", name, mech["value"], account, description=mech["description"])
