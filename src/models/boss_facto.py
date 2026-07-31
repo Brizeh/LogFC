@@ -66,6 +66,8 @@ _BOSS_FACTORY = {
     "skor" : SKORVALD,
     "arriv": ARTSARIIV,
     "arkk" : ARKK,
+    
+    "ws"   : WS,
 
     "ai"   : DARKAI,
 

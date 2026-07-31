@@ -283,3 +283,30 @@ class EPARCH(Boss):
         if msg_dps:
             lvp.append(msg_dps)
         return lvp
+    
+################################ WS ################################
+
+class WS(Boss):
+    
+    last    = None
+    name    = "WS"
+    boss_id = 27010
+    wing    = "FRAC"
+    
+    def __init__(self, log: Log):
+        super().__init__(log)
+        WS.last = self
+        
+    def get_mvp(self):
+        mvp = []
+        msg_bad_dps = self.get_bad_dps()
+        if msg_bad_dps:
+            mvp.append(msg_bad_dps)
+        return mvp
+    
+    def get_lvp(self):
+        lvp = []
+        msg_dps = self.get_lvp_dps()
+        if msg_dps:
+            lvp.append(msg_dps)
+        return lvp
