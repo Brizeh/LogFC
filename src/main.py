@@ -77,5 +77,5 @@ if __name__ == "__main__":
     LANGUES["selected_language"] = LANGUES["FR"]
     args = _make_parser().parse_args()
     main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
-    #debugLog("https://dps.report/5iqK-20240402-211640_dhuum")
+    #debugLog("https://dps.report/kjk1-20260729-002814_deci")
     print(f"\nFinished in {perf_counter() - start_time:.2f} seconds")
