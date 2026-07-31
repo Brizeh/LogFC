@@ -3,7 +3,10 @@
 
 Affiche le statut git courant, demande confirmation puis un titre de
 commit, committe (git add -A) et push sur origin/main. Une reponse
-negative ou un titre vide annule l'operation.
+negative ou un titre vide annule l'operation. Detecte aussi les
+commits locaux deja faits mais jamais pousses (ex: commit via un
+autre outil) et propose de les pousser meme s'il n'y a rien de
+nouveau a committer.
 """
 import subprocess
 import sys
@@ -16,14 +19,38 @@ def run(*args):
     subprocess.run(args, cwd=REPO_ROOT, check=True)
 
 
-def main():
-    status = subprocess.run(
-        ["git", "status", "--short"],
-        cwd=REPO_ROOT, capture_output=True, text=True, check=True,
+def capture(*args):
+    return subprocess.run(
+        args, cwd=REPO_ROOT, capture_output=True, text=True, check=True,
     ).stdout
 
+
+def push_pending_commits():
+    try:
+        run("git", "fetch", "origin", "main")
+    except subprocess.CalledProcessError:
+        print("Impossible de contacter origin (pas de reseau ?), verification annulee.")
+        return
+
+    pending = capture("git", "log", "origin/main..HEAD", "--oneline").strip()
+    if not pending:
+        print("Rien a committer ni a pousser.")
+        return
+
+    print("=== Commits locaux non pousses ===")
+    print(pending)
+    confirm = input("Pousser ces commits sur origin/main ? (o/n) : ").strip().lower()
+    if confirm not in ("o", "oui", "y", "yes"):
+        print("Annule.")
+        return
+    run("git", "push", "origin", "main")
+
+
+def main():
+    status = capture("git", "status", "--short")
+
     if not status.strip():
-        print("Rien a committer.")
+        push_pending_commits()
         return
 
     print("=== Changements detectes ===")
