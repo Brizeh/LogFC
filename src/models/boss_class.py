@@ -24,7 +24,6 @@ class Boss:
         self.start_date         = self.get_start_date()
         self.end_date           = self.get_end_date()
         self.player_list        = self.get_player_list()
-        self.wingman_time       = self.get_wingman_time()
         self.wingman_percentile = self.get_wingman_percentile()
         self.real_phase_id      = self.get_phase_id(self.real_phase)
         self.time_base          = self.get_time_base()
@@ -81,26 +80,6 @@ class Boss:
         paris_timezone = timezone(timedelta(hours=1))
         return end_date.astimezone(paris_timezone)
 
-    def get_wingman_time(self):
-        try:
-            w_boss_id = self.boss_id * (-1) ** self.cm
-            url       = f"https://gw2wingman.nevermindcreations.de/api/boss?era=latest&bossID={w_boss_id}"
-            r         = requests.get(url)
-            if not r.ok:
-                print("wingman faled")
-                print(r.status_code)
-                print(r.content)
-                return None
-            data = r.json()
-            if data.get("error"):
-                print("wingman failed")
-                print(data["error"])
-                return None
-            return [data["duration_med"], data["duration_top"]]
-        except:
-            print("wingman failed")
-            return None
-    
     def get_player_list(self):
         real_players = []
         players      = self.log.pjcontent['players']
