@@ -133,10 +133,10 @@ class GORS(Boss):
         dmg_split   = 0
         split_1_id = self.get_phase_id("Split 1")
         split_2_id = self.get_phase_id("Split 2")
-        dmg_split_1 = self.log.jcontent['phases'][split_1_id]['dpsStatsTargets'][i_player]
-        dmg_split_2 = self.log.jcontent['phases'][split_2_id]['dpsStatsTargets'][i_player]
+        dmg_split_1 = self.get_dmg_phase_targets(i_player, split_1_id)
+        dmg_split_2 = self.get_dmg_phase_targets(i_player, split_2_id)
         for add_split1, add_split2 in zip(dmg_split_1,dmg_split_2):
-            dmg_split += add_split1[0] + add_split2[0]
+            dmg_split += add_split1 + add_split2
         return dmg_split
     
     def get_egged(self):
@@ -271,9 +271,9 @@ class SABETHA(Boss):
     ################################ DATA MECHAS ################################
         
     def get_dmg_split(self,i_player: int):
-        dmg_kernan   = self.log.jcontent['phases'][2]['dpsStatsTargets'][i_player][0][0]
-        dmg_mornifle = self.log.jcontent['phases'][5]['dpsStatsTargets'][i_player][0][0]
-        dmg_karde    = self.log.jcontent['phases'][7]['dpsStatsTargets'][i_player][0][0]
+        dmg_kernan   = self.get_dmg_phase_targets(i_player, 2)[0]
+        dmg_mornifle = self.get_dmg_phase_targets(i_player, 5)[0]
+        dmg_karde    = self.get_dmg_phase_targets(i_player, 7)[0]
         return dmg_kernan + dmg_mornifle + dmg_karde 
     
     def get_terrorists(self):
@@ -1497,9 +1497,9 @@ class ADINA(Boss):
     ################################ DATA MECHAS ################################
     
     def get_dmg_split(self, i_player: int):
-        dmg_split1 = self.log.jcontent['phases'][2]['dpsStats'][i_player][0]
-        dmg_split2 = self.log.jcontent['phases'][4]['dpsStats'][i_player][0]
-        dmg_split3 = self.log.jcontent['phases'][6]['dpsStats'][i_player][0]
+        dmg_split1 = self.get_dmg_phase(i_player, 2)
+        dmg_split2 = self.get_dmg_phase(i_player, 4)
+        dmg_split3 = self.get_dmg_phase(i_player, 6)
         return dmg_split1 + dmg_split2 + dmg_split3    
 
 ################################ SABIR ################################

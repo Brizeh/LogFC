@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Capture les donnees d'un log dps.report dans tests/fixtures/.
 
-Telecharge les deux charges utiles d'un log (jcontent scrape depuis la
-page HTML, pjcontent depuis l'API JSON) et les enregistre pour que les
-tests puissent rejouer le pipeline sans reseau.
+Telecharge la reponse de l'API JSON et l'enregistre pour que les tests
+puissent rejouer le pipeline sans reseau.
 
     python -m tests.capture_fixture <url> [<url> ...]
 
-Les fichiers sont gzippes : un log pese environ 1 Mo en JSON brut, une
-centaine de Ko compresse.
+Penser a lancer ensuite `python -m tests.test_pipeline --update` pour
+produire la sortie de reference du nouveau boss, et
+`python -m tools.update_mechanic_icd <url>` s'il manque a la table des
+temps de grace.
 """
 import gzip
 import json
@@ -56,44 +57,38 @@ def _strip(container, source):
     return removed
 
 
-def strip_unused(jcontent, pjcontent):
+def strip_unused(pjcontent):
     source = _source_text()
-    removed = 0
-    for payload in (jcontent, pjcontent):
-        removed += _strip(payload, source)
-        for collection in ("players", "targets", "phases"):
-            for entry in payload.get(collection, []):
-                if isinstance(entry, dict):
-                    removed += _strip(entry, source)
+    removed = _strip(pjcontent, source)
+    for collection in ("players", "targets", "phases"):
+        for entry in pjcontent.get(collection, []):
+            if isinstance(entry, dict):
+                removed += _strip(entry, source)
     return removed
 
 
 def capture(urls):
     FIXTURES_DIR.mkdir(exist_ok=True)
 
-    requests = []
-    for url in urls:
-        requests.append(grequests.get(url))
-        requests.append(grequests.get(DPS_REPORT_JSON_URL + url, headers=REQUEST_HEADERS))
-    responses = grequests.map(requests, size=2 * len(urls))
+    requests = [grequests.get(DPS_REPORT_JSON_URL + url, headers=REQUEST_HEADERS)
+                for url in urls]
+    responses = grequests.map(requests, size=len(urls))
 
     for i, url in enumerate(urls):
         log = Log(url)
-        log.set_jcontent(responses[2 * i])
-        log.set_pjcontent(responses[2 * i + 1])
-        if log.jcontent is None or log.pjcontent is None:
+        log.set_pjcontent(responses[i])
+        if log.pjcontent is None:
             print(f"echec: {url}")
             continue
 
-        removed = strip_unused(log.jcontent, log.pjcontent)
+        removed = strip_unused(log.pjcontent)
         print(f"  elagage: {removed // 1024} Ko de donnees non lues retirees")
 
         name = log.short_name
-        for suffix, data in (("jcontent", log.jcontent), ("pjcontent", log.pjcontent)):
-            path = FIXTURES_DIR / f"{name}.{suffix}.json.gz"
-            with gzip.open(path, "wt", encoding="utf-8") as f:
-                json.dump(data, f, separators=(",", ":"))
-            print(f"  {path.name} ({path.stat().st_size // 1024} Ko)")
+        path = FIXTURES_DIR / f"{name}.pjcontent.json.gz"
+        with gzip.open(path, "wt", encoding="utf-8") as f:
+            json.dump(log.pjcontent, f, separators=(",", ":"))
+        print(f"  {path.name} ({path.stat().st_size // 1024} Ko)")
 
         # l'url d'origine est necessaire au rejeu (elle sert de cle dans ARXIV)
         with open(FIXTURES_DIR / f"{name}.url.txt", "w", encoding="utf-8") as f:

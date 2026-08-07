@@ -42,11 +42,8 @@ def available():
 def load(name, directory=FIXTURES_DIR):
     directory = Path(directory)
     url = (directory / f"{name}.url.txt").read_text(encoding="utf-8").strip()
-    payloads = []
-    for kind in ("jcontent", "pjcontent"):
-        with gzip.open(directory / f"{name}.{kind}.json.gz", "rt", encoding="utf-8") as f:
-            payloads.append(json.load(f))
-    return url, payloads[0], payloads[1]
+    with gzip.open(directory / f"{name}.pjcontent.json.gz", "rt", encoding="utf-8") as f:
+        return url, json.load(f)
 
 
 def build(names, directory=FIXTURES_DIR):
@@ -54,13 +51,13 @@ def build(names, directory=FIXTURES_DIR):
     analysis = Analysis()
     loaded = [load(name, directory) for name in names]
     # InputParser alimente analysis.dups, d'ou vient le comptage des fails
-    urls = InputParser("\n".join(url for url, _, _ in loaded), analysis).urls
+    urls = InputParser("\n".join(url for url, _ in loaded), analysis).urls
 
-    by_url = {url: (jc, pjc) for url, jc, pjc in loaded}
+    by_url = dict(loaded)
     logs = []
     for url in urls:
         log = Log(url)
-        log.jcontent, log.pjcontent = by_url[url]
+        log.pjcontent = by_url[url]
         logs.append(log)
     return analysis, logs
 

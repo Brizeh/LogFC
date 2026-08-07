@@ -1,8 +1,7 @@
 # Fixtures
 
-Deux charges utiles par log (`jcontent` scrape depuis la page HTML,
-`pjcontent` depuis l'API JSON), gzippees et elaguees des cles qu'aucun
-fichier de `src/` ne reference.
+La reponse de l'API JSON de dps.report pour un log, gzippee et elaguee
+des cles qu'aucun fichier de `src/` ne reference.
 
 | Fixture | Ce qu'elle couvre |
 |---|---|
@@ -28,5 +27,10 @@ les tests.
 
 ```bash
 python -m tests.capture_fixture <url>
+python -m tools.update_mechanic_icd <url>
 python -m tests.test_pipeline --update
 ```
+
+La deuxieme commande n'est necessaire que si le boss manque encore a
+`src/mechanic_icd.json` ; `test_icd_table_covers_the_fixtures` le
+signale.

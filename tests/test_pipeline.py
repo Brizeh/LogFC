@@ -19,6 +19,7 @@ from src.languages_dict.french import french
 from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - son import peuple Boss.registry
 from src.models.boss_facto import BossFactory
+from src import mechanics
 from tests import replay
 
 EXPECTED_DIR = Path(__file__).resolve().parent / "expected"
@@ -99,6 +100,22 @@ def test_two_analyses_do_not_interfere():
 
     assert got_left == expected_left, "l'analyse de gauche a ete polluee par l'autre"
     assert got_right == expected_right, "l'analyse de droite a ete polluee par l'autre"
+
+
+def test_icd_table_covers_the_fixtures():
+    """Aucune mecanique des fixtures ne manque a mechanic_icd.json.
+
+    Une entree absente ferait retomber son temps de grace a zero et
+    surestimerait sa valeur : LogFC le signale, ce test l'interdit sur
+    les boss couverts.
+    """
+    mechanics._warned.clear()
+    for name in replay.available():
+        replay.run([name])
+    assert not mechanics._warned, (
+        f"absents de mechanic_icd.json: {sorted(map(str, mechanics._warned))} "
+        "(lancer python -m tools.update_mechanic_icd <url>)"
+    )
 
 
 def test_arxiv_is_keyed_by_account():
@@ -217,6 +234,7 @@ TESTS = [
     test_run_message_unchanged,
     test_each_boss_message_unchanged,
     test_two_analyses_do_not_interfere,
+    test_icd_table_covers_the_fixtures,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,

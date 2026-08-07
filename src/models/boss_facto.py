@@ -15,6 +15,6 @@ from .sub_models.frac_bosses import *
 class BossFactory:
     @staticmethod
     def create_boss(log: Log, analysis):
-        boss = Boss.registry.get(log.jcontent['triggerID'])
+        boss = Boss.registry.get(log.pjcontent['triggerID'])
         if boss:
             analysis.bosses.append(boss(log, analysis))

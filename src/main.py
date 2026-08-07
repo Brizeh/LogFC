@@ -41,11 +41,9 @@ def _make_parser() -> ArgumentParser:
 def debugLog(url):
     analysis = Analysis()
     log = Log(url)
-    jcontent = grequests.get(url)
     pjcontent = grequests.get(DPS_REPORT_JSON_URL, params={"permalink": url}, headers=REQUEST_HEADERS)
-    responses = grequests.map([jcontent, pjcontent], size=2)
-    log.set_jcontent(responses[0])
-    log.set_pjcontent(responses[1])
+    responses = grequests.map([pjcontent], size=1)
+    log.set_pjcontent(responses[0])
     BossFactory.create_boss(log, analysis)
     boss = analysis.bosses[0]
     print(boss.start_date)
@@ -61,15 +59,11 @@ def main(input_string, **kwargs) -> None:
     input = InputParser(input_string, analysis)
     print(input)
     urls = input.urls
-    requests = []
-    for url in urls:
-        requests.append(grequests.get(url))
-        requests.append(grequests.get(DPS_REPORT_JSON_URL+url, headers=REQUEST_HEADERS))
-    responses = grequests.map(requests, size=2*len(urls))
+    requests = [grequests.get(DPS_REPORT_JSON_URL+url, headers=REQUEST_HEADERS) for url in urls]
+    responses = grequests.map(requests, size=len(urls))
     logs = [Log(url) for url in urls]
     for i in range(len(urls)):
-        logs[i].set_jcontent(responses[2*i])
-        logs[i].set_pjcontent(responses[2*i+1])
+        logs[i].set_pjcontent(responses[i])
     for log in logs:
         BossFactory.create_boss(log, analysis)
     print("\n")

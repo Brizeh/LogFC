@@ -46,29 +46,37 @@ equivalence avec l'etat precedent.
 Pour ajouter un boss au jeu de tests :
 `python -m tests.capture_fixture <url>` puis `--update`.
 
-## Les deux sources dps.report
+## La source de donnees
 
-Chaque `Log` porte deux charges utiles **distinctes**, recuperees par deux
-requetes separees :
+Une seule requete par log, vers l'API JSON officielle
+(`getJson?permalink=`) : `log.pjcontent`. Le projet ne scrape plus la
+page HTML de dps.report.
 
-| Attribut | Origine | Usage |
-|---|---|---|
-| `pjcontent` | API JSON officielle (`getJson?permalink=`) | quasi tout |
-| `jcontent` | **scraping HTML** de la page (variable JS `_logData`) | voir ci-dessous |
+Une seule chose n'existe pas dans cette API : le temps de grace (`icd`)
+de chaque mecanique, necessaire pour reproduire les valeurs agregees
+d'Elite Insights. Il est fige dans `src/mechanic_icd.json`, alimente par
+`python -m tools.update_mechanic_icd <url>` — le seul endroit du projet
+qui lit encore le HTML, et uniquement a la demande.
 
-`jcontent` ne sert qu'a quatre choses :
-- `triggerID` (identification du boss, dans `boss_facto.py`)
-- `mechanicMap` et `phases[].mechanicStats` (compteurs de mecaniques)
-- `players[].name`
-- `phases[].dpsStatsTargets` / `dpsStats` (degats par phase, splits)
+Quand un boss ou une mecanique manque a cette table, LogFC l'ecrit sur
+la sortie standard et suppose un `icd` nul, ce qui **surestime** la
+valeur de la mecanique concernee. Le run continue.
 
-Le scraping teste deux formats en dur (`var _logData =` puis
-`const _logData =`) et laisse `jcontent = None` en cas d'echec : si
-dps.report change son template, tout casse a `log.jcontent['triggerID']`.
+### Le calcul des mecaniques
 
-⚠️ Les deux schemas nomment differemment les memes concepts :
-`jcontent` utilise `name` / `shortName`, `pjcontent` utilise
-`fullName` / `name`. Ne pas les confondre en passant de l'un a l'autre.
+`src/mechanics.py` reproduit le tableau que la page HTML fournissait
+tout fait. Trois regles, validees sur 7676 cellules de reference :
+
+- la valeur est une **somme de poids** (`weight`), pas un nombre
+  d'evenements : un "Breakbar Damage" pese les degats infliges
+- la fenetre d'`icd` demarre a **t=0**, pas au premier evenement
+- elle **se rearme a chaque evenement**, meme ignore : une rafale
+  rapprochee ne compte donc que pour un
+
+⚠️ Les noms different entre l'API et l'ancien HTML : `pjcontent` expose
+`fullName` (nom long, celui qu'utilise `get_mech_value`) et `name` (nom
+court, la cle dans ARXIV). L'ancien HTML les appelait respectivement
+`name` et `shortName`.
 
 ## Ajouter un boss
 

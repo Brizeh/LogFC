@@ -6,6 +6,7 @@ from .player_class import *
 from ..const import CUSTOM_NAMES, BIG, ALL_MECHS
 from .log_class import Log
 from .. import func
+from ..mechanics import get_icd, mech_value, player_mechanics
 from ..languages import LANGUES
 
 class Boss:
@@ -83,13 +84,7 @@ class Boss:
         return self.log.pjcontent['fightName']
     
     def get_mechanics(self):
-        mechs        = []
-        mechanic_map = self.log.jcontent['mechanicMap']
-        for mechanic in mechanic_map:
-            is_player_mechanic = mechanic['playerMech']
-            if is_player_mechanic:
-                mechs.append(mechanic)    
-        return mechs
+        return player_mechanics(self.log.pjcontent)
     
     def get_duration_ms(self):
         return self.log.pjcontent['durationMS']
@@ -250,7 +245,7 @@ class Boss:
     ################################ DATA JOUEUR ################################
     
     def get_player_name(self, i_player: int):
-        return self.log.jcontent['players'][i_player]['name']
+        return self.log.pjcontent['players'][i_player]['name']
     
     def get_player_account(self, i_player: int):
         return self.log.pjcontent['players'][i_player]['account']
@@ -597,13 +592,14 @@ class Boss:
                     self.add_player_stat(category, name, uptime, account)
 
             # Mechanics
-            mech_values = self.log.jcontent['phases'][0]['mechanicStats'][i]
-            data_mech = {}
-            for mech, values in zip(self.mechanics, mech_values):
-                data_mech[mech["shortName"]] = {"value": values[0], "description": f"{mech['name']} : {mech['description']}"}
-            for name, mech in data_mech.items():
-                if name != "Dead" and name != "Downed" and name != "Got up" and name != "Res":
-                    self.add_player_stat("Mechanics", name, mech["value"], account, description=mech["description"])
+            player_name = self.get_player_name(i)
+            start, end  = self.get_phase_bounds(0)
+            trigger_id  = self.log.pjcontent['triggerID']
+            for mechanic in self.mechanics:
+                icd = get_icd(trigger_id, mechanic['fullName'])
+                value = mech_value(mechanic, player_name, icd, start, end)
+                description = f"{mechanic['fullName']} : {mechanic['description']}"
+                self.add_player_stat("Mechanics", mechanic['name'], value, account, description=description)
     
     ################################ LVP ################################
     
@@ -654,12 +650,33 @@ class Boss:
         print(f'{target_phase} not found')
         return None, None
     
+    def get_phase_bounds(self, phase_id: int):
+        phase = self.log.pjcontent['phases'][phase_id]
+        return phase['start'], phase['end']
+
+    def get_dmg_phase_targets(self, i_player: int, phase_id: int):
+        """Degats du joueur sur chaque cible impliquee dans une phase.
+
+        La page HTML indexait ces colonnes par les cibles de la phase,
+        l'API JSON les indexe par la liste globale des cibles : d'ou le
+        passage par targets + secondaryTargets.
+        """
+        phase       = self.log.pjcontent['phases'][phase_id]
+        indexes     = phase.get('targets', []) + phase.get('secondaryTargets', [])
+        dps_targets = self.log.pjcontent['players'][i_player]['dpsTargets']
+        return [dps_targets[i][phase_id]['damage'] for i in indexes]
+
+    def get_dmg_phase(self, i_player: int, phase_id: int):
+        """Degats du joueur sur toutes les cibles d'une phase."""
+        return self.log.pjcontent['players'][i_player]['dpsAll'][phase_id]['damage']
+
     def get_mech_value(self, i_player: int, mech_name: str, phase: str="Full Fight"):
-        phase      = self.get_phase_id(phase)
-        mechs_list = [mech['name'] for mech in self.mechanics]
-        if mech_name in mechs_list:
-            i_mech = mechs_list.index(mech_name)
-            return self.log.jcontent['phases'][phase]['mechanicStats'][i_player][i_mech][0]
+        phase_id = self.get_phase_id(phase)
+        for mechanic in self.mechanics:
+            if mechanic['fullName'] == mech_name:
+                start, end = self.get_phase_bounds(phase_id)
+                icd = get_icd(self.log.pjcontent['triggerID'], mech_name)
+                return mech_value(mechanic, self.get_player_name(i_player), icd, start, end)
         return 0
     
     def bosshp_to_time(self, hp: float):
