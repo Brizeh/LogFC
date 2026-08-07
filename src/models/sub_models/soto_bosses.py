@@ -5,9 +5,10 @@ from ...func import *
 
 class DAGDA(Boss):
     
-    name    = "DAGDA"
-    boss_id = 25705
-    wing    = "SOTO"
+    name       = "DAGDA"
+    boss_id    = 25705
+    url_suffix = "dagda"
+    wing       = "SOTO"
     
     def get_mvp(self):
         mvp = []
@@ -59,9 +60,10 @@ class DAGDA(Boss):
 
 class CERUS(Boss):
     
-    name    = "CERUS"
-    boss_id = 25989
-    wing    = "SOTO"
+    name       = "CERUS"
+    boss_id    = 25989
+    url_suffix = "cerus"
+    wing       = "SOTO"
     
     def get_mvp(self):
         mvp = []
@@ -81,9 +83,10 @@ class CERUS(Boss):
 
 class KELA(Boss):
     
-    name    = "KELA"
-    boss_id = 27124
-    wing    = "SOTO"
+    name       = "KELA"
+    boss_id    = 27124
+    url_suffix = "kela"
+    wing       = "SOTO"
     
     def get_mvp(self):
         mvp = []

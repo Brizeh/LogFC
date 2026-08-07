@@ -5,9 +5,10 @@ from ...func import *
 
 class MAMA(Boss):
     
-    name    = "MAMA"
-    boss_id = 17021
-    wing    = "FRAC"
+    name       = "MAMA"
+    boss_id    = 17021
+    url_suffix = "mama"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -27,9 +28,10 @@ class MAMA(Boss):
 
 class SIAX(Boss):
     
-    name    = "SIAX"
-    boss_id = 17028
-    wing    = "FRAC"
+    name       = "SIAX"
+    boss_id    = 17028
+    url_suffix = "siax"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -49,9 +51,10 @@ class SIAX(Boss):
 
 class ENSOLYSS(Boss):
     
-    name    = "ENSOLYSS"
-    boss_id = 16948
-    wing    = "FRAC"
+    name       = "ENSOLYSS"
+    boss_id    = 16948
+    url_suffix = "enso"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -71,9 +74,10 @@ class ENSOLYSS(Boss):
 
 class SKORVALD(Boss):
     
-    name    = "SKORVALD"
-    boss_id = 17632
-    wing    = "FRAC"
+    name       = "SKORVALD"
+    boss_id    = 17632
+    url_suffix = "skor"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -93,9 +97,10 @@ class SKORVALD(Boss):
 
 class ARTSARIIV(Boss):
     
-    name    = "ARTSARIIV"
-    boss_id = 17949
-    wing    = "FRAC"
+    name       = "ARTSARIIV"
+    boss_id    = 17949
+    url_suffix = "arriv"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -115,9 +120,10 @@ class ARTSARIIV(Boss):
 
 class ARKK(Boss):
     
-    name    = "ARKK"
-    boss_id = 17759
-    wing    = "FRAC"
+    name       = "ARKK"
+    boss_id    = 17759
+    url_suffix = "arkk"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -137,9 +143,11 @@ class ARKK(Boss):
 
 class DARKAI(Boss):
     
-    name    = "DARK AI"
-    boss_id = 232542
-    wing    = "FRAC"
+    name       = "DARK AI"
+    boss_id    = 232542
+    url_suffix = "ai"
+    trigger_ids = (23254,)
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -159,9 +167,10 @@ class DARKAI(Boss):
 
 class KANAXAI(Boss):
     
-    name    = "KANAXAI"
-    boss_id = 25577
-    wing    = "FRAC"
+    name       = "KANAXAI"
+    boss_id    = 25577
+    url_suffix = "kana"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -220,9 +229,10 @@ class KANAXAI(Boss):
 
 class EPARCH(Boss):
     
-    name    = "EPARCH"
-    boss_id = 26231
-    wing    = "FRAC"
+    name       = "EPARCH"
+    boss_id    = 26231
+    url_suffix = "eparc"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []
@@ -242,9 +252,10 @@ class EPARCH(Boss):
 
 class WS(Boss):
     
-    name    = "WS"
-    boss_id = 27010
-    wing    = "FRAC"
+    name       = "WS"
+    boss_id    = 27010
+    url_suffix = "ws"
+    wing       = "FRAC"
     
     def get_mvp(self):
         mvp = []

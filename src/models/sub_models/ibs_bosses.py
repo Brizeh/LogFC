@@ -5,9 +5,10 @@ from ...func import *
 
 class ICE(Boss):
     
-    name    = "ICEBROOD"
-    boss_id = 22154
-    wing    = "IBS"
+    name       = "ICEBROOD"
+    boss_id    = 22154
+    url_suffix = "ice"
+    wing       = "IBS"
     
     def get_mvp(self):
         mvp = []
@@ -27,9 +28,10 @@ class ICE(Boss):
 
 class KODANS(Boss):
     
-    name    = "KODANS"
-    boss_id = 22343
-    wing    = "IBS"
+    name       = "KODANS"
+    boss_id    = 22343
+    url_suffix = "falln"
+    wing       = "IBS"
     
     def get_mvp(self):
         mvp = []
@@ -66,9 +68,10 @@ class KODANS(Boss):
 
 class FRAENIR(Boss):
     
-    name    = "FRAENIR"
-    boss_id = 22492
-    wing    = "IBS"
+    name       = "FRAENIR"
+    boss_id    = 22492
+    url_suffix = "frae"
+    wing       = "IBS"
     
     def get_mvp(self):
         mvp = []
@@ -142,9 +145,10 @@ class FRAENIR(Boss):
 
 class WOJ(Boss):
     
-    name    = "WOJ"
-    boss_id = 22711
-    wing    = "IBS"
+    name       = "WOJ"
+    boss_id    = 22711
+    url_suffix = "whisp"
+    wing       = "IBS"
     
     def get_mvp(self):
         mvp = []
@@ -188,10 +192,11 @@ class WOJ(Boss):
 
 class BONESKINNER(Boss):
     
-    name    = "BONESKINNER"
-    boss_id = 22521
-    wing    = "IBS"
-    sak_id  = 60501
+    name       = "BONESKINNER"
+    boss_id    = 22521
+    url_suffix = "bone"
+    wing       = "IBS"
+    sak_id     = 60501
     
     def get_mvp(self):
         mvp = []

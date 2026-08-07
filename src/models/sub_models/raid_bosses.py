@@ -6,9 +6,10 @@ import numpy as np
 
 class VG(Boss):
     
-    name    = "VG"
-    wing    = 1
-    boss_id = 15438
+    name       = "VG"
+    wing       = 1
+    boss_id    = 15438
+    url_suffix = "vg"
     
     def get_mvp(self):
         mvp = []
@@ -59,9 +60,10 @@ class VG(Boss):
 
 class GORS(Boss):
     
-    name    = "GORSEVAL"
-    wing    = 1
-    boss_id = 15429
+    name       = "GORSEVAL"
+    wing       = 1
+    boss_id    = 15429
+    url_suffix = "gors"
     
     def get_mvp(self):
         mvp = []
@@ -148,17 +150,18 @@ class GORS(Boss):
 
 class SABETHA(Boss):
     
-    name    = "SABETHA"
-    wing    = 1
-    boss_id = 15375
+    name       = "SABETHA"
+    wing       = 1
+    boss_id    = 15375
+    url_suffix = "sab"
     
     pos_sab             = [376.7,364.4]
     pos_canon1          = [346.9,706.7]
     pos_canon2          = [35.9,336.8]
     pos_canon3          = [403.3,36.0]
-    pos_canon4          = [713.9,403.1] 
+    pos_canon4          = [713.9,403.1]
     canon_detect_radius = 45
-    scaler              = 9.34179 
+    scaler              = 9.34179
     
     def get_mvp(self):
         mvp = []
@@ -284,9 +287,10 @@ class SABETHA(Boss):
 
 class SLOTH(Boss):
     
-    name    = "SLOTH"
-    wing    = 2
-    boss_id = 16123
+    name       = "SLOTH"
+    wing       = 2
+    boss_id    = 16123
+    url_suffix = "sloth"
     
     def get_mvp(self):
         mvp = []
@@ -366,9 +370,10 @@ class SLOTH(Boss):
 
 class MATTHIAS(Boss):
     
-    name    = "MATTHIAS"
-    wing    = 2
-    boss_id = 16115
+    name       = "MATTHIAS"
+    wing       = 2
+    boss_id    = 16115
+    url_suffix = "matt"
     
     def get_mvp(self):
         mvp = []
@@ -433,11 +438,12 @@ class MATTHIAS(Boss):
 
 class ESCORT(Boss):
     
-    name    = "ESCORT"
-    wing    = 3
-    boss_id = 16253
+    name       = "ESCORT"
+    wing       = 3
+    boss_id    = 16253
+    url_suffix = "esc"
     
-    towers  = [
+    towers = [
                [387,129.1],
                [304.1,115.7],
                [187.1,118.8],
@@ -541,9 +547,10 @@ class ESCORT(Boss):
 
 class KC(Boss):
     
-    name    = "KC"
-    wing    = 3
-    boss_id = 16235
+    name       = "KC"
+    wing       = 3
+    boss_id    = 16235
+    url_suffix = "kc"
     
     def get_mvp(self):
         mvp = []
@@ -611,6 +618,7 @@ class XERA(Boss):
     name       = "XERA"
     wing       = 3
     boss_id    = 16246
+    url_suffix = "xera"
     real_phase = "Phase 1"
     
     debut         = [497.1,86.4]
@@ -738,9 +746,10 @@ class XERA(Boss):
 
 class CAIRN(Boss):
     
-    name    = "CAIRN"
-    wing    = 4
-    boss_id = 17194
+    name       = "CAIRN"
+    wing       = 4
+    boss_id    = 17194
+    url_suffix = "cairn"
     
     def get_mvp(self):
         mvp = []
@@ -791,9 +800,10 @@ class CAIRN(Boss):
 
 class MO(Boss):
     
-    name    = "MO"
-    wing    = 4
-    boss_id = 17172
+    name       = "MO"
+    wing       = 4
+    boss_id    = 17172
+    url_suffix = "mo"
     
     def get_mvp(self):
         mvp = []
@@ -848,9 +858,10 @@ class MO(Boss):
 
 class SAMAROG(Boss):
     
-    name    = "SAMAROG"
-    wing    = 4
-    boss_id = 17188
+    name       = "SAMAROG"
+    wing       = 4
+    boss_id    = 17188
+    url_suffix = "sam"
     
     top_left_corn  = [278.0,645.2]
     top_right_corn = [667.6,660.7]
@@ -973,6 +984,7 @@ class DEIMOS(Boss):
     name       = "DEIMOS"
     wing       = 4
     boss_id    = 17154
+    url_suffix = "dei"
     
     def get_mvp(self):
         mvp = []
@@ -1072,9 +1084,10 @@ class DEIMOS(Boss):
 
 class SH(Boss):
     
-    name    = "SH"
-    wing    = 5
-    boss_id = 19767
+    name       = "SH"
+    wing       = 5
+    boss_id    = 19767
+    url_suffix = "sh"
     
     center_arena = [375,375]
     radius1      = 345.5
@@ -1168,6 +1181,7 @@ class DHUUM(Boss):
     name       = "DHUUM"
     wing       = 5
     boss_id    = 19450
+    url_suffix = "dhuum"
     real_phase = "Dhuum Fight"
     
     def get_mvp(self):
@@ -1221,9 +1235,10 @@ class DHUUM(Boss):
 
 class CA(Boss):
     
-    name    = "CA"
-    wing    = 6
-    boss_id = 43974
+    name       = "CA"
+    wing       = 6
+    boss_id    = 43974
+    url_suffix = "ca"
 
     def get_mvp(self):
         mvp = []
@@ -1257,9 +1272,10 @@ class CA(Boss):
 
 class LARGOS(Boss):
     
-    name    = "LARGOS"
-    wing    = 6
-    boss_id = 21105
+    name       = "LARGOS"
+    wing       = 6
+    boss_id    = 21105
+    url_suffix = "twins"
 
     def get_mvp(self):
         mvp = []
@@ -1337,9 +1353,10 @@ class LARGOS(Boss):
 
 class Q1(Boss):
     
-    name    = "QADIM"
-    wing    = 6
-    boss_id = 20934
+    name       = "QADIM"
+    wing       = 6
+    boss_id    = 20934
+    url_suffix = "qadim"
     
     center     = [411.5,431.1]
     fdp_radius = 70
@@ -1427,9 +1444,10 @@ class Q1(Boss):
 
 class ADINA(Boss):
     
-    name    = "ADINA"
-    wing    = 7
-    boss_id = 22006
+    name       = "ADINA"
+    wing       = 7
+    boss_id    = 22006
+    url_suffix = "adina"
     
     def get_mvp(self):
         mvp = []
@@ -1488,9 +1506,10 @@ class ADINA(Boss):
 
 class SABIR(Boss):
     
-    name    = "SABIR"
-    wing    = 7
-    boss_id = 21964
+    name       = "SABIR"
+    wing       = 7
+    boss_id    = 21964
+    url_suffix = "sabir"
     
     def get_mvp(self):
         mvp = []
@@ -1530,9 +1549,10 @@ class SABIR(Boss):
 
 class QTP(Boss):
     
-    name    = "QTP"
-    wing    = 7
-    boss_id = 22000
+    name       = "QTP"
+    wing       = 7
+    boss_id    = 22000
+    url_suffix = "qpeer"
 
     def get_mvp(self):
         mvp = []
@@ -1607,9 +1627,10 @@ class QTP(Boss):
 
 class GREER(Boss):
     
-    name    = "GREER"
-    wing    = 8
-    boss_id = 26725
+    name       = "GREER"
+    wing       = 8
+    boss_id    = 26725
+    url_suffix = "greer"
 
     def get_mvp(self):
         mvp = []
@@ -1649,9 +1670,11 @@ class GREER(Boss):
 
 class DECIMA(Boss):
     
-    name    = "DECIMA"
-    wing    = 8
-    boss_id = 26774
+    name       = "DECIMA"
+    wing       = 8
+    boss_id    = 26774
+    url_suffix = "deci"
+    trigger_ids = (26774, 26867)
 
     def get_mvp(self):
         mvp = []
@@ -1691,9 +1714,10 @@ class DECIMA(Boss):
 
 class URA(Boss):
     
-    name    = "URA"
-    wing    = 8
-    boss_id = 26712
+    name       = "URA"
+    wing       = 8
+    boss_id    = 26712
+    url_suffix = "ura"
 
     def get_mvp(self):
         mvp = []
@@ -1729,3 +1753,4 @@ class GOLEM(Boss):
     
     name    = "GOLEM CHAT STANDARD"
     boss_id = 16199
+    trigger_ids = (16199, 19645)

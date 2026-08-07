@@ -64,19 +64,37 @@ dps.report change son template, tout casse a `log.jcontent['triggerID']`.
 
 ## Ajouter un boss
 
-Quatre endroits, a tenir en coherence :
+Une classe dans `sub_models/<categorie>_bosses.py`, plus les cles de
+message dans `languages_dict/french.py` **et** `english.py`. Il n'y a
+aucune table de correspondance a mettre a jour : la classe s'enregistre
+seule dans `Boss.registry` via `__init_subclass__`.
 
-1. `const.py` -> `BOSS_DICT[triggerID] = "suffixe_url"` (le suffixe des URLs
-   dps.report, ex. `_sh`, `_dei` ; il sert aussi au regex de `input.py`)
-2. `boss_facto.py` -> `_BOSS_FACTORY["suffixe_url"] = MaClasse`
-3. `sub_models/<categorie>_bosses.py` -> la classe, heritant de `Boss`
-4. `languages_dict/french.py` **et** `english.py` -> les cles de message
+```python
+class MONBOSS(Boss):
 
-Modes d'echec : oubli en 1 -> le boss est ignore sans aucun message ;
-oubli en 2 -> `KeyError` ; oubli en 4 -> plantage au moment de generer le
-message, pas au parsing.
+    name       = "MONBOSS"
+    boss_id    = 12345      # identifiant de l'API wingman
+    url_suffix = "monboss"  # suffixe des URLs dps.report
+    wing       = 8
+```
 
-Un boss peut avoir plusieurs `triggerID` (ex. DECIMA : 26774 et 26867).
+⚠️ **`boss_id` n'est pas le triggerID du log.** C'est l'identifiant de
+l'API wingman, et les deux different pour DARKAI, HT, KO et OLC. Par
+defaut le boss est enregistre sous `boss_id` ; des qu'ils divergent, ou
+qu'un boss a plusieurs triggerID, il faut declarer `trigger_ids` :
+
+```python
+    boss_id     = 24375     # wingman
+    trigger_ids = (43488,)  # triggerID reel du log
+```
+
+`url_suffix = None` retire le boss de la detection d'URL dans une liste
+collee : c'est le cas du golem, pour que les logs de practice ne
+polluent pas un run.
+
+Seul mode d'echec restant : une cle de langue oubliee, qui plante au
+moment de generer le message et non au parsing. Le test
+`languages_have_the_same_keys` l'attrape.
 
 ## Structure d'ARXIV
 

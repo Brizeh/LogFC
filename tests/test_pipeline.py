@@ -14,10 +14,10 @@ Pour regenerer la sortie de reference apres un changement volontaire :
 import sys
 from pathlib import Path
 
-from src.const import BOSS_DICT, EXTRA_BOSS_DICT
 from src.languages_dict.english import english
 from src.languages_dict.french import french
-from src.models.boss_facto import _BOSS_FACTORY
+from src.models.boss_class import Boss
+from src.models import boss_facto  # noqa: F401 - son import peuple Boss.registry
 from tests import replay
 
 EXPECTED_DIR = Path(__file__).resolve().parent / "expected"
@@ -97,15 +97,63 @@ def test_core_stats_have_descriptions():
                     assert stat["description"], f"{name} n'a pas de description"
 
 
-def test_every_boss_is_reachable():
-    """Tout boss du factory est atteignable depuis un triggerID, et vice versa."""
-    known = set(BOSS_DICT.values()) | set(EXTRA_BOSS_DICT.values())
-    orphans = known - set(_BOSS_FACTORY)
-    assert not orphans, f"triggerID sans classe (KeyError au parsing): {sorted(orphans)}"
-    unreachable = set(_BOSS_FACTORY) - known
-    assert not unreachable, (
-        f"classes sans triggerID (boss ignore silencieusement): {sorted(unreachable)}"
-    )
+def test_registry_is_populated():
+    """Les classes de boss se sont enregistrees a l'import."""
+    assert len(Boss.registry) >= 47, f"registre trop petit: {len(Boss.registry)} entrees"
+    for boss_id, boss in Boss.registry.items():
+        assert boss_id > 0, f"{boss.__name__} enregistre sous un triggerID invalide"
+        assert boss.name, f"{boss.__name__} n'a pas de nom d'affichage"
+
+
+def test_url_suffixes_are_unambiguous():
+    """Deux boss ne peuvent pas partager un suffixe d'URL."""
+    seen = {}
+    for boss in set(Boss.registry.values()):
+        if not boss.url_suffix:
+            continue
+        other = seen.setdefault(boss.url_suffix, boss)
+        assert other is boss, (
+            f"suffixe {boss.url_suffix!r} partage par {other.__name__} et {boss.__name__}"
+        )
+
+
+def test_wingman_id_is_not_a_trigger_id():
+    """boss_id sert l'API wingman et differe parfois du triggerID du log.
+
+    Aligner l'un sur l'autre casserait silencieusement soit la note
+    wingman, soit la reconnaissance du log : ces quatre boss l'attestent.
+    """
+    for name, wingman_id in [("DARKAI", 232542), ("HT", 24375),
+                             ("KO", 24485), ("OLC", 25413)]:
+        boss = next(b for b in Boss.registry.values() if b.__name__ == name)
+        assert boss.boss_id == wingman_id, f"{name}: id wingman modifie"
+        assert wingman_id not in Boss.registry, (
+            f"{name}: l'id wingman {wingman_id} ne doit pas identifier un log"
+        )
+
+
+def test_registry_rejects_a_duplicate_trigger_id():
+    """Declarer un triggerID deja pris echoue au lieu d'ecraser l'autre boss."""
+    taken = next(iter(Boss.registry))
+    try:
+        class Doublon(Boss):
+            name    = "Doublon"
+            boss_id = taken
+    except ValueError:
+        pass
+    else:
+        raise AssertionError(f"le triggerID {taken}, deja pris, a ete accepte")
+
+
+def test_registry_rejects_a_missing_boss_id():
+    """Un boss sans triggerID echoue a l'import plutot que d'etre ignore."""
+    try:
+        class SansId(Boss):
+            name = "SansId"
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("une classe sans boss_id a ete acceptee")
 
 
 def test_languages_have_the_same_keys():
@@ -123,7 +171,11 @@ TESTS = [
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,
-    test_every_boss_is_reachable,
+    test_registry_is_populated,
+    test_url_suffixes_are_unambiguous,
+    test_wingman_id_is_not_a_trigger_id,
+    test_registry_rejects_a_duplicate_trigger_id,
+    test_registry_rejects_a_missing_boss_id,
     test_languages_have_the_same_keys,
 ]
 

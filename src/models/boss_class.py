@@ -3,17 +3,45 @@ import requests
 import pytz
 
 from .player_class import *
-from ..const import ALL_PLAYERS, BOSS_DICT, CUSTOM_NAMES, BIG, EXTRA_MECHS, ALL_MECHS, ARXIV
+from ..const import ALL_PLAYERS, CUSTOM_NAMES, BIG, EXTRA_MECHS, ALL_MECHS, ARXIV
 from .log_class import Log
 from .. import func
 from ..languages import LANGUES
 
-class Boss:  
+class Boss:
 
-    name       = None
-    wing       = 0
-    boss_id    = -1
-    real_phase = "Full Fight"
+    # Chaque sous-classe s'enregistre a l'import via son boss_id : il n'y a
+    # donc pas de table de correspondance a tenir a jour ailleurs.
+    registry   = {}
+
+    name        = None
+    wing        = 0
+    boss_id     = -1    # identifiant de l'API wingman
+    trigger_ids = ()    # triggerID des logs ; vaut (boss_id,) par defaut.
+                        # A declarer quand les deux different (DARKAI, HT,
+                        # KO, OLC) ou qu'un boss a plusieurs triggerID.
+    url_suffix  = None  # suffixe des URLs dps.report ; None = non detecte
+                        # dans une liste collee (cas du golem)
+    real_phase  = "Full Fight"
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if cls.boss_id < 0:
+            raise ValueError(f"{cls.__name__} n'a pas de boss_id : il serait ignore silencieusement")
+        boss_ids = cls.trigger_ids or (cls.boss_id,)
+        # on valide tout avant d'enregistrer quoi que ce soit, pour ne pas
+        # laisser un enregistrement partiel derriere une erreur
+        for boss_id in boss_ids:
+            known = Boss.registry.get(boss_id)
+            if known is not None:
+                raise ValueError(f"triggerID {boss_id} deja pris par {known.__name__}, redeclare par {cls.__name__}")
+        for boss_id in boss_ids:
+            Boss.registry[boss_id] = cls
+
+    @classmethod
+    def url_suffixes(cls):
+        """Suffixes detectables dans une liste de logs collee."""
+        return {boss.url_suffix for boss in cls.registry.values() if boss.url_suffix}
 
     def __init__(self, log: Log):
         self.log                = log
@@ -609,13 +637,6 @@ class Boss:
             return LANGUES["selected_language"]["LVP DPS FOODSWAP"].format(lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps, foodSwapCount=foodSwapCount)
         return LANGUES["selected_language"]["LVP DPS"].format(lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps)
     ################################ DATA BOSS ################################
-    
-    def get_pos_boss(self, start: int = 0, end: int = None):
-        targets = self.log.pjcontent['targets']
-        for target in targets:
-            if target['id'] in BOSS_DICT.keys():
-                return target['combatReplayData']['positions'][start:end]
-        raise ValueError('No Boss in targets')
     
     def get_phase_timers(self, target_phase: str, inMilliSeconds=False):
         phases = self.log.pjcontent['phases']
