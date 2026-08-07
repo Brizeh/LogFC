@@ -4,7 +4,8 @@ import grequests
 import json
 
 from . import func
-from .const import ARXIV, REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE, ALL_BOSSES, ALL_PLAYERS
+from .analysis import Analysis
+from .const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE
 from .models.log_class import Log
 from .models.boss_facto import BossFactory
 from .languages import LANGUES
@@ -38,14 +39,15 @@ def _make_parser() -> ArgumentParser:
     return parser
 
 def debugLog(url):
+    analysis = Analysis()
     log = Log(url)
     jcontent = grequests.get(url)
     pjcontent = grequests.get(DPS_REPORT_JSON_URL, params={"permalink": url}, headers=REQUEST_HEADERS)
     responses = grequests.map([jcontent, pjcontent], size=2)
     log.set_jcontent(responses[0])
     log.set_pjcontent(responses[1])
-    BossFactory.create_boss(log)
-    boss = ALL_BOSSES[0]
+    BossFactory.create_boss(log, analysis)
+    boss = analysis.bosses[0]
     print(boss.start_date)
     if boss.mvp:
         for mvp in boss.mvp:
@@ -55,7 +57,8 @@ def debugLog(url):
             print(lvp)
 
 def main(input_string, **kwargs) -> None:
-    input = InputParser(input_string)
+    analysis = Analysis(title=DEFAULT_TITLE)
+    input = InputParser(input_string, analysis)
     print(input)
     urls = input.urls
     requests = []
@@ -68,9 +71,9 @@ def main(input_string, **kwargs) -> None:
         logs[i].set_jcontent(responses[2*i])
         logs[i].set_pjcontent(responses[2*i+1])
     for log in logs:
-        BossFactory.create_boss(log)
+        BossFactory.create_boss(log, analysis)
     print("\n")
-    split_run_message = func.get_message_reward(ALL_BOSSES, ALL_PLAYERS, titre=DEFAULT_TITLE)
+    split_run_message = func.get_message_reward(analysis)
     for message in split_run_message:
         print(message)
     print("\n")

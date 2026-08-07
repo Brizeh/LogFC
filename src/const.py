@@ -12,9 +12,7 @@ BIG = float('inf')
 
 DPS_REPORT_JSON_URL = "https://dps.report/getJson?permalink="
 
-ALL_BOSSES = []
 
-ARXIV = {}
 
 dmgStats = {
     "DmgTarget"     : "Total damage to the boss",
@@ -87,10 +85,7 @@ ALL_MECHS = {
     "Support Stats": supportStats.copy()
 }
 
-EXTRA_MECHS = {}
 
-ALL_PLAYERS = {}
-DUPS_CHECKER = {}
 
 
 

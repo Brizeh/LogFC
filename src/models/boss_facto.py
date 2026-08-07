@@ -1,6 +1,5 @@
 from .boss_class import Boss
 from .log_class import Log
-from ..const import ALL_BOSSES
 
 # Ces imports paraissent inutilises : ils sont indispensables. Charger les
 # modules de sub_models declenche __init_subclass__ sur chaque classe de
@@ -15,7 +14,7 @@ from .sub_models.frac_bosses import *
 
 class BossFactory:
     @staticmethod
-    def create_boss(log: Log):
+    def create_boss(log: Log, analysis):
         boss = Boss.registry.get(log.jcontent['triggerID'])
         if boss:
-            ALL_BOSSES.append(boss(log))
+            analysis.bosses.append(boss(log, analysis))

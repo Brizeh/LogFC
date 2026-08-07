@@ -18,6 +18,7 @@ from src.languages_dict.english import english
 from src.languages_dict.french import french
 from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - son import peuple Boss.registry
+from src.models.boss_facto import BossFactory
 from tests import replay
 
 EXPECTED_DIR = Path(__file__).resolve().parent / "expected"
@@ -71,6 +72,33 @@ def test_each_boss_message_unchanged():
         if message.splitlines() != _read(expected_path):
             changed.append(name)
     assert not changed, f"message modifie pour: {', '.join(changed)}"
+
+
+def test_two_analyses_do_not_interfere():
+    """Deux analyses entrelacees donnent le meme resultat qu'en sequentiel.
+
+    C'est la raison d'etre de l'objet Analysis : tant que l'etat de run
+    vivait dans des variables de module, deux analyses simultanees
+    fusionnaient leurs boss et leurs joueurs, ce qui obligeait le bot a
+    les serialiser derriere un verrou.
+    """
+    left, right = ["sh", "dei"], ["gors", "qadim"]
+    expected_left, _ = replay.run(left)
+    expected_right, _ = replay.run(right)
+
+    with replay.no_network():
+        analysis_left, logs_left = replay.build(left)
+        analysis_right, logs_right = replay.build(right)
+        # on alterne un log de chaque cote pour maximiser les chances de
+        # collision si un etat etait encore partage
+        for log_left, log_right in zip(logs_left, logs_right):
+            BossFactory.create_boss(log_left, analysis_left)
+            BossFactory.create_boss(log_right, analysis_right)
+        got_left = replay.message_of(analysis_left)
+        got_right = replay.message_of(analysis_right)
+
+    assert got_left == expected_left, "l'analyse de gauche a ete polluee par l'autre"
+    assert got_right == expected_right, "l'analyse de droite a ete polluee par l'autre"
 
 
 def test_arxiv_is_keyed_by_account():
@@ -188,6 +216,7 @@ def test_languages_have_the_same_keys():
 TESTS = [
     test_run_message_unchanged,
     test_each_boss_message_unchanged,
+    test_two_analyses_do_not_interfere,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,

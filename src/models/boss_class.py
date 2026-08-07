@@ -3,7 +3,7 @@ import requests
 import pytz
 
 from .player_class import *
-from ..const import ALL_PLAYERS, CUSTOM_NAMES, BIG, EXTRA_MECHS, ALL_MECHS, ARXIV
+from ..const import CUSTOM_NAMES, BIG, ALL_MECHS
 from .log_class import Log
 from .. import func
 from ..languages import LANGUES
@@ -43,8 +43,9 @@ class Boss:
         """Suffixes detectables dans une liste de logs collee."""
         return {boss.url_suffix for boss in cls.registry.values() if boss.url_suffix}
 
-    def __init__(self, log: Log):
+    def __init__(self, log: Log, analysis):
         self.log                = log
+        self.analysis           = analysis
         self.cm                 = self.is_cm()
         self.logName            = self.get_logName()
         self.mechanics          = self.get_mechanics()
@@ -59,10 +60,9 @@ class Boss:
         self.lvp_accounts       = []
         for i in self.player_list:
             account = self.get_player_account(i)
-            player  = ALL_PLAYERS.get(account)
+            player  = self.analysis.players.get(account)
             if not player:
-                new_player           = Player(self, account)
-                ALL_PLAYERS[account] = new_player
+                self.analysis.players[account] = Player(self, account)
             else:
                 player.add_boss(self)
         self.mvp     = self.get_mvp()
@@ -349,14 +349,14 @@ class Boss:
         for i in players:
             account = self.get_player_account(i)
             self.add_player_stat("Titles", "MVP", 1, account, description="Number of MVP titles")
-            ALL_PLAYERS[account].mvps += 1
+            self.analysis.players[account].mvps += 1
 
     def add_lvps(self, players: list[int]):
         self.lvp_accounts = [self.get_player_account(i) for i in players]
         for i in players:
             account = self.get_player_account(i)
             self.add_player_stat("Titles", "LVP", 1, account, description="Number of LVP titles")
-            ALL_PLAYERS[account].lvps += 1
+            self.analysis.players[account].lvps += 1
             
     def _get_dps_contrib(self, exclude: list[classmethod]=[]):
         dps_ranking = {}
@@ -397,8 +397,8 @@ class Boss:
     def get_box(self):
         player1_acc = "Ravi.5812"
         player2_acc = "endymion.3162"
-        player1 = ALL_PLAYERS.get(player1_acc)
-        player2 = ALL_PLAYERS.get(player2_acc)
+        player1 = self.analysis.players.get(player1_acc)
+        player2 = self.analysis.players.get(player2_acc)
         if player1 and player2:
             if player1.boxWins is None:
                 player1.boxWins = 0
@@ -484,13 +484,16 @@ class Boss:
                 return LANGUES["selected_language"]["MVP BAD DPS P"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
             
     def add_player_stat(self, category: str, stat: str, value, account: str, description: str = None):
+        extra_mechs = self.analysis.extra_mechs
         if description:
-            EXTRA_MECHS.setdefault(category, {}).setdefault(stat, description)
+            extra_mechs.setdefault(category, {}).setdefault(stat, description)
+        # ALL_MECHS est une configuration partagee : les libelles derives
+        # vont dans l'analyse, sinon ils s'accumuleraient d'un run a l'autre
         if ALL_MECHS.get(category) and "avg" not in stat:
-            ALL_MECHS[category].setdefault("avg" + stat, f"Average {stat} uptime")
+            extra_mechs.setdefault(category, {}).setdefault("avg" + stat, f"Average {stat} uptime")
 
-        stat_description = ALL_MECHS.get(category, {}).get(stat) or EXTRA_MECHS.get(category, {}).get(stat)
-        arxiv_stats = ARXIV.setdefault(self.log.url, {}).setdefault(account, {}).setdefault(category, {})
+        stat_description = ALL_MECHS.get(category, {}).get(stat) or extra_mechs.get(category, {}).get(stat)
+        arxiv_stats = self.analysis.arxiv.setdefault(self.log.url, {}).setdefault(account, {}).setdefault(category, {})
         arxiv_stats[stat] = {"value": value, "description": stat_description}
         
                     
@@ -584,11 +587,12 @@ class Boss:
                     description = data['name']
                     category = data["classification"]
                     # Add EXTRA MECH
-                    if category not in EXTRA_MECHS.keys():
-                        EXTRA_MECHS[category] = {}
-                    if name not in EXTRA_MECHS[category].keys():
-                        EXTRA_MECHS[category][name] = f"{description} Total Usage"
-                        EXTRA_MECHS[category]["avg"+name] = f"Average {description} Uptime"
+                    extra_mechs = self.analysis.extra_mechs
+                    if category not in extra_mechs.keys():
+                        extra_mechs[category] = {}
+                    if name not in extra_mechs[category].keys():
+                        extra_mechs[category][name] = f"{description} Total Usage"
+                        extra_mechs[category]["avg"+name] = f"Average {description} Uptime"
                     # Add player mech
                     self.add_player_stat(category, name, uptime, account)
 

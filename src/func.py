@@ -1,7 +1,7 @@
 import math
 from datetime import timedelta
 
-from .const import CUSTOM_NAMES, EMOTE_WINGMAN, ALL_PLAYERS, DUPS_CHECKER
+from .const import CUSTOM_NAMES, EMOTE_WINGMAN
 from .languages import LANGUES
 
 def time_to_index(time: int, base):  # time in millisecond
@@ -26,7 +26,10 @@ def disp_time(td: timedelta):
     else:
         return f"{seconds}s"
 
-def get_message_reward(logs: list, players: dict, titre="Run"):
+def get_message_reward(analysis):
+    logs    = analysis.bosses
+    players = analysis.players
+    titre   = analysis.title
     if not logs:
         print("No boss found")
         return []
@@ -139,7 +142,9 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
             boss_duration  = disp_time(timedelta(seconds=boss.duration_ms / 1000))
             boss_url       = boss.log.url
             boss_percentil = boss.wingman_percentile
-            fail_count = len(DUPS_CHECKER.get(boss.log.short_name))-1
+            # un boss cree sans passer par InputParser n'a pas de doublons
+            # connus : on compte alors zero fail plutot que de planter
+            fail_count = len(analysis.dups.get(boss.log.short_name, [boss.log.url]))-1
             fail_msg       = ""
             if fail_count:
                 fail_msg = f" *{fail_count} fails* :x:"
@@ -172,7 +177,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
                 run_message = cut_text(run_message)
             if boss.name != "ESCORT":
                 for player_account, dps_mark in boss.get_dps_ranking().items():
-                    ALL_PLAYERS[player_account].add_mark(dps_mark)
+                    players[player_account].add_mark(dps_mark)
 
         run_message += "\n"
 
@@ -202,7 +207,7 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
     
     
     boxers = []
-    for account, player in ALL_PLAYERS.items():
+    for account, player in players.items():
         if player.boxWins is not None:
             boxers.append(player)
     if boxers:
@@ -217,8 +222,5 @@ def get_message_reward(logs: list, players: dict, titre="Run"):
             run_message += f"# {boxers[0].boxWins} : {boxers[1].boxWins}"
     run_message = cut_text(run_message)
     split_message.append(run_message)
-    logs.clear()
-    players.clear()
-    DUPS_CHECKER.clear()
 
     return split_message

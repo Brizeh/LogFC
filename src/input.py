@@ -1,12 +1,12 @@
-from .const import DUPS_CHECKER
 from .models import boss_facto  # noqa: F401 - son import peuple Boss.registry
 from .models.boss_class import Boss
 import re
 from datetime import datetime
 
 class InputParser:
-    def __init__(self, input_string, project=False):
+    def __init__(self, input_string, analysis, project=False):
         self.input = input_string
+        self.analysis = analysis
         self.project = project
         self.urls = self.detectUrls()
         
@@ -27,12 +27,13 @@ class InputParser:
         matches = [match.group(0) for match in re.finditer(regex_full, self.input)]
         # Affichage des résultats
         if not self.project:
+            dups = self.analysis.dups
             for match in matches:
                 end = match.split("_")[-1]
-                if DUPS_CHECKER.get(end):
-                    DUPS_CHECKER[end].append(match)
+                if dups.get(end):
+                    dups[end].append(match)
                 else:
-                    DUPS_CHECKER[end] = [match]
+                    dups[end] = [match]
         else:
             return list(set(matches.copy()))
         
@@ -41,5 +42,5 @@ class InputParser:
             date = timestamp_str.split('-')[1]+"-"+timestamp_str.split('-')[2]
             return datetime.strptime(date, "%Y%m%d-%H%M%S")
     
-        return [max(urlz, key=extract_timestamp) for urlz in DUPS_CHECKER.values()]
+        return [max(urlz, key=extract_timestamp) for urlz in self.analysis.dups.values()]
     

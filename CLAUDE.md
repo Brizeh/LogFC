@@ -104,10 +104,31 @@ Seul mode d'echec restant : une cle de langue oubliee, qui plante au
 moment de generer le message et non au parsing. Le test
 `languages_have_the_same_keys` l'attrape.
 
+## L'objet Analysis
+
+Tout ce qui varie d'un run a l'autre vit dans une instance d'`Analysis`
+(`src/analysis.py`) : `bosses`, `players`, `arxiv`, `extra_mechs`, `dups`.
+Elle se cree en debut d'analyse et se passe explicitement :
+
+```python
+analysis = Analysis(title="Run")
+InputParser(texte, analysis)
+BossFactory.create_boss(log, analysis)
+func.get_message_reward(analysis)
+```
+
+Deux analyses peuvent donc tourner en parallele. Il n'y a rien a
+reinitialiser entre deux runs : l'objet est jete a la fin.
+
+Ne vit **pas** dans `Analysis` : la configuration partagee en lecture
+seule (`CUSTOM_NAMES`, `ALL_MECHS`, les dictionnaires de langue). Seule
+exception encore en place, `LANGUES["selected_language"]`, qui reste
+global et empeche deux analyses simultanees dans des langues differentes.
+
 ## Structure d'ARXIV
 
 ```
-ARXIV[url_log][account][categorie][stat] = {"value": ..., "description": ...}
+analysis.arxiv[url_log][account][categorie][stat] = {"value": ..., "description": ...}
 ```
 
 C'est un **instantane par log** : pas de cumul ni de moyenne a l'ecriture.
@@ -130,6 +151,5 @@ re-tracker : `Commit.bat` fait `git add -A`.
 - Bannieres de section : `################################ MVP ################################`
 - Messages `print` en anglais dans le code ; le francais vit dans
   `languages_dict/`
-- Etat global mutable dans `const.py` (`ALL_BOSSES`, `ALL_PLAYERS`, `ARXIV`,
-  `EXTRA_MECHS`, `DUPS_CHECKER`) ; `func.get_message_reward` les vide en fin
-  d'appel
+- L'etat de run se passe explicitement via `Analysis`, jamais par une
+  variable de module
