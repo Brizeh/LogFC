@@ -57,7 +57,7 @@ class KODANS(Boss):
         self.add_lvps(i_players)
         return self.msg("LVP DPS", lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=dmg_ratio)
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_dmg_boss(self, i_player: int):
         boss1_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][0][self.real_phase_id]['damage']
@@ -117,7 +117,7 @@ class FRAENIR(Boss):
             return self.msg("FRAENIR LVP SAK", lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
         return
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_dmg_boss(self, i_player: int):
         boss1_dmg = self.log.pjcontent['players'][i_player]['dpsTargets'][0][self.real_phase_id]['damage']
@@ -178,7 +178,7 @@ class WOJ(Boss):
             return self.msg("WOJ MVP CHAINS", mvp_name=mvp_name, max_dmg=max_dmg, ratio=ratio)
         return
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_chain_damage(self, i_player: int):
         chain_id = 59159
@@ -227,7 +227,7 @@ class BONESKINNER(Boss):
             return self.msg("FRAENIR LVP SAK", lvp_dps_name=lvp_dps_name, sak_count=sak_count, sak_ratio=sak_ratio, dps=dps, dmg_ratio=dmg_ratio)
         return
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_sak_dmg(self, i_player: int):
         dmgPath = self.log.pjcontent["players"][i_player]["targetDamageDist"][0][0]

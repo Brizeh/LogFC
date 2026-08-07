@@ -20,12 +20,11 @@ class InputParser:
     def detectUrls(self):
         valid_terms = list(Boss.url_suffixes())
         valid_terms.sort(key=lambda x: (len(x), x), reverse=True)
-        # RegEx pour capturer chaque lien valide, même s'ils sont collés
+        # RegEx to capture every valid link, even stuck together
         regex_full = rf"https://dps\.report/[a-zA-Z0-9]{{4}}-\d{{8}}-\d{{6}}_({'|'.join(valid_terms)})"
 
-        # Utilisation de re.finditer pour identifier toutes les correspondances
+        # Use re.finditer to identify every match
         matches = [match.group(0) for match in re.finditer(regex_full, self.input)]
-        # Affichage des résultats
         if not self.project:
             dups = self.analysis.dups
             for match in matches:

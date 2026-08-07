@@ -51,7 +51,7 @@ class AH(Boss):
         self.add_lvps(i_players)
         return self.msg("LVP DPS", lvp_dps_name=lvp_dps_name, dps=dps, dmg_ratio=ratio)
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_max_exposed(self, i_player: int):
         buffUptimes   = self.log.pjcontent["players"][i_player]["buffUptimes"]
@@ -149,7 +149,7 @@ class KO(Boss):
                 return self.msg("KO MVP DEBIL P", mvp_names=mvp_names, max_debil=max_debil)
         return
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_max_debil(self, i_player: int):
         buffUptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]
@@ -269,7 +269,7 @@ class OLC(Boss):
             msg += self.msg("OLC MVP EXPOSED", mvp_name=mvp_name, red=rgb["red"], green=rgb["green"], blue=rgb["blue"])+"\n"           
         return msg[:-1]
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_dmg_boss(self, i_player: int):
         return self.log.pjcontent["players"][i_player]["dpsAll"][0]["damage"]

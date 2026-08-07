@@ -161,7 +161,7 @@ english = {
     "LVP DPS"         : "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad)]*",
     "LVP DPS FOODSWAP": "⬗ *[**LVP** : {lvp_dps_name} who did **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** of the squad) with **{foodSwapCount} foodswap**]*",
     
-    ################################ TITRES ################################
+    ################################ TITLES ################################
     "W1"          : "## W1 - *{wing_duration}* (without pre-VG)\n",
     "W3"          : "## W3 - *{wing_duration}* (without escort)\n",
     "W7"          : "## W7 - *{wing_duration}* (without gate)\n",

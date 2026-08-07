@@ -1,9 +1,9 @@
-"""Rejoue le pipeline LogFC sur des fixtures, sans reseau.
+"""Replays the LogFC pipeline against fixtures, without any network.
 
-Sert aux tests et a toute verification manuelle. Le rejeu est
-deterministe : chaque appel part d'une Analysis neuve, les appels
-wingman sont neutralises et CUSTOM_NAMES est vide pour que la sortie ne
-depende pas du fichier local de surnoms.
+Used by the tests and for any manual check. The replay is
+deterministic: each call starts from a fresh Analysis, wingman calls
+are neutralized, and CUSTOM_NAMES is empty so the output doesn't depend
+on the local nicknames file.
 """
 import gzip
 import json
@@ -23,7 +23,7 @@ FIXED_PERCENTILE = 50
 
 
 def _fixed_percentiles(bosses):
-    """Remplace la passe wingman par une note constante."""
+    """Replaces the wingman pass with a constant grade."""
     for boss in bosses:
         boss.wingman_percentile = FIXED_PERCENTILE
 
@@ -40,10 +40,10 @@ def load(name, directory=FIXTURES_DIR):
 
 
 def build(names, language="FR", directory=FIXTURES_DIR):
-    """Prepare une Analysis et ses Log, sans encore creer les boss."""
+    """Prepares an Analysis and its Logs, without creating the bosses yet."""
     analysis = Analysis(language=language)
     loaded = [load(name, directory) for name in names]
-    # InputParser alimente analysis.dups, d'ou vient le comptage des fails
+    # InputParser feeds analysis.dups, which the fail count comes from
     urls = InputParser("\n".join(url for url, _ in loaded), analysis).urls
 
     by_url = dict(loaded)
@@ -60,7 +60,7 @@ def message_of(analysis):
 
 
 def no_network():
-    """Contexte neutralisant la passe wingman et les surnoms locaux."""
+    """Context that neutralizes the wingman pass and local nicknames."""
     class _Patch:
         def __enter__(self):
             CUSTOM_NAMES.clear()
@@ -72,7 +72,7 @@ def no_network():
 
 
 def run(names, language="FR", directory=FIXTURES_DIR):
-    """Rejoue un run complet et renvoie (message, copie de l'arxiv)."""
+    """Replays a full run and returns (message, copy of the arxiv)."""
     with no_network():
         analysis, logs = build(names, language, directory)
         for log in logs:

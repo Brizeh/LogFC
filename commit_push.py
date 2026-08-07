@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Committe et push les changements de LogFC.
+"""Commits and pushes LogFC's changes.
 
-Affiche le statut git courant, demande confirmation puis un titre de
-commit, committe (git add -A) et push sur origin/main. Une reponse
-negative ou un titre vide annule l'operation. Detecte aussi les
-commits locaux deja faits mais jamais pousses (ex: commit via un
-autre outil) et propose de les pousser meme s'il n'y a rien de
-nouveau a committer.
+Displays the current git status, asks for confirmation then a commit
+title, commits (git add -A) and pushes to origin/main. A negative
+answer or an empty title cancels the operation. Also detects local
+commits already made but never pushed (e.g. committed via another
+tool) and offers to push them even when there's nothing new to commit.
 """
 import subprocess
 import sys

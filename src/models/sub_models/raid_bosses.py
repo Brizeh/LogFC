@@ -49,7 +49,7 @@ class VG(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_bleu(self, i_player: int):
         bleu_split = self.get_mech_value(i_player, "Green Guard TP")
@@ -127,7 +127,7 @@ class GORS(Boss):
     def got_egged(self, i_player: int):
         return self.get_mech_value(i_player, "Egged") > 0
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
         
     def get_dmg_split(self, i_player: int):
         dmg_split   = 0
@@ -268,7 +268,7 @@ class SABETHA(Boss):
                     return True
         return False
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
         
     def get_dmg_split(self,i_player: int):
         dmg_kernan   = self.get_dmg_phase_targets(i_player, 2)[0]
@@ -361,7 +361,7 @@ class SLOTH(Boss):
                 return True
         return False
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_tantrum(self, i_player: int):
         return self.get_mech_value(i_player, "Tantrum")
@@ -429,7 +429,7 @@ class MATTHIAS(Boss):
     def is_sac(self, i_player: int):
         return self.get_nb_sac(i_player) > 0
     
-    ################################ DATA MECHAS ################################    
+    ################################ MECHANICS DATA ################################    
     
     def get_nb_sac(self, i_player: int):
         return self.get_mech_value(i_player, "Sacrifice")
@@ -524,7 +524,7 @@ class ESCORT(Boss):
                 return False
         return True
 
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_mined_players(self):
         p = []
@@ -602,7 +602,7 @@ class KC(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_good_orb(self, i_player: int):
         good_red_orbs   = self.get_mech_value(i_player, 'Good Red Orb')
@@ -699,7 +699,7 @@ class XERA(Boss):
     def is_fdp(self, i_player: int):
         return i_player in self.get_fdp()
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_tp_out(self, i_player: int):
         return self.get_mech_value(i_player, 'TP')
@@ -791,7 +791,7 @@ class CAIRN(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_tp(self, i_player: int):
         return self.get_mech_value(i_player, 'Orange TP')
@@ -845,7 +845,7 @@ class MO(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_piced(self):
         piced = []
@@ -946,7 +946,7 @@ class SAMAROG(Boss):
     def is_fix(self, i_player: int):
         return self.get_mech_value(i_player, "Fixate: Samarog") >= 3
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_impaled(self):
         i_players = []
@@ -1058,7 +1058,7 @@ class DEIMOS(Boss):
             return False
         return greens[-1]['actor'] == self.get_player_name(i_player)
 
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_black_trigger(self, i_player: int):
         return self.get_mech_value(i_player, "Black Oil Trigger")
@@ -1158,7 +1158,7 @@ class SH(Boss):
                 return True
         return False
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_walled_players(self):
         walled = []
@@ -1226,7 +1226,7 @@ class DHUUM(Boss):
     def is_green(self, i_player: int) -> bool:
         return self.get_mech_value(i_player, "Green port", "Dhuum Fight") > 0
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_cracks(self, i_player: int):
         return self.get_mech_value(i_player, "Cracks")    
@@ -1266,7 +1266,7 @@ class CA(Boss):
     
     
     
-    ################################ DATA MECHAS ################################  
+    ################################ MECHANICS DATA ################################  
 
 ################################ LARGOS ################################
 
@@ -1339,7 +1339,7 @@ class LARGOS(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_dash(self, i_player: int):
         return self.get_mech_value(i_player, "Vapor Rush Charge")
@@ -1410,7 +1410,7 @@ class Q1(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_fdp(self):
         fdp              = []
@@ -1494,7 +1494,7 @@ class ADINA(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_dmg_split(self, i_player: int):
         dmg_split1 = self.get_dmg_phase(i_player, 2)
@@ -1543,7 +1543,7 @@ class SABIR(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
 ################################ QTP ################################
 
@@ -1618,7 +1618,7 @@ class QTP(Boss):
     def is_pylon(self, i_player: int):
         return self.get_orb_caught(i_player) > 1
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
 
     def get_orb_caught(self, i_player: int):
         return self.get_mech_value(i_player, "Critical Mass")
@@ -1664,7 +1664,7 @@ class GREER(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
 ################################ GREER ################################
 
@@ -1708,7 +1708,7 @@ class DECIMA(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
 ################################ GREER ################################
 
@@ -1745,7 +1745,7 @@ class URA(Boss):
     
     
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
 ################################ GOLEM CHAT STANDARD ################################
 

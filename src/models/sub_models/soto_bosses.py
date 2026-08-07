@@ -40,7 +40,7 @@ class DAGDA(Boss):
                 return self.msg("KO MVP DEBIL P", mvp_names=mvp_names, max_debil=max_debil)
         return
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_max_debil(self, i_player: int):
         buffUptimes = self.log.pjcontent["players"][i_player]["buffUptimes"]

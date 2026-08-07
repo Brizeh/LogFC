@@ -9,37 +9,37 @@ from ..mechanics import get_icd, mech_value, player_mechanics
 
 class Boss:
 
-    # Chaque sous-classe s'enregistre a l'import via son boss_id : il n'y a
-    # donc pas de table de correspondance a tenir a jour ailleurs.
+    # Each subclass registers itself at import time via its boss_id: no
+    # lookup table needs to be kept in sync elsewhere.
     registry   = {}
 
     name        = None
     wing        = 0
-    boss_id     = -1    # identifiant de l'API wingman
-    trigger_ids = ()    # triggerID des logs ; vaut (boss_id,) par defaut.
-                        # A declarer quand les deux different (DARKAI, HT,
-                        # KO, OLC) ou qu'un boss a plusieurs triggerID.
-    url_suffix  = None  # suffixe des URLs dps.report ; None = non detecte
-                        # dans une liste collee (cas du golem)
+    boss_id     = -1    # wingman API identifier
+    trigger_ids = ()    # log triggerIDs; defaults to (boss_id,).
+                        # Declare when the two differ (DARKAI, HT,
+                        # KO, OLC) or a boss has several triggerIDs.
+    url_suffix  = None  # dps.report URL suffix; None = not detected
+                        # in a pasted list of logs (the golem's case)
     real_phase  = "Full Fight"
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         if cls.boss_id < 0:
-            raise ValueError(f"{cls.__name__} n'a pas de boss_id : il serait ignore silencieusement")
+            raise ValueError(f"{cls.__name__} has no boss_id: it would be silently ignored")
         boss_ids = cls.trigger_ids or (cls.boss_id,)
-        # on valide tout avant d'enregistrer quoi que ce soit, pour ne pas
-        # laisser un enregistrement partiel derriere une erreur
+        # validate everything before registering anything, so an error
+        # never leaves a partial registration behind
         for boss_id in boss_ids:
             known = Boss.registry.get(boss_id)
             if known is not None:
-                raise ValueError(f"triggerID {boss_id} deja pris par {known.__name__}, redeclare par {cls.__name__}")
+                raise ValueError(f"triggerID {boss_id} already taken by {known.__name__}, redeclared by {cls.__name__}")
         for boss_id in boss_ids:
             Boss.registry[boss_id] = cls
 
     @classmethod
     def url_suffixes(cls):
-        """Suffixes detectables dans une liste de logs collee."""
+        """Suffixes detectable in a pasted list of logs."""
         return {boss.url_suffix for boss in cls.registry.values() if boss.url_suffix}
 
     def __init__(self, log: Log, analysis):
@@ -74,13 +74,13 @@ class Boss:
         return self.log.url
 
     def msg(self, key: str, **kwargs) -> str:
-        """Message localise, dans la langue de l'analyse en cours."""
+        """Localized message, in the current analysis' language."""
         template = self.analysis.language.get(key)
         if template is None:
-            raise KeyError(f"cle de message absente des dictionnaires de langue: {key!r}")
+            raise KeyError(f"message key missing from both language dictionaries: {key!r}")
         return template.format(**kwargs)
-        
-    ################################ Fonction pour attribus Boss ################################
+
+    ################################ Boss attribute functions ################################
     
     def is_cm(self):
         return self.log.pjcontent['isCM']
@@ -235,7 +235,7 @@ class Boss:
                         return True
         return False
     
-    ################################ DATA JOUEUR ################################
+    ################################ PLAYER DATA ################################
     
     def get_player_name(self, i_player: int):
         return self.log.pjcontent['players'][i_player]['name']
@@ -475,8 +475,8 @@ class Boss:
         extra_mechs = self.analysis.extra_mechs
         if description:
             extra_mechs.setdefault(category, {}).setdefault(stat, description)
-        # ALL_MECHS est une configuration partagee : les libelles derives
-        # vont dans l'analyse, sinon ils s'accumuleraient d'un run a l'autre
+        # ALL_MECHS is shared configuration: derived labels go into the
+        # analysis instead, or they'd pile up from one run to the next
         if ALL_MECHS.get(category) and "avg" not in stat:
             extra_mechs.setdefault(category, {}).setdefault("avg" + stat, f"Average {stat} uptime")
 
@@ -629,7 +629,7 @@ class Boss:
         if foodSwapCount:
             return self.msg("LVP DPS FOODSWAP", lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps, foodSwapCount=foodSwapCount)
         return self.msg("LVP DPS", lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps)
-    ################################ DATA BOSS ################################
+    ################################ BOSS DATA ################################
     
     def get_phase_timers(self, target_phase: str, inMilliSeconds=False):
         phases = self.log.pjcontent['phases']
@@ -648,11 +648,11 @@ class Boss:
         return phase['start'], phase['end']
 
     def get_dmg_phase_targets(self, i_player: int, phase_id: int):
-        """Degats du joueur sur chaque cible impliquee dans une phase.
+        """Player's damage to each target involved in a phase.
 
-        La page HTML indexait ces colonnes par les cibles de la phase,
-        l'API JSON les indexe par la liste globale des cibles : d'ou le
-        passage par targets + secondaryTargets.
+        The HTML page indexed these columns by the phase's targets, the
+        JSON API indexes them by the global target list: hence going
+        through targets + secondaryTargets.
         """
         phase       = self.log.pjcontent['phases'][phase_id]
         indexes     = phase.get('targets', []) + phase.get('secondaryTargets', [])
@@ -660,7 +660,7 @@ class Boss:
         return [dps_targets[i][phase_id]['damage'] for i in indexes]
 
     def get_dmg_phase(self, i_player: int, phase_id: int):
-        """Degats du joueur sur toutes les cibles d'une phase."""
+        """Player's damage to every target of a phase."""
         return self.log.pjcontent['players'][i_player]['dpsAll'][phase_id]['damage']
 
     def get_mech_value(self, i_player: int, mech_name: str, phase: str="Full Fight"):

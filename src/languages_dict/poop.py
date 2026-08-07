@@ -161,7 +161,7 @@ poop = {
     "LVP DPS"         : "⬗ *[**LVP** : {lvp_dps_name} qui a fait **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** de la squad)]*",
     "LVP DPS FOODSWAP": "⬗ *[**LVP** : {lvp_dps_name} qui a fait **{dps:.1f}kdps** (**{dmg_ratio:.0f}%** de la squad) avec **{foodSwapCount} foodswap**]*",
     
-    ################################ TITRES ################################
+    ################################ TITLES ################################
     "W1"          : "## W1 - *{wing_duration}* (sans pre-VG)\n",
     "W3"          : "## W3 - *{wing_duration}* (sans escort)\n",
     "W7"          : "## W7 - *{wing_duration}* (sans gate)\n",

@@ -1,10 +1,10 @@
 from .boss_class import Boss
 from .log_class import Log
 
-# Ces imports paraissent inutilises : ils sont indispensables. Charger les
-# modules de sub_models declenche __init_subclass__ sur chaque classe de
-# boss, ce qui remplit Boss.registry. Les retirer viderait le registre et
-# plus aucun log ne serait reconnu.
+# These imports look unused: they're essential. Loading the sub_models
+# modules triggers __init_subclass__ on every boss class, which fills
+# Boss.registry. Removing them would empty the registry and no log
+# would be recognized anymore.
 from .sub_models.raid_bosses import *
 from .sub_models.ibs_bosses import *
 from .sub_models.eod_bosses import *

@@ -199,7 +199,7 @@ class KANAXAI(Boss):
         else:
             return self.msg("LVP DPS", lvp_dps_name=lvp_dps_name, dmg_ratio=dmg_ratio, dps=dps)
     
-    ################################ DATA MECHAS ################################
+    ################################ MECHANICS DATA ################################
     
     def get_links(self, i_player: int):
         link_id      = 69206

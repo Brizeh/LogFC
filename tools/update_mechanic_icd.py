@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Enrichit src/mechanic_icd.json depuis les pages HTML de dps.report.
+"""Enriches src/mechanic_icd.json from dps.report's HTML pages.
 
     python -m tools.update_mechanic_icd <url> [<url> ...]
 
-Chaque mecanique porte un temps de grace (icd) pendant lequel un nouvel
-evenement ne compte pas. LogFC en a besoin pour reproduire les valeurs
-agregees d'Elite Insights, mais l'API JSON ne l'expose pas : seule la
-page HTML le contient, dans sa variable `_logData`.
+Each mechanic carries an internal cooldown (icd) during which a new
+event does not count. LogFC needs it to reproduce Elite Insights'
+aggregated values, but the JSON API doesn't expose it: only the HTML
+page contains it, in its `_logData` variable.
 
-C'est donc le seul endroit du projet qui lit encore le HTML, et il ne
-tourne qu'a la demande : le programme, lui, n'utilise que l'API JSON.
-A relancer quand un boss manque a la table (LogFC l'avertit) ou apres
-une mise a jour d'Elite Insights.
+This is therefore the only place in the project that still reads HTML,
+and it only runs on demand: the program itself only uses the JSON API.
+Rerun it when a boss is missing from the table (LogFC warns about it)
+or after an Elite Insights update.
 """
 import json
 import sys
@@ -25,9 +25,9 @@ ICD_PATH = Path(__file__).resolve().parent.parent / "src" / "mechanic_icd.json"
 
 
 def scrape_log_data(html: str):
-    """Extrait la variable _logData de la page d'un log.
+    """Extracts the _logData variable from a log's page.
 
-    Deux formats coexistent selon l'age du log, d'ou les deux tentatives.
+    Two formats coexist depending on the log's age, hence the two attempts.
     """
     try:
         raw = html.split('var _logData = ')[1] \
@@ -65,16 +65,16 @@ def main(urls):
     for url in urls:
         response = requests.get(url, headers=REQUEST_HEADERS)
         if not response.ok:
-            print(f"{url} : http {response.status_code}")
+            print(f"{url}: http {response.status_code}")
             continue
         log_data = scrape_log_data(response.text)
         if log_data is None:
-            print(f"{url} : _logData introuvable (format de page modifie ?)")
+            print(f"{url}: _logData not found (page format changed?)")
             continue
 
         trigger_id = str(log_data["triggerID"])
-        # on enregistre toutes les mecaniques joueur, icd nul compris :
-        # l'absence d'une entree doit signifier "inconnu", pas "icd nul"
+        # record every player mechanic, zero icd included: a missing
+        # entry must mean "unknown", not "icd zero"
         mechanics = {
             mechanic["name"]: mechanic["icd"]
             for mechanic in log_data["mechanicMap"]
@@ -84,10 +84,10 @@ def main(urls):
         new = {name: icd for name, icd in mechanics.items() if name not in known}
         table.setdefault(trigger_id, {}).update(mechanics)
         added += len(new)
-        print(f"{url}\n  boss {trigger_id} : {len(mechanics)} mecaniques, {len(new)} nouvelles")
+        print(f"{url}\n  boss {trigger_id}: {len(mechanics)} mechanics, {len(new)} new")
 
     save_table(table)
-    print(f"\n{ICD_PATH.name} : {len(table)} boss, {added} mecaniques ajoutees")
+    print(f"\n{ICD_PATH.name}: {len(table)} bosses, {added} mechanics added")
 
 
 if __name__ == "__main__":

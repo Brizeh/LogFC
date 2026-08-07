@@ -141,8 +141,8 @@ def get_message_reward(analysis):
             boss_duration  = disp_time(timedelta(seconds=boss.duration_ms / 1000))
             boss_url       = boss.log.url
             boss_percentil = boss.wingman_percentile
-            # un boss cree sans passer par InputParser n'a pas de doublons
-            # connus : on compte alors zero fail plutot que de planter
+            # a boss created without going through InputParser has no
+            # known duplicates: count zero fails then, rather than crash
             fail_count = len(analysis.dups.get(boss.log.short_name, [boss.log.url]))-1
             fail_msg       = ""
             if fail_count:

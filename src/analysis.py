@@ -3,23 +3,23 @@ from .languages import LANGUES
 
 
 class Analysis:
-    """Etat d'une analyse de run.
+    """State of a single analysis run.
 
-    Tout ce qui varie d'un run a l'autre vit ici plutot que dans des
-    variables de module : deux analyses peuvent donc tourner en parallele
-    sans se marcher dessus, meme dans des langues differentes, et il n'y
-    a plus rien a reinitialiser entre deux appels puisque l'objet est
-    simplement jete a la fin.
+    Everything that varies from one run to the next lives here rather
+    than in module-level variables: two analyses can therefore run in
+    parallel without stepping on each other, even in different
+    languages, and there's nothing to reset between two calls since the
+    object is simply discarded at the end.
 
-    Ce qui n'y figure pas est de la configuration partagee en lecture
-    seule (CUSTOM_NAMES, ALL_MECHS, les dictionnaires de langue).
+    What does not live here is shared, read-only configuration
+    (CUSTOM_NAMES, ALL_MECHS, the language dictionaries).
     """
 
     def __init__(self, title: str = DEFAULT_TITLE, language: str = DEFAULT_LANGUAGE):
         self.title       = title
-        self.language    = LANGUES[language]  # dictionnaire de messages
-        self.bosses      = []   # Boss, dans l'ordre de creation
-        self.players     = {}   # compte -> Player
-        self.arxiv       = {}   # url du log -> compte -> categorie -> stat
-        self.extra_mechs = {}   # categorie -> stat -> description
-        self.dups        = {}   # suffixe de log -> urls, pour compter les fails
+        self.language    = LANGUES[language]  # message dictionary
+        self.bosses      = []   # Boss, in creation order
+        self.players     = {}   # account -> Player
+        self.arxiv       = {}   # log url -> account -> category -> stat
+        self.extra_mechs = {}   # category -> stat -> description
+        self.dups        = {}   # log suffix -> urls, for counting fails

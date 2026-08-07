@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Capture les donnees d'un log dps.report dans tests/fixtures/.
+"""Captures a dps.report log's data into tests/fixtures/.
 
-Telecharge la reponse de l'API JSON et l'enregistre pour que les tests
-puissent rejouer le pipeline sans reseau.
+Downloads the JSON API response and saves it so the tests can replay
+the pipeline offline.
 
     python -m tests.capture_fixture <url> [<url> ...]
 
-Penser a lancer ensuite `python -m tests.test_pipeline --update` pour
-produire la sortie de reference du nouveau boss, et
-`python -m tools.update_mechanic_icd <url>` s'il manque a la table des
-temps de grace.
+Remember to then run `python -m tests.test_pipeline --update` to
+produce the new boss' reference output, and
+`python -m tools.update_mechanic_icd <url>` if it's missing from the
+internal-cooldown table.
 """
 import gzip
 import json
@@ -24,12 +24,11 @@ from src.models.log_class import Log
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 
-# Un log complet pese plusieurs Mo, dont ~60% de donnees que LogFC ne lit
-# jamais (statistiques de soin etendues, volumes de buffs, series par
-# seconde, donnees de combat replay brutes...). On les retire des fixtures
-# pour garder le depot leger. Prudence : une cle n'est retiree que si elle
-# n'apparait nulle part dans src/ ET qu'elle est volumineuse, pour que les
-# petites cles restent presentes meme en cas d'acces dynamique.
+# A full log weighs several MB, ~60% of which LogFC never reads
+# (extended healing stats, buff volumes, per-second series, raw combat
+# replay data...). It's stripped from fixtures to keep the repo light.
+# Caution: a key is only removed if it appears nowhere in src/ AND it's
+# large, so small keys survive even a dynamic access.
 STRIP_MIN_BYTES = 10 * 1024
 
 
@@ -45,7 +44,7 @@ def _is_referenced(key, source):
 
 
 def _strip(container, source):
-    """Retire les cles volumineuses jamais referencees dans src/."""
+    """Removes large keys never referenced anywhere in src/."""
     removed = 0
     for key in list(container):
         if _is_referenced(key, source):
@@ -78,19 +77,19 @@ def capture(urls):
         log = Log(url)
         log.set_pjcontent(responses[i])
         if log.pjcontent is None:
-            print(f"echec: {url}")
+            print(f"failed: {url}")
             continue
 
         removed = strip_unused(log.pjcontent)
-        print(f"  elagage: {removed // 1024} Ko de donnees non lues retirees")
+        print(f"  stripped: {removed // 1024} KB of unread data removed")
 
         name = log.short_name
         path = FIXTURES_DIR / f"{name}.pjcontent.json.gz"
         with gzip.open(path, "wt", encoding="utf-8") as f:
             json.dump(log.pjcontent, f, separators=(",", ":"))
-        print(f"  {path.name} ({path.stat().st_size // 1024} Ko)")
+        print(f"  {path.name} ({path.stat().st_size // 1024} KB)")
 
-        # l'url d'origine est necessaire au rejeu (elle sert de cle dans ARXIV)
+        # the original url is needed for replay (it's the key into ARXIV)
         with open(FIXTURES_DIR / f"{name}.url.txt", "w", encoding="utf-8") as f:
             f.write(url)
         print(f"{name}: ok")
