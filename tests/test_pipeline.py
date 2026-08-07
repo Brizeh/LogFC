@@ -20,6 +20,7 @@ from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - son import peuple Boss.registry
 from src.models.boss_facto import BossFactory
 from src import mechanics
+from src import wingman
 from tests import replay
 
 EXPECTED_DIR = Path(__file__).resolve().parent / "expected"
@@ -95,6 +96,8 @@ def test_two_analyses_do_not_interfere():
         for log_left, log_right in zip(logs_left, logs_right):
             BossFactory.create_boss(log_left, analysis_left)
             BossFactory.create_boss(log_right, analysis_right)
+        wingman.fetch_percentiles(analysis_left.bosses)
+        wingman.fetch_percentiles(analysis_right.bosses)
         got_left = replay.message_of(analysis_left)
         got_right = replay.message_of(analysis_right)
 
@@ -119,6 +122,8 @@ def test_two_languages_do_not_interfere():
         for log_fr, log_en in zip(logs_fr, logs_en):
             BossFactory.create_boss(log_fr, analysis_fr)
             BossFactory.create_boss(log_en, analysis_en)
+        wingman.fetch_percentiles(analysis_fr.bosses)
+        wingman.fetch_percentiles(analysis_en.bosses)
         got_fr = replay.message_of(analysis_fr)
         got_en = replay.message_of(analysis_en)
 

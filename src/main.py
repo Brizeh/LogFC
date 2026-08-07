@@ -4,6 +4,7 @@ import grequests
 import json
 
 from . import func
+from . import wingman
 from .analysis import Analysis
 from .const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE
 from .models.log_class import Log
@@ -44,6 +45,7 @@ def debugLog(url):
     responses = grequests.map([pjcontent], size=1)
     log.set_pjcontent(responses[0])
     BossFactory.create_boss(log, analysis)
+    wingman.fetch_percentiles(analysis.bosses)
     boss = analysis.bosses[0]
     print(boss.start_date)
     if boss.mvp:
@@ -65,6 +67,7 @@ def main(input_string, **kwargs) -> None:
         logs[i].set_pjcontent(responses[i])
     for log in logs:
         BossFactory.create_boss(log, analysis)
+    wingman.fetch_percentiles(analysis.bosses)
     print("\n")
     split_run_message = func.get_message_reward(analysis)
     for message in split_run_message:

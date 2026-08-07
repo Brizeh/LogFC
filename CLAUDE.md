@@ -119,11 +119,19 @@ Tout ce qui varie d'un run a l'autre vit dans une instance d'`Analysis`
 Elle se cree en debut d'analyse et se passe explicitement :
 
 ```python
-analysis = Analysis(title="Run")
+analysis = Analysis(title="Run", language="FR")
 InputParser(texte, analysis)
-BossFactory.create_boss(log, analysis)
+BossFactory.create_boss(log, analysis)      # pour chaque log
+wingman.fetch_percentiles(analysis.bosses)  # une passe parallele
 func.get_message_reward(analysis)
 ```
+
+⚠️ **`fetch_percentiles` est une etape a part entiere.** L'oublier ne
+provoque aucune erreur : les notes wingman disparaissent simplement du
+message. Elle est separee parce que la creation d'un boss ne fait plus
+aucun appel reseau, ce qui rend le pipeline testable hors-ligne, et
+parce que ces appels ne valent la peine qu'en lot (un par boss, sinon
+sequentiels).
 
 Deux analyses peuvent donc tourner en parallele, y compris dans des
 langues differentes. Il n'y a rien a reinitialiser entre deux runs :

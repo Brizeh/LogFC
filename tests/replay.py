@@ -10,10 +10,10 @@ import json
 from pathlib import Path
 
 from src import func
+from src import wingman
 from src.analysis import Analysis
 from src.const import CUSTOM_NAMES
 from src.input import InputParser
-from src.models import boss_class
 from src.models.boss_facto import BossFactory
 from src.models.log_class import Log
 
@@ -22,16 +22,10 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 FIXED_PERCENTILE = 50
 
 
-class _FakeWingmanResponse:
-    """Reponse wingman constante, pour un rejeu sans reseau ni aleas."""
-
-    @staticmethod
-    def json():
-        return {"percentile": FIXED_PERCENTILE}
-
-
-def _no_network(*args, **kwargs):
-    return _FakeWingmanResponse()
+def _fixed_percentiles(bosses):
+    """Remplace la passe wingman par une note constante."""
+    for boss in bosses:
+        boss.wingman_percentile = FIXED_PERCENTILE
 
 
 def available():
@@ -66,14 +60,14 @@ def message_of(analysis):
 
 
 def no_network():
-    """Contexte neutralisant les appels wingman et les surnoms locaux."""
+    """Contexte neutralisant la passe wingman et les surnoms locaux."""
     class _Patch:
         def __enter__(self):
             CUSTOM_NAMES.clear()
-            self.original = boss_class.requests.get
-            boss_class.requests.get = _no_network
+            self.original = wingman.fetch_percentiles
+            wingman.fetch_percentiles = _fixed_percentiles
         def __exit__(self, *exc):
-            boss_class.requests.get = self.original
+            wingman.fetch_percentiles = self.original
     return _Patch()
 
 
@@ -83,4 +77,5 @@ def run(names, language="FR", directory=FIXTURES_DIR):
         analysis, logs = build(names, language, directory)
         for log in logs:
             BossFactory.create_boss(log, analysis)
+        wingman.fetch_percentiles(analysis.bosses)
         return message_of(analysis), json.loads(json.dumps(analysis.arxiv))

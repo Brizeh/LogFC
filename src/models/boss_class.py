@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-import requests
 import pytz
 
 from .player_class import *
@@ -53,7 +52,7 @@ class Boss:
         self.start_date         = self.get_start_date()
         self.end_date           = self.get_end_date()
         self.player_list        = self.get_player_list()
-        self.wingman_percentile = self.get_wingman_percentile()
+        self.wingman_percentile = None  # renseigne par wingman.fetch_percentiles
         self.real_phase_id      = self.get_phase_id(self.real_phase)
         self.time_base          = self.get_time_base()
         self.mvp_accounts       = []
@@ -118,18 +117,6 @@ class Boss:
                 
         return real_players
     
-    def get_wingman_percentile(self):
-        try:
-            time_stamp = int(self.get_start_date().timestamp())
-            requestUrl = f"https://gw2wingman.nevermindcreations.de/api/getPercentileByMetadata?bossID={self.boss_id}&isCM={self.cm}&duration={self.duration_ms}&timestamp={time_stamp}"
-            infos      = requests.get(requestUrl).json()
-            if infos.get("percentile"):
-                return infos["percentile"]
-            return
-        except:
-            print("wingman percentile failed")
-            return                 
-            
     ################################ CONDITIONS ################################
 
     def is_quick(self, i_player: int):
