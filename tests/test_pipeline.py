@@ -16,9 +16,11 @@ from pathlib import Path
 
 from src.languages_dict.english import english
 from src.languages_dict.french import french
+from src.mechanics import mech_value
 from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - importing it populates Boss.registry
 from src.models.boss_facto import BossFactory
+from src.models.sub_models.raid_bosses import DHUUM
 from src import mechanics
 from src import wingman
 from tests import replay
@@ -147,6 +149,67 @@ def test_icd_table_covers_the_fixtures():
     )
 
 
+def test_mech_value_respects_exclusions():
+    """mech_value drops events falling in an excluded time range.
+
+    Events must be spaced further apart than the icd, otherwise the icd
+    window alone collapses them to a single count and the exclude
+    parameter's effect can't be observed.
+    """
+    mechanic = {"mechanicsData": [
+        {"time": 4000, "actor": "P", "weight": 1},
+        {"time": 14000, "actor": "P", "weight": 1},
+    ]}
+    without = mech_value(mechanic, "P", icd=3000, start=0, end=20000)
+    with_excl = mech_value(mechanic, "P", icd=3000, start=0, end=20000, exclude=[(0, 5000)])
+    assert without == 2, f"expected both events to count, got {without}"
+    assert with_excl == 1, f"expected the excluded event to be dropped, got {with_excl}"
+
+
+def test_dhuum_excludes_pickup_near_shielded_phase():
+    """DHUUM drops "Ender's Pick up" events within 5s of Shielded Dhuum's start.
+
+    None of the fixtures reach that phase (it only exists past the
+    Ritual, which our DHUUM fixture is a wipe before), so this is
+    exercised with synthetic data instead. self.mechanics holds direct
+    references into pjcontent["mechanics"]: it must be mutated in place,
+    reassigning log.pjcontent afterwards would not reach it.
+    """
+    with replay.no_network():
+        analysis, logs = replay.build(["dhuum"])
+        BossFactory.create_boss(logs[0], analysis)
+        boss = analysis.bosses[0]
+
+    player_index = next(
+        i for i, p in enumerate(boss.log.pjcontent["players"]) if p["name"] == boss.get_player_name(0)
+    )
+    pickup = next(m for m in boss.mechanics if m["fullName"] == "Ender's Pick up")
+    pickup["mechanicsData"] = [
+        {"time": 170000, "actor": boss.get_player_name(player_index), "id": 0, "instid": 1, "weight": 1},
+        {"time": 180000, "actor": boss.get_player_name(player_index), "id": 0, "instid": 1, "weight": 1},
+    ]
+
+    before = boss.get_mech_value(player_index, "Ender's Pick up")
+    assert before == 2, f"both well-separated events should count without the phase, got {before}"
+
+    boss.log.pjcontent["phases"] = boss.log.pjcontent["phases"] + [
+        {"name": "Shielded Dhuum", "start": 172000, "end": 188914}
+    ]
+    after = boss.get_mech_value(player_index, "Ender's Pick up")
+    assert after == 1, f"the pick-up at 170000 falls in [167000, 177000] and should be dropped, got {after}"
+
+
+def test_mechanic_exclusions_defaults_to_empty():
+    """Bosses other than DHUUM don't filter any mechanic event."""
+    for boss in set(Boss.registry.values()):
+        if boss is DHUUM:
+            continue
+        instance = object.__new__(boss)
+        assert instance.mechanic_exclusions("anything") == [], (
+            f"{boss.__name__} unexpectedly overrides mechanic_exclusions"
+        )
+
+
 def test_arxiv_is_keyed_by_account():
     """ARXIV is indexed by account, not by display nickname."""
     _, arxiv = run_reference()
@@ -265,6 +328,9 @@ TESTS = [
     test_two_analyses_do_not_interfere,
     test_two_languages_do_not_interfere,
     test_icd_table_covers_the_fixtures,
+    test_mech_value_respects_exclusions,
+    test_dhuum_excludes_pickup_near_shielded_phase,
+    test_mechanic_exclusions_defaults_to_empty,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,

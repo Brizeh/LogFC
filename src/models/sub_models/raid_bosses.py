@@ -1183,7 +1183,17 @@ class DHUUM(Boss):
     boss_id    = 19450
     url_suffix = "dhuum"
     real_phase = "Dhuum Fight"
-    
+
+    def mechanic_exclusions(self, mech_name):
+        # A pick-up right around the Shielded Dhuum transition isn't
+        # counted: personal counting choice, not an Elite Insights bug.
+        if mech_name != "Ender's Pick up":
+            return []
+        for phase in self.log.pjcontent['phases']:
+            if phase['name'] == "Shielded Dhuum":
+                return [(phase['start'] - 5000, phase['start'] + 5000)]
+        return []
+
     def get_mvp(self):
         mvp = []
         msg_cracks = self.mvp_cracks()

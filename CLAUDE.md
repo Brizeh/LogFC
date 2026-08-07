@@ -78,6 +78,13 @@ tout fait. Trois regles, validees sur 7676 cellules de reference :
 court, la cle dans ARXIV). L'ancien HTML les appelait respectivement
 `name` et `shortName`.
 
+**Ajustements de comptage au cas par cas** : `Boss.mechanic_exclusions(mech_name)`
+renvoie une liste de fenetres `(debut_ms, fin_ms)` a exclure des evenements
+d'une mecanique avant l'agregation par `icd` — vide par defaut, a surcharger
+dans une classe de boss pour un choix de comptage propre a ce boss (pas pour
+corriger un bug d'Elite Insights). Exemple : DHUUM ignore les "Ender's Pick
+up" survenant a moins de 5s du debut de la phase "Shielded Dhuum".
+
 ## Ajouter un boss
 
 Une classe dans `sub_models/<categorie>_bosses.py`, plus les cles de

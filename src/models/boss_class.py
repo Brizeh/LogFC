@@ -42,6 +42,16 @@ class Boss:
         """Suffixes detectable in a pasted list of logs."""
         return {boss.url_suffix for boss in cls.registry.values() if boss.url_suffix}
 
+    def mechanic_exclusions(self, mech_name: str):
+        """Time ranges (start_ms, end_ms) to drop from a mechanic's events.
+
+        Empty by default. A boss overrides this for one-off counting
+        adjustments (e.g. DHUUM discards "Ender's Pick up" events fired
+        near the start of "Shielded Dhuum") without touching the shared
+        aggregation logic in mechanics.mech_value.
+        """
+        return []
+
     def __init__(self, log: Log, analysis):
         self.log                = log
         self.analysis           = analysis
@@ -590,7 +600,8 @@ class Boss:
             trigger_id  = self.log.pjcontent['triggerID']
             for mechanic in self.mechanics:
                 icd = get_icd(trigger_id, mechanic['fullName'])
-                value = mech_value(mechanic, player_name, icd, start, end)
+                exclude = self.mechanic_exclusions(mechanic['fullName'])
+                value = mech_value(mechanic, player_name, icd, start, end, exclude)
                 description = f"{mechanic['fullName']} : {mechanic['description']}"
                 self.add_player_stat("Mechanics", mechanic['name'], value, account, description=description)
     
@@ -669,7 +680,8 @@ class Boss:
             if mechanic['fullName'] == mech_name:
                 start, end = self.get_phase_bounds(phase_id)
                 icd = get_icd(self.log.pjcontent['triggerID'], mech_name)
-                return mech_value(mechanic, self.get_player_name(i_player), icd, start, end)
+                exclude = self.mechanic_exclusions(mech_name)
+                return mech_value(mechanic, self.get_player_name(i_player), icd, start, end, exclude)
         return 0
     
     def bosshp_to_time(self, hp: float):

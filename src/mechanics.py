@@ -72,12 +72,19 @@ def player_mechanics(pjcontent):
     return mechanics
 
 
-def mech_value(mechanic, actor: str, icd: int, start: int, end: int):
-    """Value of a mechanic for a player over a time interval."""
+def mech_value(mechanic, actor: str, icd: int, start: int, end: int, exclude=()):
+    """Value of a mechanic for a player over a time interval.
+
+    `exclude` is an iterable of (start_ms, end_ms) ranges: events falling
+    in any of them are dropped before the icd window is applied, as if
+    they had never fired. Used for boss-specific one-off adjustments,
+    see Boss.mechanic_exclusions.
+    """
     events = sorted(
         (data["time"], data.get("weight", 1))
         for data in mechanic["mechanicsData"]
         if data["actor"] == actor and start <= data["time"] <= end
+        and not any(lo <= data["time"] <= hi for lo, hi in exclude)
     )
     total, last = 0, 0
     for time, weight in events:
