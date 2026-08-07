@@ -16,10 +16,27 @@ imports relatifs, l'execution directe leve
 `ImportError: attempted relative import with no known parent package`.
 Sous VSCode, utiliser F5 avec la config `LogFC: src.main`.
 
-Pour verifier un changement : lancer sur `src/input_logs.txt` et comparer
-la sortie avant/apres. La console Windows est en cp1252 et plante sur les
-emojis du message : prefixer par `PYTHONIOENCODING=utf-8` ou rediriger
-vers un fichier.
+La console Windows est en cp1252 et plante sur les emojis du message :
+prefixer par `PYTHONIOENCODING=utf-8` ou rediriger vers un fichier.
+
+## Tests
+
+```bash
+python -m tests.test_pipeline
+```
+
+Hors-ligne, sans dependance externe, ~1s : le pipeline est rejoue sur les
+fixtures de `tests/fixtures/` (appels wingman neutralises, `CUSTOM_NAMES`
+vide pour que la sortie ne depende pas du fichier local).
+
+**A lancer avant et apres tout refactor.** Le test principal compare le
+message produit a `tests/expected/run_message.txt` : c'est le filet qui
+protege les changements de structure. Si le message change volontairement,
+regenerer la reference avec `--update` apres avoir verifie le diff.
+
+Pour ajouter un boss au jeu de tests :
+`python -m tests.capture_fixture <url>` (les fixtures sont elaguees des
+donnees que le code ne lit jamais, ce qui divise leur poids par deux).
 
 ## Les deux sources dps.report
 
