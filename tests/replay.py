@@ -36,7 +36,13 @@ def load(name, directory=FIXTURES_DIR):
     directory = Path(directory)
     url = (directory / f"{name}.url.txt").read_text(encoding="utf-8").strip()
     with gzip.open(directory / f"{name}.pjcontent.json.gz", "rt", encoding="utf-8") as f:
-        return url, json.load(f)
+        pjcontent = json.load(f)
+    crpath = directory / f"{name}.crdata.json.gz"
+    replay_data = None
+    if crpath.exists():
+        with gzip.open(crpath, "rt", encoding="utf-8") as f:
+            replay_data = json.load(f)
+    return url, pjcontent, replay_data
 
 
 def build(names, language="FR", directory=FIXTURES_DIR):
@@ -44,13 +50,13 @@ def build(names, language="FR", directory=FIXTURES_DIR):
     analysis = Analysis(language=language)
     loaded = [load(name, directory) for name in names]
     # InputParser feeds analysis.dups, which the fail count comes from
-    urls = InputParser("\n".join(url for url, _ in loaded), analysis).urls
+    urls = InputParser("\n".join(url for url, _, _ in loaded), analysis).urls
 
-    by_url = dict(loaded)
+    by_url = {url: (pjcontent, replay_data) for url, pjcontent, replay_data in loaded}
     logs = []
     for url in urls:
         log = Log(url)
-        log.pjcontent = by_url[url]
+        log.pjcontent, log.replay_data = by_url[url]
         logs.append(log)
     return analysis, logs
 

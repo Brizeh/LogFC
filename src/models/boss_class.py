@@ -22,6 +22,8 @@ class Boss:
     url_suffix  = None  # dps.report URL suffix; None = not detected
                         # in a pasted list of logs (the golem's case)
     real_phase  = "Full Fight"
+    needs_replay_data = False  # set True by a boss whose MVP/LVP logic
+                                # reads self.log.replay_data (see combat_replay.py)
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

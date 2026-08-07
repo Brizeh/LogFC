@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Captures a dps.report log's data into tests/fixtures/.
 
-Downloads the JSON API response and saves it so the tests can replay
-the pipeline offline.
+Downloads the JSON API response (and, for a boss with
+Boss.needs_replay_data, the HTML combat-replay data too) and saves them
+so the tests can replay the pipeline offline.
 
     python -m tests.capture_fixture <url> [<url> ...]
+    python -m tests.capture_fixture <url> --name <fixture_name>
+
+--name overrides the fixture's file name (defaults to the log's boss
+suffix, e.g. "sh"): needed when capturing a second log of a boss
+already covered by another fixture.
 
 Remember to then run `python -m tests.test_pipeline --update` to
 produce the new boss' reference output, and
@@ -18,7 +24,10 @@ from pathlib import Path
 
 import grequests
 
+from src import combat_replay
 from src.const import REQUEST_HEADERS, DPS_REPORT_JSON_URL
+from src.models import boss_facto  # noqa: F401 - importing it populates Boss.registry
+from src.models.boss_class import Boss
 from src.models.log_class import Log
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -66,8 +75,9 @@ def strip_unused(pjcontent):
     return removed
 
 
-def capture(urls):
+def capture(urls, names=None):
     FIXTURES_DIR.mkdir(exist_ok=True)
+    names = names or [None] * len(urls)
 
     requests = [grequests.get(DPS_REPORT_JSON_URL + url, headers=REQUEST_HEADERS)
                 for url in urls]
@@ -83,7 +93,7 @@ def capture(urls):
         removed = strip_unused(log.pjcontent)
         print(f"  stripped: {removed // 1024} KB of unread data removed")
 
-        name = log.short_name
+        name = names[i] or log.short_name
         path = FIXTURES_DIR / f"{name}.pjcontent.json.gz"
         with gzip.open(path, "wt", encoding="utf-8") as f:
             json.dump(log.pjcontent, f, separators=(",", ":"))
@@ -92,6 +102,18 @@ def capture(urls):
         # the original url is needed for replay (it's the key into ARXIV)
         with open(FIXTURES_DIR / f"{name}.url.txt", "w", encoding="utf-8") as f:
             f.write(url)
+
+        boss = Boss.registry.get(log.pjcontent["triggerID"])
+        if boss and boss.needs_replay_data:
+            combat_replay.fetch_replay_data([log])
+            if log.replay_data is None:
+                print("  replay data: fetch failed")
+            else:
+                crpath = FIXTURES_DIR / f"{name}.crdata.json.gz"
+                with gzip.open(crpath, "wt", encoding="utf-8") as f:
+                    json.dump(log.replay_data, f, separators=(",", ":"))
+                print(f"  {crpath.name} ({crpath.stat().st_size // 1024} KB)")
+
         print(f"{name}: ok")
 
 
@@ -99,4 +121,9 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(1)
-    capture(sys.argv[1:])
+    args = sys.argv[1:]
+    if "--name" in args:
+        i = args.index("--name")
+        capture([args[0]], names=[args[i + 1]])
+    else:
+        capture(args)

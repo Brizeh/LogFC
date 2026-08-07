@@ -3,6 +3,7 @@ from time import perf_counter
 import grequests
 import json
 
+from . import combat_replay
 from . import func
 from . import wingman
 from .analysis import Analysis
@@ -65,6 +66,7 @@ def main(input_string, **kwargs) -> None:
     logs = [Log(url) for url in urls]
     for i in range(len(urls)):
         logs[i].set_pjcontent(responses[i])
+    combat_replay.fetch_replay_data(logs)
     for log in logs:
         BossFactory.create_boss(log, analysis)
     wingman.fetch_percentiles(analysis.bosses)

@@ -1,4 +1,5 @@
 from ..boss_class import Boss, Stats
+from ...combat_replay import contains, rectangles
 from ...func import *
 import numpy as np
 
@@ -1088,24 +1089,28 @@ class SH(Boss):
     wing       = 5
     boss_id    = 19767
     url_suffix = "sh"
-    
+    needs_replay_data = True
+
     center_arena = [375,375]
     radius1      = 345.5
     radius2      = 304.2
     radius3      = 256.2
     radius4      = 208.5
     radius5      = 163
-    
+
     def get_mvp(self):
         mvp = []
         msg_cc = self.get_mvp_cc_boss()
         if msg_cc:
             mvp.append(msg_cc)
+        msg_wall = self.mvp_wall()
+        if msg_wall:
+            mvp.append(msg_wall)
         msg_bad_dps = self.get_bad_dps()
-        if msg_bad_dps: 
+        if msg_bad_dps:
             mvp.append(msg_bad_dps)
         return mvp
-    
+
     def get_lvp(self):
         lvp = []
         msg_cc = self.get_lvp_cc_boss()
@@ -1115,8 +1120,60 @@ class SH(Boss):
         if msg_dps:
             lvp.append(msg_dps)
         return lvp
-        
-        
+
+    def mvp_wall(self):
+        i_players = self.get_walled_players()
+        if not i_players:
+            return
+        self.add_mvps(i_players)
+        mvp_names = self.players_to_string(i_players)
+        return self.msg("SH MVP WALL", mvp_names=mvp_names)
+
+    def get_walled_players(self):
+        """Players who died while standing inside a moving wall.
+
+        Elite Insights' walls ("SurgingSoul") carry no combat stats and
+        are absent from the JSON API; their position only exists in the
+        page's HTML combat replay data (self.log.replay_data, fetched by
+        combat_replay.fetch_replay_data for bosses that need it).
+        Empirically the position sample matching a recorded death
+        sometimes lags the wall's own sample grid by one polling step
+        (~300ms), hence checking a small window of frames around the
+        death instead of only the exact one.
+
+        Deaths after duration_ms are excluded: arcdps keeps logging a
+        little past a successful kill, and a "death" there is a
+        post-encounter artifact rather than a wall hit (confirmed on a
+        real log where two players' final "death" landed after the
+        fight's own recorded end and coincided to the same millisecond,
+        the signature of something else entirely).
+        """
+        crdata = self.log.replay_data
+        if not crdata:
+            return []
+        walls = rectangles(crdata, "255, 100, 0")
+        if not walls:
+            return []
+        polling = crdata["pollingRate"]
+
+        walled = []
+        for i in self.player_list:
+            crd = self.log.pjcontent['players'][i]['combatReplayData']
+            deaths = [t for interval in crd['dead'] if (t := interval[0]) <= self.duration_ms]
+            if any(self._died_in_a_wall(crd['positions'], t, polling, walls) for t in deaths):
+                walled.append(i)
+        return walled
+
+    def _died_in_a_wall(self, positions, death_time, polling, walls):
+        base = (death_time // polling) * polling
+        for t in (base, base + polling, base + 2 * polling, base - polling):
+            index = t // polling
+            if not (0 <= index < len(positions)):
+                continue
+            if any(contains(wall, positions[index], t) for wall in walls):
+                return True
+        return False
+
     ################################ MVP ################################
     # Work in progress, not sure if I will keep it in the final version of the bot
     """def mvp_wall(self):

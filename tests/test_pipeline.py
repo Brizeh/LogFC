@@ -20,7 +20,8 @@ from src.mechanics import mech_value
 from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - importing it populates Boss.registry
 from src.models.boss_facto import BossFactory
-from src.models.sub_models.raid_bosses import DHUUM
+from src.models.sub_models.raid_bosses import DHUUM, SH
+from src import combat_replay
 from src import mechanics
 from src import wingman
 from tests import replay
@@ -210,6 +211,32 @@ def test_mechanic_exclusions_defaults_to_empty():
         )
 
 
+def test_sh_wall_detection():
+    """SH flags exactly the player who died inside a moving wall.
+
+    dps.report's JSON API doesn't expose the wall entity at all (it
+    carries no combat stats), so this can only be checked against a
+    real log where it happened: sh_wall's I Am Cooked, verified by hand
+    against the site's own combat replay viewer. The other nine players
+    never entered a wall and must not be flagged.
+    """
+    with replay.no_network():
+        analysis, logs = replay.build(["sh_wall"])
+        assert logs[0].replay_data is not None, "sh_wall fixture is missing its crdata"
+        BossFactory.create_boss(logs[0], analysis)
+        boss = analysis.bosses[0]
+        assert isinstance(boss, SH), f"sh_wall fixture resolved to {type(boss).__name__}, not SH"
+
+    walled = {boss.get_player_account(i) for i in boss.get_walled_players()}
+    assert walled == {"Junior.8316"}, f"expected only Junior.8316 (I Am Cooked), got {walled}"
+
+
+def test_combat_replay_degrades_gracefully():
+    """Missing or unparsable HTML replay data yields no walls, not an error."""
+    assert combat_replay.parse("<html>no crData here</html>") is None
+    assert combat_replay.rectangles(None, "255, 100, 0") == []
+
+
 def test_arxiv_is_keyed_by_account():
     """ARXIV is indexed by account, not by display nickname."""
     _, arxiv = run_reference()
@@ -331,6 +358,8 @@ TESTS = [
     test_mech_value_respects_exclusions,
     test_dhuum_excludes_pickup_near_shielded_phase,
     test_mechanic_exclusions_defaults_to_empty,
+    test_sh_wall_detection,
+    test_combat_replay_degrades_gracefully,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,

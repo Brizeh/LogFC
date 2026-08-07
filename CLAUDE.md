@@ -50,17 +50,40 @@ Pour ajouter un boss au jeu de tests :
 
 Une seule requete par log, vers l'API JSON officielle
 (`getJson?permalink=`) : `log.pjcontent`. Le projet ne scrape plus la
-page HTML de dps.report.
+page HTML de dps.report par defaut.
 
-Une seule chose n'existe pas dans cette API : le temps de grace (`icd`)
-de chaque mecanique, necessaire pour reproduire les valeurs agregees
+Une chose n'existe pas dans cette API : le temps de grace (`icd`) de
+chaque mecanique, necessaire pour reproduire les valeurs agregees
 d'Elite Insights. Il est fige dans `src/mechanic_icd.json`, alimente par
-`python -m tools.update_mechanic_icd <url>` — le seul endroit du projet
-qui lit encore le HTML, et uniquement a la demande.
+`python -m tools.update_mechanic_icd <url>` — un outil a la demande,
+pas une requete faite a chaque run.
 
 Quand un boss ou une mecanique manque a cette table, LogFC l'ecrit sur
 la sortie standard et suppose un `icd` nul, ce qui **surestime** la
 valeur de la mecanique concernee. Le run continue.
+
+### Donnees absentes de l'API : le replay HTML
+
+Certains hazards ne portent aucune statistique de combat (pas de vie,
+pas de degats) et sont de ce fait absents de `pjcontent` — le mur mobile
+de SOULLESS HORROR ("SurgingSoul" cote Elite Insights) en est
+l'exemple. Sa position n'existe que dans le `_crData` de la page HTML,
+celui qui alimente le visualiseur de replay du site.
+
+`src/combat_replay.py` extrait ce blob et expose des primitives
+geometriques generiques (`rectangles`, `contains`) ; `Boss.needs_replay_data`
+(faux par defaut) est le point d'extension qu'un boss doit surcharger
+pour en avoir besoin — seul SH le fait aujourd'hui. La regle elle-meme
+(quelle couleur, quelle marge temporelle) reste dans la classe du boss.
+
+⚠️ **`fetch_replay_data` doit tourner avant la creation des boss**, pas
+apres comme `wingman.fetch_percentiles` : le calcul MVP/LVP se fait de
+maniere synchrone dans `Boss.__init__`, donc la donnee doit deja etre
+attachee au `Log` au moment ou le boss est construit.
+
+Si le fetch HTML echoue ou que la page a change de format,
+`combat_replay.parse` renvoie `None` : le boss concerne perd juste sa
+regle geometrique, le run continue.
 
 ### Le calcul des mecaniques
 
@@ -128,8 +151,9 @@ Elle se cree en debut d'analyse et se passe explicitement :
 ```python
 analysis = Analysis(title="Run", language="FR")
 InputParser(texte, analysis)
+combat_replay.fetch_replay_data(logs)       # avant la creation des boss
 BossFactory.create_boss(log, analysis)      # pour chaque log
-wingman.fetch_percentiles(analysis.bosses)  # une passe parallele
+wingman.fetch_percentiles(analysis.bosses)  # une passe parallele, apres
 func.get_message_reward(analysis)
 ```
 
