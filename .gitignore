@@ -2,5 +2,7 @@
 **/__pycache__
 *.swp
 env
-/src/input logs.txt
+
+# Donnees locales : copier les .example correspondants pour demarrer
+src/input_logs.txt
 src/custom_names.json

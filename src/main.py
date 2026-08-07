@@ -24,8 +24,12 @@ def printjson(data: dict) -> None:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 def _make_parser() -> ArgumentParser:
-    with open(DEFAULT_INPUT_FILE, "r") as file:
-        default_input = file.read()
+    try:
+        with open(DEFAULT_INPUT_FILE, "r") as file:
+            default_input = file.read()
+    except FileNotFoundError:
+        print(f"{DEFAULT_INPUT_FILE} not found, copy src/input_logs.example.txt to create it")
+        default_input = ""
     parser = ArgumentParser()
     parser.add_argument('-d', '--debug', action='store_true', required=False)
     parser.add_argument('-l', '--language', required=False, default=DEFAULT_LANGUAGE)
