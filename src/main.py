@@ -45,6 +45,7 @@ def debugLog(url):
     pjcontent = grequests.get(DPS_REPORT_JSON_URL, params={"permalink": url}, headers=REQUEST_HEADERS)
     responses = grequests.map([pjcontent], size=1)
     log.set_pjcontent(responses[0])
+    combat_replay.fetch_replay_data([log])
     BossFactory.create_boss(log, analysis)
     wingman.fetch_percentiles(analysis.bosses)
     boss = analysis.bosses[0]
@@ -80,6 +81,6 @@ if __name__ == "__main__":
     print("Starting\n")
     start_time = perf_counter()
     args = _make_parser().parse_args()
-    main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
-    #debugLog("https://dps.report/kjk1-20260729-002814_deci")
+    #main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
+    debugLog("https://dps.report/yCkJ-20260401-221631_sh")
     print(f"\nFinished in {perf_counter() - start_time:.2f} seconds")
