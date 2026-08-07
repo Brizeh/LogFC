@@ -21,6 +21,9 @@ from src.models import boss_facto  # noqa: F401 - son import peuple Boss.registr
 from tests import replay
 
 EXPECTED_DIR = Path(__file__).resolve().parent / "expected"
+
+# Un run coherent d'une meme soiree, pour couvrir le regroupement par aile,
+# les GRAND MVP/LVP et la duree totale.
 RUN_FIXTURES = ["sh", "dei", "adina"]
 
 _cache = {}
@@ -52,6 +55,22 @@ def test_run_message_unchanged():
     assert message.splitlines() == _read(expected_path), (
         "le message a change ; verifier le diff puis --update si c'est voulu"
     )
+
+
+def test_each_boss_message_unchanged():
+    """Chaque boss, rejoue seul, produit le meme message qu'avant.
+
+    Rejouer boss par boss plutot qu'en bloc : un echec designe alors
+    directement la classe fautive.
+    """
+    changed = []
+    for name in replay.available():
+        expected_path = EXPECTED_DIR / f"{name}.txt"
+        assert expected_path.exists(), f"reference absente pour {name}, lancer --update"
+        message, _ = replay.run([name])
+        if message.splitlines() != _read(expected_path):
+            changed.append(name)
+    assert not changed, f"message modifie pour: {', '.join(changed)}"
 
 
 def test_arxiv_is_keyed_by_account():
@@ -168,6 +187,7 @@ def test_languages_have_the_same_keys():
 
 TESTS = [
     test_run_message_unchanged,
+    test_each_boss_message_unchanged,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
     test_core_stats_have_descriptions,
@@ -183,7 +203,11 @@ TESTS = [
 def update_expected():
     message, _ = replay.run(RUN_FIXTURES)
     _write(EXPECTED_DIR / "run_message.txt", message)
-    print(f"sortie de reference mise a jour ({len(message.splitlines())} lignes)")
+    print(f"run_message.txt ({len(message.splitlines())} lignes)")
+    for name in replay.available():
+        message, _ = replay.run([name])
+        _write(EXPECTED_DIR / f"{name}.txt", message)
+        print(f"{name}.txt ({len(message.splitlines())} lignes)")
 
 
 def main():

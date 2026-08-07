@@ -25,18 +25,26 @@ prefixer par `PYTHONIOENCODING=utf-8` ou rediriger vers un fichier.
 python -m tests.test_pipeline
 ```
 
-Hors-ligne, sans dependance externe, ~1s : le pipeline est rejoue sur les
+Hors-ligne, sans dependance externe, ~2s : le pipeline est rejoue sur les
 fixtures de `tests/fixtures/` (appels wingman neutralises, `CUSTOM_NAMES`
-vide pour que la sortie ne depende pas du fichier local).
+vide pour que la sortie ne depende pas du fichier local). Voir
+`tests/fixtures/README.md` pour ce que couvre chaque fixture.
 
-**A lancer avant et apres tout refactor.** Le test principal compare le
-message produit a `tests/expected/run_message.txt` : c'est le filet qui
-protege les changements de structure. Si le message change volontairement,
-regenerer la reference avec `--update` apres avoir verifie le diff.
+**A lancer avant et apres tout refactor.** Deux tests de non-regression
+comparent les messages produits a `tests/expected/` : un run complet de
+trois logs, puis chaque boss rejoue seul pour qu'un echec designe
+directement la classe fautive. Si le message change volontairement,
+regenerer les references avec `--update` apres avoir verifie le diff.
+
+⚠️ Le filet ne couvre que les boss presents en fixture. Un refactor
+transverse peut casser un boss non couvert sans qu'aucun test bronche :
+c'est arrive lors du passage au registre, ou la confusion entre `boss_id`
+et triggerID n'a ete rattrapee que par une comparaison manuelle avec
+l'ancienne table. Pour ce genre de changement, verifier aussi par
+equivalence avec l'etat precedent.
 
 Pour ajouter un boss au jeu de tests :
-`python -m tests.capture_fixture <url>` (les fixtures sont elaguees des
-donnees que le code ne lit jamais, ce qui divise leur poids par deux).
+`python -m tests.capture_fixture <url>` puis `--update`.
 
 ## Les deux sources dps.report
 
