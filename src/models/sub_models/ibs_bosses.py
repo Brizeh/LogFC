@@ -1,20 +1,14 @@
 from ..boss_class import Boss, Stats
-from ..log_class import Log
 from ...func import *
 
 ################################ ICEBROOD CONSTRUCT ################################
 
 class ICE(Boss):
     
-    last    = None
     name    = "ICEBROOD"
     boss_id = 22154
     wing    = "IBS"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ICE.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -33,15 +27,10 @@ class ICE(Boss):
 
 class KODANS(Boss):
     
-    last    = None
     name    = "KODANS"
     boss_id = 22343
     wing    = "IBS"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        KODANS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -77,15 +66,10 @@ class KODANS(Boss):
 
 class FRAENIR(Boss):
     
-    last    = None
     name    = "FRAENIR"
     boss_id = 22492
     wing    = "IBS"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        FRAENIR.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_frozen = self.get_frozen_mvp()
@@ -158,15 +142,10 @@ class FRAENIR(Boss):
 
 class WOJ(Boss):
     
-    last    = None
     name    = "WOJ"
     boss_id = 22711
     wing    = "IBS"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        WOJ.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_chains = self.get_chain_mvp()
@@ -209,16 +188,11 @@ class WOJ(Boss):
 
 class BONESKINNER(Boss):
     
-    last    = None
     name    = "BONESKINNER"
     boss_id = 22521
     wing    = "IBS"
     sak_id  = 60501
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        BONESKINNER.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()

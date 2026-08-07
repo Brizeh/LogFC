@@ -1,20 +1,14 @@
 from ..boss_class import Boss, Stats
-from ..log_class import Log
 from ...func import *
 
 ################################ MAMA ################################
 
 class MAMA(Boss):
     
-    last    = None
     name    = "MAMA"
     boss_id = 17021
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        MAMA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -33,15 +27,10 @@ class MAMA(Boss):
 
 class SIAX(Boss):
     
-    last    = None
     name    = "SIAX"
     boss_id = 17028
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SIAX.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -60,15 +49,10 @@ class SIAX(Boss):
 
 class ENSOLYSS(Boss):
     
-    last    = None
     name    = "ENSOLYSS"
     boss_id = 16948
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ENSOLYSS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -87,15 +71,10 @@ class ENSOLYSS(Boss):
 
 class SKORVALD(Boss):
     
-    last    = None
     name    = "SKORVALD"
     boss_id = 17632
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SKORVALD.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -114,15 +93,10 @@ class SKORVALD(Boss):
 
 class ARTSARIIV(Boss):
     
-    last    = None
     name    = "ARTSARIIV"
     boss_id = 17949
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ARTSARIIV.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -141,15 +115,10 @@ class ARTSARIIV(Boss):
 
 class ARKK(Boss):
     
-    last    = None
     name    = "ARKK"
     boss_id = 17759
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ARKK.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -168,15 +137,10 @@ class ARKK(Boss):
 
 class DARKAI(Boss):
     
-    last    = None
     name    = "DARK AI"
     boss_id = 232542
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        DARKAI.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -195,15 +159,10 @@ class DARKAI(Boss):
 
 class KANAXAI(Boss):
     
-    last    = None
     name    = "KANAXAI"
     boss_id = 25577
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        KANAXAI.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -261,15 +220,10 @@ class KANAXAI(Boss):
 
 class EPARCH(Boss):
     
-    last    = None
     name    = "EPARCH"
     boss_id = 26231
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        EPARCH.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -288,15 +242,10 @@ class EPARCH(Boss):
 
 class WS(Boss):
     
-    last    = None
     name    = "WS"
     boss_id = 27010
     wing    = "FRAC"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        WS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()

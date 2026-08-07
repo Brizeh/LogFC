@@ -1,20 +1,14 @@
 from ..boss_class import Boss, Stats
-from ..log_class import Log
 from ...func import *
 
 ################################ MAI TRIN ################################
 
 class AH(Boss):
     
-    last    = None
     name    = "MAI TRIN"
     boss_id = 24033
     wing    = "EOD"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        AH.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_exposed = self.expose_mvp()
@@ -82,15 +76,10 @@ class AH(Boss):
 
 class XJ(Boss):
     
-    last    = None
     name    = "ANKKA"
     boss_id = 23957
     wing    = "EOD"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        XJ.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_cc = self.get_mvp_cc_total()
@@ -112,15 +101,10 @@ class XJ(Boss):
 
 class KO(Boss):
     
-    last    = None
     name    = "KO"
     boss_id = 24485
     wing    = "EOD"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        KO.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_debil = self.mvp_debil()
@@ -184,15 +168,10 @@ class KO(Boss):
 
 class HT(Boss):
     
-    last    = None
     name    = "HT"
     boss_id = 24375
     wing    = "EOD"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        HT.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -211,15 +190,10 @@ class HT(Boss):
 
 class OLC(Boss):
     
-    last    = None
     name    = "OLC"
     boss_id = 25413
     wing    = "EOD"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        OLC.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_olc = self.get_mvp_olc()

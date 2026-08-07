@@ -1,5 +1,4 @@
 from ..boss_class import Boss, Stats
-from ..log_class import Log
 from ...func import *
 import numpy as np
 
@@ -7,15 +6,10 @@ import numpy as np
 
 class VG(Boss):
     
-    last    = None
     name    = "VG"
     wing    = 1
     boss_id = 15438
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        VG.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_bleu = self.mvp_bleu()
@@ -65,15 +59,10 @@ class VG(Boss):
 
 class GORS(Boss):
     
-    last    = None
     name    = "GORSEVAL"
     wing    = 1
     boss_id = 15429
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        GORS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_egg = self.mvp_egg()
@@ -159,7 +148,6 @@ class GORS(Boss):
 
 class SABETHA(Boss):
     
-    last    = None
     name    = "SABETHA"
     wing    = 1
     boss_id = 15375
@@ -172,10 +160,6 @@ class SABETHA(Boss):
     canon_detect_radius = 45
     scaler              = 9.34179 
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SABETHA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_terrorists = self.mvp_terrorists()
@@ -300,15 +284,10 @@ class SABETHA(Boss):
 
 class SLOTH(Boss):
     
-    last    = None
     name    = "SLOTH"
     wing    = 2
     boss_id = 16123
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SLOTH.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_tantrum = self.mvp_tantrum()
@@ -387,15 +366,10 @@ class SLOTH(Boss):
 
 class MATTHIAS(Boss):
     
-    last    = None
     name    = "MATTHIAS"
     wing    = 2
     boss_id = 16115
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        MATTHIAS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_cc = self.mvp_cc_matthias()
@@ -459,7 +433,6 @@ class MATTHIAS(Boss):
 
 class ESCORT(Boss):
     
-    last    = None
     name    = "ESCORT"
     wing    = 3
     boss_id = 16253
@@ -473,10 +446,6 @@ class ESCORT(Boss):
               ]
     tower_radius = 19
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ESCORT.last = self 
-        
     def get_mvp(self):
         mvp = []
         msg_mine = self.mvp_mine()
@@ -572,15 +541,10 @@ class ESCORT(Boss):
 
 class KC(Boss):
     
-    last    = None
     name    = "KC"
     wing    = 3
     boss_id = 16235
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        KC.last  = self  
-        
     def get_mvp(self):
         mvp = []
         msg_orb = self.mvp_orb_kc()
@@ -644,7 +608,6 @@ class KC(Boss):
 
 class XERA(Boss):
     
-    last       = None
     name       = "XERA"
     wing       = 3
     boss_id    = 16246
@@ -660,10 +623,6 @@ class XERA(Boss):
     debut_radius  = 85
     centre_radius = 140
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        XERA.last = self  
-        
     def get_mvp(self):
         mvp = []
         msg_fdp = self.mvp_fdp_xera()
@@ -779,15 +738,10 @@ class XERA(Boss):
 
 class CAIRN(Boss):
     
-    last    = None
     name    = "CAIRN"
     wing    = 4
     boss_id = 17194
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        CAIRN.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_tp = self.mvp_tp()
@@ -837,15 +791,10 @@ class CAIRN(Boss):
 
 class MO(Boss):
     
-    last    = None
     name    = "MO"
     wing    = 4
     boss_id = 17172
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        MO.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_pic = self.mvp_pic()
@@ -899,7 +848,6 @@ class MO(Boss):
 
 class SAMAROG(Boss):
     
-    last    = None
     name    = "SAMAROG"
     wing    = 4
     boss_id = 17188
@@ -910,10 +858,6 @@ class SAMAROG(Boss):
     bot_right_corn = [690.7,73.6]
     scaler         = 5.4621
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SAMAROG.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_impaled = self.mvp_impaled()
@@ -1026,15 +970,10 @@ class SAMAROG(Boss):
 
 class DEIMOS(Boss):
     
-    last       = None
     name       = "DEIMOS"
     wing       = 4
     boss_id    = 17154
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        DEIMOS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_black = self.mvp_black()
@@ -1133,7 +1072,6 @@ class DEIMOS(Boss):
 
 class SH(Boss):
     
-    last    = None
     name    = "SH"
     wing    = 5
     boss_id = 19767
@@ -1145,10 +1083,6 @@ class SH(Boss):
     radius4      = 208.5
     radius5      = 163
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SH.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_cc = self.get_mvp_cc_boss()
@@ -1231,16 +1165,11 @@ class SH(Boss):
 
 class DHUUM(Boss):
     
-    last       = None
     name       = "DHUUM"
     wing       = 5
     boss_id    = 19450
     real_phase = "Dhuum Fight"
     
-    def __init__(self, log: Log):    
-        super().__init__(log)
-        DHUUM.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_cracks = self.mvp_cracks()
@@ -1292,15 +1221,10 @@ class DHUUM(Boss):
 
 class CA(Boss):
     
-    last    = None
     name    = "CA"
     wing    = 6
     boss_id = 43974
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        CA.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_dps = self.get_bad_dps()
@@ -1333,15 +1257,10 @@ class CA(Boss):
 
 class LARGOS(Boss):
     
-    last    = None
     name    = "LARGOS"
     wing    = 6
     boss_id = 21105
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        LARGOS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_dash = self.mvp_dash()
@@ -1418,7 +1337,6 @@ class LARGOS(Boss):
 
 class Q1(Boss):
     
-    last    = None
     name    = "QADIM"
     wing    = 6
     boss_id = 20934
@@ -1426,10 +1344,6 @@ class Q1(Boss):
     center     = [411.5,431.1]
     fdp_radius = 70
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        Q1.last  = self
-        
     def get_mvp(self):
         mvp = []
         msg_fdp = self.mvp_fdp()
@@ -1513,15 +1427,10 @@ class Q1(Boss):
 
 class ADINA(Boss):
     
-    last    = None
     name    = "ADINA"
     wing    = 7
     boss_id = 22006
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        ADINA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -1579,15 +1488,10 @@ class ADINA(Boss):
 
 class SABIR(Boss):
     
-    last    = None
     name    = "SABIR"
     wing    = 7
     boss_id = 21964
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        SABIR.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_cc = self.get_mvp_cc_boss()
@@ -1626,15 +1530,10 @@ class SABIR(Boss):
 
 class QTP(Boss):
     
-    last    = None
     name    = "QTP"
     wing    = 7
     boss_id = 22000
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        QTP.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps(extra_exclude=[self.is_pylon])
@@ -1708,15 +1607,10 @@ class QTP(Boss):
 
 class GREER(Boss):
     
-    last    = None
     name    = "GREER"
     wing    = 8
     boss_id = 26725
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        GREER.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_dps = self.get_bad_dps()
@@ -1755,15 +1649,10 @@ class GREER(Boss):
 
 class DECIMA(Boss):
     
-    last    = None
     name    = "DECIMA"
     wing    = 8
     boss_id = 26774
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        DECIMA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_dps = self.get_bad_dps()
@@ -1802,15 +1691,10 @@ class DECIMA(Boss):
 
 class URA(Boss):
     
-    last    = None
     name    = "URA"
     wing    = 8
     boss_id = 26712
 
-    def __init__(self, log: Log):
-        super().__init__(log)
-        GREER.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_dps = self.get_bad_dps()
@@ -1843,10 +1727,5 @@ class URA(Boss):
 
 class GOLEM(Boss):
     
-    last    = None
     name    = "GOLEM CHAT STANDARD"
     boss_id = 16199
-    
-    def __init__(self, log: Log):
-        super().__init__(log)
-        GOLEM.last = self

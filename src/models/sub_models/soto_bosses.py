@@ -1,20 +1,14 @@
 from ..boss_class import Boss, Stats
-from ..log_class import Log
 from ...func import *
 
 ################################ DAGDA ################################
 
 class DAGDA(Boss):
     
-    last    = None
     name    = "DAGDA"
     boss_id = 25705
     wing    = "SOTO"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        DAGDA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_debil = self.mvp_debil()
@@ -65,15 +59,10 @@ class DAGDA(Boss):
 
 class CERUS(Boss):
     
-    last    = None
     name    = "CERUS"
     boss_id = 25989
     wing    = "SOTO"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        CERUS.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
@@ -92,15 +81,10 @@ class CERUS(Boss):
 
 class KELA(Boss):
     
-    last    = None
     name    = "KELA"
     boss_id = 27124
     wing    = "SOTO"
     
-    def __init__(self, log: Log):
-        super().__init__(log)
-        KELA.last = self
-        
     def get_mvp(self):
         mvp = []
         msg_bad_dps = self.get_bad_dps()
