@@ -8,7 +8,6 @@ from .analysis import Analysis
 from .const import REQUEST_HEADERS, DPS_REPORT_JSON_URL, DEFAULT_LANGUAGE, DEFAULT_TITLE, DEFAULT_INPUT_FILE
 from .models.log_class import Log
 from .models.boss_facto import BossFactory
-from .languages import LANGUES
 from .input import InputParser
 
 import matplotlib.pyplot as plt
@@ -55,7 +54,7 @@ def debugLog(url):
             print(lvp)
 
 def main(input_string, **kwargs) -> None:
-    analysis = Analysis(title=DEFAULT_TITLE)
+    analysis = Analysis(title=DEFAULT_TITLE, language=kwargs.get('language') or DEFAULT_LANGUAGE)
     input = InputParser(input_string, analysis)
     print(input)
     urls = input.urls
@@ -75,7 +74,6 @@ def main(input_string, **kwargs) -> None:
 if __name__ == "__main__":
     print("Starting\n")
     start_time = perf_counter()
-    LANGUES["selected_language"] = LANGUES["FR"]
     args = _make_parser().parse_args()
     main(args.input, reward_mode=args.reward, debug=args.debug, language=args.language)
     #debugLog("https://dps.report/kjk1-20260729-002814_deci")

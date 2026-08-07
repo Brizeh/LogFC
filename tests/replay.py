@@ -13,7 +13,6 @@ from src import func
 from src.analysis import Analysis
 from src.const import CUSTOM_NAMES
 from src.input import InputParser
-from src.languages import LANGUES
 from src.models import boss_class
 from src.models.boss_facto import BossFactory
 from src.models.log_class import Log
@@ -46,9 +45,9 @@ def load(name, directory=FIXTURES_DIR):
         return url, json.load(f)
 
 
-def build(names, directory=FIXTURES_DIR):
+def build(names, language="FR", directory=FIXTURES_DIR):
     """Prepare une Analysis et ses Log, sans encore creer les boss."""
-    analysis = Analysis()
+    analysis = Analysis(language=language)
     loaded = [load(name, directory) for name in names]
     # InputParser alimente analysis.dups, d'ou vient le comptage des fails
     urls = InputParser("\n".join(url for url, _ in loaded), analysis).urls
@@ -80,9 +79,8 @@ def no_network():
 
 def run(names, language="FR", directory=FIXTURES_DIR):
     """Rejoue un run complet et renvoie (message, copie de l'arxiv)."""
-    LANGUES["selected_language"] = LANGUES[language]
     with no_network():
-        analysis, logs = build(names, directory)
+        analysis, logs = build(names, language, directory)
         for log in logs:
             BossFactory.create_boss(log, analysis)
         return message_of(analysis), json.loads(json.dumps(analysis.arxiv))

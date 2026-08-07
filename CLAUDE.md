@@ -125,13 +125,25 @@ BossFactory.create_boss(log, analysis)
 func.get_message_reward(analysis)
 ```
 
-Deux analyses peuvent donc tourner en parallele. Il n'y a rien a
-reinitialiser entre deux runs : l'objet est jete a la fin.
+Deux analyses peuvent donc tourner en parallele, y compris dans des
+langues differentes. Il n'y a rien a reinitialiser entre deux runs :
+l'objet est jete a la fin.
 
 Ne vit **pas** dans `Analysis` : la configuration partagee en lecture
-seule (`CUSTOM_NAMES`, `ALL_MECHS`, les dictionnaires de langue). Seule
-exception encore en place, `LANGUES["selected_language"]`, qui reste
-global et empeche deux analyses simultanees dans des langues differentes.
+seule (`CUSTOM_NAMES`, `ALL_MECHS`, `LANGUES`, `mechanic_icd.json`).
+
+### Les messages localises
+
+Depuis une methode de `Boss`, toujours passer par le helper, jamais par
+`LANGUES` directement :
+
+```python
+return self.msg("GORS MVP EGG P", mvp_names=mvp_names)
+```
+
+Il resout la cle dans la langue de l'analyse en cours et leve une erreur
+explicite si elle manque aux deux dictionnaires. En dehors d'un `Boss`
+(`func.py`), utiliser `analysis.language["CLE"]`.
 
 ## Structure d'ARXIV
 

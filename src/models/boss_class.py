@@ -7,7 +7,6 @@ from ..const import CUSTOM_NAMES, BIG, ALL_MECHS
 from .log_class import Log
 from .. import func
 from ..mechanics import get_icd, mech_value, player_mechanics
-from ..languages import LANGUES
 
 class Boss:
 
@@ -73,7 +72,14 @@ class Boss:
         self.add_players_mechs()
                 
     def __repr__(self) -> str:
-        return self.log.url    
+        return self.log.url
+
+    def msg(self, key: str, **kwargs) -> str:
+        """Message localise, dans la langue de l'analyse en cours."""
+        template = self.analysis.language.get(key)
+        if template is None:
+            raise KeyError(f"cle de message absente des dictionnaires de langue: {key!r}")
+        return template.format(**kwargs)
         
     ################################ Fonction pour attribus Boss ################################
     
@@ -431,14 +437,14 @@ class Boss:
         number_mvp = len(i_players)  
         if min_cc == 0:
             if number_mvp == 1:
-                return LANGUES["selected_language"]["MVP BOSS 0 CC S"].format(mvp_names=mvp_names)
+                return self.msg("MVP BOSS 0 CC S", mvp_names=mvp_names)
             else:
-                return LANGUES["selected_language"]["MVP BOSS 0 CC P"].format(mvp_names=mvp_names)
+                return self.msg("MVP BOSS 0 CC P", mvp_names=mvp_names)
         else:
             if number_mvp == 1:
-                return LANGUES["selected_language"]["MVP BOSS CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return self.msg("MVP BOSS CC S", mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
             else:
-                return LANGUES["selected_language"]["MVP BOSS CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return self.msg("MVP BOSS CC P", mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
     
     def get_mvp_cc_total(self,extra_exclude: list[classmethod]=[]):
         i_players, min_cc, total_cc = Stats.get_min_value(self, self.get_cc_total, exclude=[*extra_exclude])
@@ -450,14 +456,14 @@ class Boss:
         number_mvp = len(i_players)  
         if min_cc == 0:
             if number_mvp == 1:
-                return LANGUES["selected_language"]["MVP TOTAL 0 CC S"].format(mvp_names=mvp_names)
+                return self.msg("MVP TOTAL 0 CC S", mvp_names=mvp_names)
             else:
-                return LANGUES["selected_language"]["MVP TOTAL 0 CC P"].format(mvp_names=mvp_names)
+                return self.msg("MVP TOTAL 0 CC P", mvp_names=mvp_names)
         else:
             if number_mvp == 1:
-                return LANGUES["selected_language"]["MVP TOTAL CC S"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return self.msg("MVP TOTAL CC S", mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
             else:
-                return LANGUES["selected_language"]["MVP TOTAL CC P"].format(mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
+                return self.msg("MVP TOTAL CC P", mvp_names=mvp_names, min_cc=min_cc, cc_ratio=cc_ratio)
     
     def get_bad_dps(self, extra_exclude: list[classmethod]=[]):
         i_sup, sup_max_dmg, _ = Stats.get_max_value(self, self.get_dmg_boss, exclude=[self.is_dps, self.is_bannerslave])
@@ -474,9 +480,9 @@ class Boss:
             self.add_mvps(bad_dps)
             bad_dps_name = self.players_to_string(bad_dps)
             if len(bad_dps) == 1:
-                return LANGUES["selected_language"]["MVP BAD DPS S"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
+                return self.msg("MVP BAD DPS S", bad_dps_name=bad_dps_name, sup_name=sup_name)
             else:
-                return LANGUES["selected_language"]["MVP BAD DPS P"].format(bad_dps_name=bad_dps_name, sup_name=sup_name)
+                return self.msg("MVP BAD DPS P", bad_dps_name=bad_dps_name, sup_name=sup_name)
             
     def add_player_stat(self, category: str, stat: str, value, account: str, description: str = None):
         extra_mechs = self.analysis.extra_mechs
@@ -613,7 +619,7 @@ class Boss:
         self.add_lvps(i_players)
         lvp_names = self.players_to_string(i_players)
         cc_ratio  = max_cc / total_cc * 100
-        return LANGUES["selected_language"]["LVP BOSS CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
+        return self.msg("LVP BOSS CC", lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
     
     def get_lvp_cc_total(self):
         i_players, max_cc, total_cc = Stats.get_max_value(self, self.get_cc_total)
@@ -622,7 +628,7 @@ class Boss:
         self.add_lvps(i_players)
         lvp_names = self.players_to_string(i_players)
         cc_ratio  = max_cc / total_cc * 100
-        return LANGUES["selected_language"]["LVP TOTAL CC"].format(lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
+        return self.msg("LVP TOTAL CC", lvp_names=lvp_names, max_cc=max_cc, cc_ratio=cc_ratio)
     
     def get_lvp_dps(self):
         i_players, max_dmg, total_dmg = Stats.get_max_value(self, self.get_dmg_boss)
@@ -634,8 +640,8 @@ class Boss:
         foodSwapCount                 = self.get_foodswap_count(i_players[0])
         self.add_lvps(i_players) 
         if foodSwapCount:
-            return LANGUES["selected_language"]["LVP DPS FOODSWAP"].format(lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps, foodSwapCount=foodSwapCount)
-        return LANGUES["selected_language"]["LVP DPS"].format(lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps)
+            return self.msg("LVP DPS FOODSWAP", lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps, foodSwapCount=foodSwapCount)
+        return self.msg("LVP DPS", lvp_dps_name=lvp_dps_name, max_dmg=max_dmg, dmg_ratio=dmg_ratio, dps=dps)
     ################################ DATA BOSS ################################
     
     def get_phase_timers(self, target_phase: str, inMilliSeconds=False):

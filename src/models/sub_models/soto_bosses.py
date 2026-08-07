@@ -35,9 +35,9 @@ class DAGDA(Boss):
         if max_debil > 1:
             self.add_mvps(i_players)
             if len(i_players) == 1:
-                return LANGUES["selected_language"]["KO MVP DEBIL S"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return self.msg("KO MVP DEBIL S", mvp_names=mvp_names, max_debil=max_debil)
             else:
-                return LANGUES["selected_language"]["KO MVP DEBIL P"].format(mvp_names=mvp_names, max_debil=max_debil)
+                return self.msg("KO MVP DEBIL P", mvp_names=mvp_names, max_debil=max_debil)
         return
     
     ################################ DATA MECHAS ################################

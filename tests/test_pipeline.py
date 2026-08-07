@@ -102,6 +102,30 @@ def test_two_analyses_do_not_interfere():
     assert got_right == expected_right, "l'analyse de droite a ete polluee par l'autre"
 
 
+def test_two_languages_do_not_interfere():
+    """Deux analyses entrelacees dans des langues differentes coexistent.
+
+    La langue selectionnee etait la derniere variable de module mutee a
+    chaque run : une analyse en anglais ecrasait la langue d'une analyse
+    francaise en cours.
+    """
+    expected_fr, _ = replay.run(["gors"], language="FR")
+    expected_en, _ = replay.run(["gors"], language="EN")
+    assert expected_fr != expected_en, "les deux langues rendent le meme texte"
+
+    with replay.no_network():
+        analysis_fr, logs_fr = replay.build(["gors"], language="FR")
+        analysis_en, logs_en = replay.build(["gors"], language="EN")
+        for log_fr, log_en in zip(logs_fr, logs_en):
+            BossFactory.create_boss(log_fr, analysis_fr)
+            BossFactory.create_boss(log_en, analysis_en)
+        got_fr = replay.message_of(analysis_fr)
+        got_en = replay.message_of(analysis_en)
+
+    assert got_fr == expected_fr, "l'analyse francaise a bascule de langue"
+    assert got_en == expected_en, "l'analyse anglaise a bascule de langue"
+
+
 def test_icd_table_covers_the_fixtures():
     """Aucune mecanique des fixtures ne manque a mechanic_icd.json.
 
@@ -234,6 +258,7 @@ TESTS = [
     test_run_message_unchanged,
     test_each_boss_message_unchanged,
     test_two_analyses_do_not_interfere,
+    test_two_languages_do_not_interfere,
     test_icd_table_covers_the_fixtures,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,
