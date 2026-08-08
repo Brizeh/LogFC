@@ -162,7 +162,7 @@ class SABETHA(Boss):
     pos_canon3          = [403.3,36.0]
     pos_canon4          = [713.9,403.1]
     canon_detect_radius = 45
-    scaler              = 9.34179
+    bomb_radius         = 280  # Timed Bomb blast radius, per EI's Sabetha.cs (CircleDecoration(280, ...))
     
     def get_mvp(self):
         mvp = []
@@ -248,25 +248,32 @@ class SABETHA(Boss):
     
     def is_terrorist(self, i_player: int):
         bomb_history = self.get_player_mech_history(i_player, ["Timed Bomb"])
-        if bomb_history:
-            poses   = self.get_player_pos(i_player)
-            players = self.player_list
-            for bomb in bomb_history:
-                bomb_time  = bomb['time'] + 3000
-                time_index = time_to_index(bomb_time, self.time_base)
-                try:
-                    bomb_pos = poses[time_index]
-                except:
+        if not bomb_history:
+            return False
+        poses         = self.get_player_pos(i_player)
+        # the API exposes the exact map scale; no need to hand-calibrate
+        # a scaler against a single replay, as was done before
+        pixel_to_inch = 1 / self.log.pjcontent['combatReplayMetaData']['inchToPixel']
+        players       = self.player_list
+        for bomb in bomb_history:
+            bomb_time  = bomb['time'] + 3000
+            time_index = time_to_index(bomb_time, self.time_base)
+            try:
+                bomb_pos = poses[time_index]
+            except IndexError:
+                continue
+            bombed_players = 0
+            for i in players:
+                if i == i_player:
                     continue
-                bombed_players = 0
-                for i in players:
-                    if i == i_player or self.is_dead(i):
-                        continue
+                try:
                     i_pos = self.get_player_pos(i)[time_index]
-                    if get_dist(bomb_pos, i_pos)*SABETHA.scaler <= 270:
-                        bombed_players += 1
-                if bombed_players > 1:
-                    return True
+                except IndexError:
+                    continue
+                if get_dist(bomb_pos, i_pos)*pixel_to_inch <= SABETHA.bomb_radius:
+                    bombed_players += 1
+            if bombed_players > 1:
+                return True
         return False
     
     ################################ MECHANICS DATA ################################

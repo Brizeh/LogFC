@@ -20,7 +20,7 @@ from src.mechanics import mech_value
 from src.models.boss_class import Boss
 from src.models import boss_facto  # noqa: F401 - importing it populates Boss.registry
 from src.models.boss_facto import BossFactory
-from src.models.sub_models.raid_bosses import DHUUM, SH
+from src.models.sub_models.raid_bosses import DHUUM, SABETHA, SH
 from src import combat_replay
 from src import mechanics
 from src import wingman
@@ -231,6 +231,27 @@ def test_sh_wall_detection():
     assert walled == {"Junior.8316"}, f"expected only Junior.8316 (I Am Cooked), got {walled}"
 
 
+def test_sabetha_terrorist_detection():
+    """SABETHA flags exactly the players who bombed more than one teammate.
+
+    sab's carriers each detonate their bomb on an empty spot except two:
+    Lillith Deros and Schnakao, both confirmed by hand against the site's
+    combat replay viewer. Distance uses the log's own inchToPixel, not a
+    hand-calibrated constant, since two different SH pulls in these
+    fixtures already show it's stable per boss but not worth guessing.
+    """
+    with replay.no_network():
+        analysis, logs = replay.build(["sab"])
+        BossFactory.create_boss(logs[0], analysis)
+        boss = analysis.bosses[0]
+        assert isinstance(boss, SABETHA), f"sab fixture resolved to {type(boss).__name__}, not SABETHA"
+
+    terrorists = {boss.get_player_name(i) for i in boss.get_terrorists()}
+    assert terrorists == {"Lillith Deros", "Schnakao"}, (
+        f"expected Lillith Deros and Schnakao, got {terrorists}"
+    )
+
+
 def test_combat_replay_degrades_gracefully():
     """Missing or unparsable HTML replay data yields no walls, not an error."""
     assert combat_replay.parse("<html>no crData here</html>") is None
@@ -359,6 +380,7 @@ TESTS = [
     test_dhuum_excludes_pickup_near_shielded_phase,
     test_mechanic_exclusions_defaults_to_empty,
     test_sh_wall_detection,
+    test_sabetha_terrorist_detection,
     test_combat_replay_degrades_gracefully,
     test_arxiv_is_keyed_by_account,
     test_arxiv_stats_are_snapshots,

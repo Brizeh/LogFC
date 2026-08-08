@@ -15,6 +15,7 @@ aujourd'hui).
 | `gors` | degats de split via `get_phase_id("Split 1")` et `dpsStatsTargets` |
 | `dhuum` | `real_phase = "Dhuum Fight"` (seul boss a le surcharger) et mode CM |
 | `qadim` | phases multiples, comparaison DPS/support |
+| `sab` | detection de terroriste (bombe explosee sur plusieurs coequipiers), verifiee a la main |
 
 ## URLs
 
