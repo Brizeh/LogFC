@@ -235,8 +235,15 @@ def test_sabetha_terrorist_detection():
     """SABETHA flags exactly the players who bombed more than one teammate.
 
     sab's carriers each detonate their bomb on an empty spot except two:
-    Lillith Deros and Schnakao, both confirmed by hand against the site's
-    combat replay viewer. Distance uses the log's own inchToPixel, not a
+    Schnakao and Wittel Mourndust, confirmed by hand against the site's
+    combat replay viewer using its own range-circle overlay (radius 280,
+    the real Timed Bomb blast per EI's source) rather than eyeballing.
+    A third candidate, Lillith Deros, looked like a hit until the same
+    check against the replay showed her isolated from everyone at that
+    instant: that false positive came from get_time_base() truncating
+    the polling interval to an int, which drifts the sampled frame by
+    almost a full sample every ~2.5s and picks the wrong position late
+    in a fight. Distance uses the log's own inchToPixel, not a
     hand-calibrated constant, since two different SH pulls in these
     fixtures already show it's stable per boss but not worth guessing.
     """
@@ -247,8 +254,8 @@ def test_sabetha_terrorist_detection():
         assert isinstance(boss, SABETHA), f"sab fixture resolved to {type(boss).__name__}, not SABETHA"
 
     terrorists = {boss.get_player_name(i) for i in boss.get_terrorists()}
-    assert terrorists == {"Lillith Deros", "Schnakao"}, (
-        f"expected Lillith Deros and Schnakao, got {terrorists}"
+    assert terrorists == {"Schnakao", "Wittel Mourndust"}, (
+        f"expected Schnakao and Wittel Mourndust, got {terrorists}"
     )
 
 

@@ -708,9 +708,11 @@ class Boss:
         return 0  
     
     def get_time_base(self):
+        # not rounded to int: truncating ~299.78ms to 299 drifts the index
+        # by almost a full sample every ~2.5s, badly aliasing late-fight lookups
         delta = self.log.pjcontent["players"][0]["combatReplayData"]["end"]-self.log.pjcontent["players"][0]["combatReplayData"]["start"]
         lpos  = len(self.log.pjcontent["players"][0]["combatReplayData"]["positions"])
-        return int(delta/lpos)
+        return delta/lpos
     
     def getBuff(self, buffId: int):
         if not hasattr(self, "_buff_by_id"):

@@ -256,21 +256,24 @@ class SABETHA(Boss):
         pixel_to_inch = 1 / self.log.pjcontent['combatReplayMetaData']['inchToPixel']
         players       = self.player_list
         for bomb in bomb_history:
-            bomb_time  = bomb['time'] + 3000
-            time_index = time_to_index(bomb_time, self.time_base)
-            try:
-                bomb_pos = poses[time_index]
-            except IndexError:
+            bomb_time    = bomb['time'] + 3000
+            center_index = time_to_index(bomb_time, self.time_base)
+            # a single 300ms-sampled frame is noisy against the fast-moving
+            # carrier: require the majority of the frames around bomb_time,
+            # not just the nearest one, to call a player caught in the blast
+            sample_indices = [i for i in range(center_index - 1, center_index + 2) if 0 <= i < len(poses)]
+            if not sample_indices:
                 continue
             bombed_players = 0
             for i in players:
                 if i == i_player:
                     continue
-                try:
-                    i_pos = self.get_player_pos(i)[time_index]
-                except IndexError:
-                    continue
-                if get_dist(bomb_pos, i_pos)*pixel_to_inch <= SABETHA.bomb_radius:
+                i_poses = self.get_player_pos(i)
+                hits = sum(
+                    1 for idx in sample_indices
+                    if idx < len(i_poses) and get_dist(poses[idx], i_poses[idx])*pixel_to_inch <= SABETHA.bomb_radius
+                )
+                if hits > len(sample_indices)/2:
                     bombed_players += 1
             if bombed_players > 1:
                 self.add_player_stat("Mechanics", "Bombed Players", bombed_players, self.get_player_account(i_player), "Number of people player bombed")
