@@ -273,6 +273,7 @@ class SABETHA(Boss):
                 if get_dist(bomb_pos, i_pos)*pixel_to_inch <= SABETHA.bomb_radius:
                     bombed_players += 1
             if bombed_players > 1:
+                self.add_player_stat("Mechanics", "Bombed Players", bombed_players, self.get_player_account(i_player), "Number of people player bombed")
                 return True
         return False
     
