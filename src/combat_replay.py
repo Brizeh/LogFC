@@ -12,13 +12,20 @@ fetch_replay_data must run before the corresponding Boss objects are
 constructed: MVP/LVP computation happens synchronously in
 Boss.__init__, unlike wingman.fetch_percentiles which runs on
 already-built bosses afterwards.
+
+Like wingman.py, this uses threads rather than grequests: the module is
+meant to be imported by the Discord bot, and grequests monkey-patches
+gevent onto the whole process, which doesn't cohabit well with asyncio.
 """
 import json
+from concurrent.futures import ThreadPoolExecutor
 
-import grequests
+import requests
 
 from .const import REQUEST_HEADERS
 from .models.boss_class import Boss
+
+MAX_PARALLEL = 10
 
 RECTANGLE_TYPE = 15
 
@@ -37,18 +44,24 @@ def parse(html: str):
         return None
 
 
+def _fetch_one(log):
+    try:
+        response = requests.get(log.url, headers=REQUEST_HEADERS)
+        return parse(response.content.decode("utf-8"))
+    except Exception:
+        print(f"replay data fetch failed: {log.url}")
+        return None
+
+
 def fetch_replay_data(logs):
     """Fetches _crData for logs whose boss needs it, in one parallel pass."""
     needing = [log for log in logs
                if Boss.registry.get(log.pjcontent['triggerID'], Boss).needs_replay_data]
     if not needing:
         return
-    responses = grequests.map(
-        [grequests.get(log.url, headers=REQUEST_HEADERS) for log in needing],
-        size=len(needing),
-    )
-    for log, response in zip(needing, responses):
-        log.replay_data = parse(response.content.decode("utf-8")) if response else None
+    with ThreadPoolExecutor(max_workers=min(len(needing), MAX_PARALLEL)) as pool:
+        for log, replay_data in zip(needing, pool.map(_fetch_one, needing)):
+            log.replay_data = replay_data
 
 
 def _pairs(flat):
